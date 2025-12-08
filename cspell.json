@@ -47,12 +47,24 @@
     "twemoji",
     "venv",
     "ÁRBOL",
-    "adpyke"
+    "adpyke",
+    "pylance"
   ],
   "ignoreWords": [],
   "dictionaries": [
-    "en_US",
-    "softwareTerms"
+    "softwareTerms",
+    "python",
+    "typescript",
+    "node",
+    "bash",
+    "html",
+    "css",
+    "docker",
+    "k8s",
+    "aws",
+    "npm",
+    "markdown",
+    "companies"
   ],
   "useGitignore": true,
   "ignorePaths": [
