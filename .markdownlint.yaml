@@ -1,0 +1,35 @@
+# Markdown Linting Configuration
+# Reference: https://github.com/DavidAnson/markdownlint
+
+default: true
+
+# Disabled rules
+MD013: false  # Line length - handled by editor
+MD033: false  # Inline HTML - needed for badges, embeds
+MD060: false  # Reference link placement flexibility
+
+# Heading configuration
+MD001: true   # Increment heading levels by one
+MD003:
+  style: atx  # Use # style headings (not underlines)
+MD025:
+  front_matter_title: "^title"  # Allow title in frontmatter
+
+# List configuration
+MD004:
+  style: consistent  # Allows * or - (but must be consistent per file)
+MD007:
+  indent: 2    # 2-space indentation for nested lists
+MD029:
+  style: one   # Always use 1. for ordered lists
+
+# Whitespace
+MD009:
+  br_spaces: 0  # No trailing spaces for line breaks
+  strict: true  # No trailing spaces anywhere
+MD010:
+  code_blocks: false  # Allow tabs in code blocks
+
+# Horizontal rules
+MD035:
+  style: "---"  # Use triple dash for horizontal rules

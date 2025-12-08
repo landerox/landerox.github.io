@@ -1,0 +1,77 @@
+{
+  "version": "0.2",
+  "language": "en",
+  "words": [
+    "zensical",
+    "mkdocs",
+    "Landero",
+    "landerox",
+    "devcontainer",
+    "precommit",
+    "pyproject",
+    "toml",
+    "yaml",
+    "webp",
+    "pycache",
+    "pymdownx",
+    "superfences",
+    "inlinehilite",
+    "glightbox",
+    "mermaid",
+    "cspell",
+    "markdownlint",
+    "commitizen",
+    "dependabot",
+    "codecov",
+    "ADICIONES",
+    "Anson",
+    "Axity",
+    "bierner",
+    "codezombiech",
+    "Dalnet",
+    "davidanson",
+    "debugpy",
+    "eamodio",
+    "envrc",
+    "kohler",
+    "kisstkondoros",
+    "linenums",
+    "OLAP",
+    "pylint",
+    "Pypi",
+    "pygments",
+    "PYTHONDONTWRITEBYTECODE",
+    "Sodimac",
+    "tamasfe",
+    "toolsai",
+    "twemoji",
+    "venv",
+    "ÁRBOL",
+    "adpyke"
+  ],
+  "ignoreWords": [],
+  "dictionaries": [
+    "en_US",
+    "softwareTerms"
+  ],
+  "useGitignore": true,
+  "ignorePaths": [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "node_modules",
+    "uv.lock",
+    "site"
+  ],
+  "overrides": [
+    {
+      "filename": "**/*.md",
+      "ignoreRegExpList": [
+        "\\[.*\\]\\(.*\\)",
+        "```[\\s\\S]*?```"
+      ]
+    }
+  ],
+  "allowCompoundWords": true,
+  "caseSensitive": false
+}

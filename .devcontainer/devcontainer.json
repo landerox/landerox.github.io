@@ -1,0 +1,42 @@
+{
+  "name": "landerox-github-io",
+  "image": "mcr.microsoft.com/devcontainers/python:1-3.12-bookworm",
+  "containerEnv": {
+    "UV_LINK_MODE": "copy",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "features": {
+    "ghcr.io/devcontainers/features/git:1": {},
+    "ghcr.io/devcontainers/features/github-cli:1": {}
+  },
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+        "python.terminal.activateEnvironment": true,
+        "editor.formatOnSave": true,
+        "[markdown]": {
+          "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
+          "editor.wordWrap": "on"
+        },
+        "[toml]": {
+          "editor.defaultFormatter": "tamasfe.even-better-toml"
+        },
+        "files.associations": {
+          "zensical.toml": "toml"
+        }
+      },
+      "extensions": [
+        "ms-python.python",
+        "tamasfe.even-better-toml",
+        "DavidAnson.vscode-markdownlint",
+        "streetsidesoftware.code-spell-checker",
+        "EditorConfig.EditorConfig",
+        "bierner.markdown-mermaid",
+        "eamodio.gitlens"
+      ]
+    }
+  },
+  "postCreateCommand": "pip install uv && uv sync --group dev && uv run pre-commit install",
+  "remoteUser": "vscode"
+}
