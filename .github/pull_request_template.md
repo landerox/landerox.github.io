@@ -1,10 +1,10 @@
 <!-- markdownlint-disable MD041 -->
 
-### Summary
+### 📋 Summary
 
 <!-- Briefly describe the changes and their purpose -->
 
-### Type of Change
+### 🔄 Type of Change
 
 - [ ] Fix (typo, broken link, formatting issue)
 - [ ] New content (blog post, project page)
@@ -12,12 +12,12 @@
 - [ ] Remove (deletes obsolete content)
 - [ ] CI/CD or tooling changes
 
-### Validation
+### 🧪 Validation
 
 - [ ] Ran `zensical serve` locally and checked the rendering
 - [ ] Reviewed spelling and grammar
 
-### Checklist
+### ✅ Checklist
 
 - [ ] My changes follow the project's formatting guidelines
 - [ ] I have performed a self-review of the content

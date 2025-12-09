@@ -4,7 +4,7 @@ Source code for my personal portfolio and engineering blog. Built with **Zensica
 
 ## Live Site
 
-- [landerox.github.io](https://landerox.github.io)
+- [landerox.com](https://landerox.com)
 
 ## Quick Start
 
