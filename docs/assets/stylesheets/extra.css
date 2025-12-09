@@ -1,14 +1,11 @@
+/* ---------------------------------------------------------- */
+/* 1. Animations                                             */
+/* ---------------------------------------------------------- */
 @keyframes heart {
-
-  0%,
-  40%,
-  80%,
-  100% {
+  0%, 40%, 80%, 100% {
     transform: scale(1);
   }
-
-  20%,
-  60% {
+  20%, 60% {
     transform: scale(1.15);
   }
 }
@@ -17,6 +14,9 @@
   animation: heart 1000ms infinite;
 }
 
+/* ---------------------------------------------------------- */
+/* 2. Layout Utilities (Columns)                             */
+/* ---------------------------------------------------------- */
 .mdx-columns ol,
 .mdx-columns ul {
   columns: 2;
@@ -33,43 +33,67 @@
   break-inside: avoid;
 }
 
+/* ---------------------------------------------------------- */
+/* 3. Component: Flags & Switches                            */
+/* ---------------------------------------------------------- */
 .mdx-switch button {
   cursor: pointer;
 }
 
 .mdx-flags {
-  margin: 2em auto
+  margin: 2em auto;
 }
 
 .md-typeset .mdx-flags ol {
-  list-style: none
+  list-style: none;
 }
 
 .md-typeset .mdx-flags ol li {
-  margin-bottom: 1em
+  margin-bottom: 1em;
 }
 
 .md-typeset .mdx-flags__item {
   display: flex;
-  gap: .6rem
+  gap: .6rem;
 }
 
 .md-typeset .mdx-flags__content {
   display: flex;
   flex: 1;
-  flex-direction: column
+  flex-direction: column;
 }
 
 .md-typeset .mdx-flags__content span {
   align-items: baseline;
   display: inline-flex;
-  justify-content: space-between
+  justify-content: space-between;
 }
 
 .md-typeset .mdx-flags__content>span:nth-child(2) {
-  font-size: 80%
+  font-size: 80%;
 }
 
 .md-typeset .mdx-flags__content code {
-  float: right
+  float: right;
+}
+
+/* ---------------------------------------------------------- */
+/* 4. Custom UI Overrides (Buttons)                          */
+/* ---------------------------------------------------------- */
+
+/* Standard Button Hover Effect */
+/* Fills the button with the primary color (Deep Orange) and lifts it */
+.md-typeset .md-button:hover {
+  background-color: var(--md-primary-fg-color);
+  border-color: var(--md-primary-fg-color);
+  color: #ffffff !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+}
+
+/* Primary Button Specific Hover */
+/* Uses a slightly brighter orange for feedback on already-orange buttons */
+.md-typeset .md-button--primary:hover {
+  background-color: #ff6e40;
+  border-color: #ff6e40;
 }
