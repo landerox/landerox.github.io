@@ -2,7 +2,7 @@
 # Documentation: https://zensical.org/docs/setup/basics/
 
 [project]
-site_name = "Fernando Landero"
+site_name = "landerox.com"
 site_url = "https://landerox.com"
 site_description = "Personal portfolio and engineering blog showcasing cloud architecture patterns and open source projects."
 site_author = "Fernando Landero"
@@ -24,8 +24,9 @@ nav = [
 # Theme configuration
 [project.theme]
 variant = "modern"
-favicon = "assets/images/favicon.svg"
+favicon = "assets/images/favicon.png"
 logo = "assets/images/logo.svg"
+
 features = [
   "navigation.instant",
   "navigation.instant.prefetch",
@@ -44,8 +45,8 @@ features = [
 
 [project.theme.palette]
 scheme = "slate"
-primary = "deep orange"
-accent = "amber"
+primary = "indigo"
+accent = "indigo"
 
 # Social links (footer)
 [[project.extra.social]]
