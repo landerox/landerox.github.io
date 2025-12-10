@@ -1,59 +1,37 @@
 {
   "version": "0.2",
   "language": "en",
+  "files": ["**", ".*/**"],
   "words": [
-    "ADICIONES",
-    "adpyke",
     "Anson",
-    "ASGI",
-    "Axity",
-    "bierner",
-    "codecov",
-    "codezombiech",
-    "commitizen",
-    "cspell",
-    "Dalnet",
-    "davidanson",
-    "debugpy",
-    "dependabot",
-    "devcontainer",
-    "eamodio",
-    "envrc",
-    "glightbox",
-    "Hudi",
+    "better",
+    "bookworm",
+    "customizations",
+    "fonts",
     "inlinehilite",
-    "kisstkondoros",
-    "kohler",
     "Landero",
     "landerox",
     "linenums",
-    "markdownlint",
     "mermaid",
-    "mkdocs",
-    "OLAP",
-    "precommit",
-    "pycache",
-    "pygments",
-    "pylance",
-    "pylint",
     "pymdownx",
-    "Pypi",
-    "pyproject",
-    "PYTHONDONTWRITEBYTECODE",
-    "RSGI",
-    "Sodimac",
-    "superfences",
-    "tamasfe",
-    "toml",
-    "toolsai",
-    "twemoji",
-    "venv",
-    "webp",
-    "yaml",
+    "pyupgrade",
     "zensical",
-    "ÁRBOL"
+    "Zensical"
   ],
-  "ignoreWords": [],
+  "ignoreWords": [
+    "bar",
+    "cd",
+    "ci",
+    "dev",
+    "foo",
+    "nd",
+    "prd",
+    "qa",
+    "repo",
+    "req",
+    "temp"
+  ],
+  "import": [],
   "dictionaries": [
     "aws",
     "bash",
@@ -75,6 +53,7 @@
     "softwareTerms",
     "typescript"
   ],
+  "dictionaryDefinitions": [],
   "useGitignore": true,
   "ignorePaths": [
     ".coverage",
@@ -100,10 +79,29 @@
     {
       "filename": "**/*.md",
       "ignoreRegExpList": [
-        "\\[.*\\]\\(.*\\)",
-        "```[\\s\\S]*?```"
+        "[A-Z]{3,}",
+        "https?://\\S+",
+        "^#+\\s",
+        "```[\\s\\S]*?```",
+        "`[^`\\n]+`"
+      ]
+    },
+    {
+      "filename": "**/*.yaml",
+      "language": "yaml"
+    },
+    {
+      "filename": "**/*.json",
+      "language": "json",
+      "ignoreRegExpList": [
+        "\\w+\\.\\w+"
       ]
     }
+  ],
+  "noSuggestDictionaries": [
+    "fonts",
+    "filetypes",
+    "software-terms"
   ],
   "allowCompoundWords": true,
   "caseSensitive": false

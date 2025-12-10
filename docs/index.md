@@ -3,9 +3,9 @@ hide:
   - toc
 ---
 
-# :material-hand-wave: Hi, I'm Fernando
+# :material-hand-wave: Welcome to landerox.com
 
-> **Senior Data Engineer** with **6+ years** designing and implementing scalable cloud data solutions on **Google Cloud Platform (GCP)**. Specialized in DataOps and MLOps for enterprise environments.
+> Hi, I'm Fernando Landero **Senior Data Engineer** with **6+ years** designing and implementing scalable cloud data solutions on **Google Cloud Platform (GCP)**. Specialized in DataOps and MLOps for enterprise environments.
 
 ## :material-briefcase-variant: What I Do
 

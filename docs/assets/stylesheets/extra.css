@@ -1,4 +1,17 @@
 /* ---------------------------------------------------------- */
+/* 0. Font Import - Meslo LG Nerd Font Pro                   */
+/* ---------------------------------------------------------- */
+@import url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@master/css/meslo.css');
+
+* {
+  font-family: 'Meslo LG Nerd Font Pro', 'Meslo LG', monospace;
+}
+
+body, html, .md-typeset {
+  font-family: 'Meslo LG Nerd Font Pro', 'Meslo LG', monospace;
+}
+
+/* ---------------------------------------------------------- */
 /* 1. Animations                                             */
 /* ---------------------------------------------------------- */
 @keyframes heart {
@@ -96,4 +109,23 @@
 .md-typeset .md-button--primary:hover {
   background-color: #ff6e40;
   border-color: #ff6e40;
+}
+
+/* ---------------------------------------------------------- */
+/* 5. Navigation Bar Styling                                 */
+/* ---------------------------------------------------------- */
+/* Blue background ONLY in the secondary nav bar (Home, Projects, Radar, Resume) */
+.md-tabs {
+  background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
+}
+
+/* Make nav items larger and bolder */
+.md-tabs__link {
+  font-size: 1.4em;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+.md-tabs__link:hover {
+  font-weight: 600;
 }
