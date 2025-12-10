@@ -14,6 +14,7 @@
       "settings": {
         "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
         "python.terminal.activateEnvironment": true,
+        "python.languageServer": "None",
         "editor.formatOnSave": true,
         "[markdown]": {
           "editor.defaultFormatter": "DavidAnson.vscode-markdownlint",
@@ -27,16 +28,22 @@
         }
       },
       "extensions": [
-        "ms-python.python",
-        "tamasfe.even-better-toml",
-        "DavidAnson.vscode-markdownlint",
-        "streetsidesoftware.code-spell-checker",
-        "EditorConfig.EditorConfig",
+        "alexkaufman.indent-on-paste",
         "bierner.markdown-mermaid",
-        "eamodio.gitlens"
+        "charliermarsh.ruff",
+        "DavidAnson.vscode-markdownlint",
+        "eamodio.gitlens",
+        "EditorConfig.EditorConfig",
+        "ms-pyright.pyright",
+        "ms-python.python",
+        "PKief.material-icon-theme",
+        "redhat.vscode-yaml",
+        "streetsidesoftware.code-spell-checker",
+        "tamasfe.even-better-toml",
+        "yzhang.markdown-all-in-one"
       ]
     }
   },
-  "postCreateCommand": "pip install uv && uv sync --group dev && uv run pre-commit install",
+  "postCreateCommand": "chmod +x .devcontainer/post-create.sh && bash .devcontainer/post-create.sh",
   "remoteUser": "vscode"
 }
