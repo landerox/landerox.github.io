@@ -6,14 +6,6 @@
 
 This repository hosts the source code for **landerox.com**. It serves as a live demonstration of my engineering standards applied to a real-world project, showcasing a modern, high-performance architecture built with Rust-based tooling and strict CI/CD practices.
 
-## Core Philosophy
-
-- **Simplicity:** Straightforward solutions over unnecessary complexity.
-- **Consistency:** Predictable patterns across all services and jobs.
-- **Automation:** If it can be scripted, it is automated (CI/CD, Linting).
-- **Reproducibility:** Deterministic environments using modern tooling.
-- **Performance:** Fast builds and deployments using efficient tools.
-
 ## Live Site
 
 - [landerox.com](https://landerox.com)

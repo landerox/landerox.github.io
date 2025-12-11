@@ -93,9 +93,6 @@ body, html, .md-typeset {
 /* ---------------------------------------------------------- */
 /* 4. Custom UI Overrides (Buttons)                          */
 /* ---------------------------------------------------------- */
-
-/* Standard Button Hover Effect */
-/* Fills the button with the primary color (Deep Orange) and lifts it */
 .md-typeset .md-button:hover {
   background-color: var(--md-primary-fg-color);
   border-color: var(--md-primary-fg-color);
@@ -104,28 +101,37 @@ body, html, .md-typeset {
   box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
-/* Primary Button Specific Hover */
-/* Uses a slightly brighter orange for feedback on already-orange buttons */
 .md-typeset .md-button--primary:hover {
-  background-color: #ff6e40;
-  border-color: #ff6e40;
+  background-color: #1e3a8a;
+  border-color: #1e3a8a;
 }
 
 /* ---------------------------------------------------------- */
 /* 5. Navigation Bar Styling                                 */
 /* ---------------------------------------------------------- */
-/* Blue background ONLY in the secondary nav bar (Home, Projects, Radar, Resume) */
 .md-tabs {
-  background: linear-gradient(90deg, #1e3a8a 0%, #1e40af 100%);
+  background: linear-gradient(90deg, #1e3a8a 0%, #14285f 100%);
+  height: auto;
 }
 
-/* Make nav items larger and bolder */
+.md-tabs__list {
+  justify-content: left;
+}
+
 .md-tabs__link {
-  font-size: 1.8em;
-  font-weight: 800;
+  font-size: 0.80rem;
+  font-weight: 600;
   letter-spacing: 0.5px;
+  opacity: 0.9;
+  transition: opacity 0.3s;
+  padding-top: 0.6rem;
+  padding-bottom: 0.6rem;
+
+  margin-top: 0;
+  height: auto;
 }
 
 .md-tabs__link:hover {
-  font-weight: 800;
+  opacity: 1;
+  font-weight: 600;
 }

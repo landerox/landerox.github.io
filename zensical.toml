@@ -24,7 +24,7 @@ nav = [
 # Theme configuration
 [project.theme]
 variant = "modern"
-favicon = "assets/images/favicon.png"
+favicon = "assets/images/favicon.ico"
 logo = "assets/images/logo.svg"
 
 features = [
