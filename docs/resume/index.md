@@ -67,18 +67,3 @@ Responsible for robust data ingestion at scale and democratizing data models.
 
 * :material-cloud-upload: **Cloud Migration:** Executed the migration of on-premise data systems (Hadoop/Spark) to Google Cloud Platform.
 * :material-monitor-dashboard: **Visualization:** Built Looker dashboards to expose key business metrics to stakeholders.
-
----
-
-## :material-code-braces: Technical Skills
-
-A summary of my core engineering stack.
-
-| Domain | Stack |
-| :--- | :--- |
-| **Cloud Platform** | :material-google-cloud: **GCP** (BigQuery, Dataflow, Composer, Vertex AI, GKE, Cloud Run) |
-| **Languages** | :material-language-python: Python, SQL, Rust (Learning), Shell Scripting |
-| **Data Ops** | :material-cog-refresh: dbt, Airflow, Dagster, Terraform, Docker, Kubernetes |
-| **Databases** | :material-database: BigQuery, PostgreSQL, Neo4j, MongoDB, Redis |
-| **Visualization** | :material-pie-chart: Looker, Data Studio|
-| **Others** | :material-git: Git, GitHub Actions, CI/CD, REST APIs |
