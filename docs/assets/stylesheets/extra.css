@@ -3,114 +3,32 @@
 /* ---------------------------------------------------------- */
 @import url('https://cdn.jsdelivr.net/gh/ryanoasis/nerd-fonts@master/css/meslo.css');
 
-* {
-  font-family: 'Meslo LG Nerd Font Pro', 'Meslo LG', monospace;
-}
-
 body, html, .md-typeset {
   font-family: 'Meslo LG Nerd Font Pro', 'Meslo LG', monospace;
 }
 
-/* ---------------------------------------------------------- */
-/* 1. Animations                                             */
-/* ---------------------------------------------------------- */
-@keyframes heart {
-  0%, 40%, 80%, 100% {
-    transform: scale(1);
-  }
-  20%, 60% {
-    transform: scale(1.15);
-  }
-}
-
-.mdx-heart {
-  animation: heart 1000ms infinite;
-}
 
 /* ---------------------------------------------------------- */
-/* 2. Layout Utilities (Columns)                             */
-/* ---------------------------------------------------------- */
-.mdx-columns ol,
-.mdx-columns ul {
-  columns: 2;
-}
-
-@media screen and (max-width: 29.9844em) {
-  .md-typeset .mdx-columns ol,
-  .md-typeset .mdx-columns ul {
-    columns: initial;
-  }
-}
-
-.mdx-columns li {
-  break-inside: avoid;
-}
-
-/* ---------------------------------------------------------- */
-/* 3. Component: Flags & Switches                            */
-/* ---------------------------------------------------------- */
-.mdx-switch button {
-  cursor: pointer;
-}
-
-.mdx-flags {
-  margin: 2em auto;
-}
-
-.md-typeset .mdx-flags ol {
-  list-style: none;
-}
-
-.md-typeset .mdx-flags ol li {
-  margin-bottom: 1em;
-}
-
-.md-typeset .mdx-flags__item {
-  display: flex;
-  gap: .6rem;
-}
-
-.md-typeset .mdx-flags__content {
-  display: flex;
-  flex: 1;
-  flex-direction: column;
-}
-
-.md-typeset .mdx-flags__content span {
-  align-items: baseline;
-  display: inline-flex;
-  justify-content: space-between;
-}
-
-.md-typeset .mdx-flags__content>span:nth-child(2) {
-  font-size: 80%;
-}
-
-.md-typeset .mdx-flags__content code {
-  float: right;
-}
-
-/* ---------------------------------------------------------- */
-/* 4. Custom UI Overrides (Buttons)                          */
+/* 1. Custom UI Overrides (Buttons)                          */
 /* ---------------------------------------------------------- */
 .md-typeset .md-button:hover {
   background-color: var(--md-primary-fg-color);
   border-color: var(--md-primary-fg-color);
   color: #ffffff !important;
   transform: translateY(-2px);
-  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+  box-shadow: 0 6px 12px rgba(0,0,0,0.3);
 }
 
 .md-typeset .md-button--primary:hover {
-  background-color: #1e3a8a;
-  border-color: #1e3a8a;
+  background-color: #2e5de0;
+  border-color: #2e5de0;
 }
 
 /* ---------------------------------------------------------- */
-/* 5. Navigation Bar Styling                                 */
+/* 2. Navigation Bar Styling                                 */
 /* ---------------------------------------------------------- */
 .md-tabs {
-  background: linear-gradient(90deg, #1e3a8a 0%, #14285f 100%);
+  background: linear-gradient(90deg, #1e3a8a 0%, #11214e 100%);
   height: auto;
 }
 
@@ -122,16 +40,37 @@ body, html, .md-typeset {
   font-size: 0.80rem;
   font-weight: 600;
   letter-spacing: 0.5px;
-  opacity: 0.9;
-  transition: opacity 0.3s;
+  opacity: 0.8;
+  color: rgba(255, 255, 255, 0.900);
+  transition: all 0.3s ease;
   padding-top: 0.6rem;
   padding-bottom: 0.6rem;
-
   margin-top: 0;
   height: auto;
 }
 
-.md-tabs__link:hover {
+.md-tabs__link:hover,
+.md-tabs__link--active {
   opacity: 1;
-  font-weight: 600;
+  color: #ffffff;
+}
+
+.md-tabs__link:hover {
+  text-shadow: 0 0 8px rgba(0, 240, 255, 0.6);
+  transform: translateY(-1px);
+}
+
+.md-tabs__link--active {
+   font-weight: bold;
+}
+
+/* ---------------------------------------------------------- */
+/* 3. Header Logo Spacing                                     */
+/* ---------------------------------------------------------- */
+.md-header__button.md-logo {
+    margin-right: 0rem;
+}
+
+.md-header__title {
+    align-items: left;
 }

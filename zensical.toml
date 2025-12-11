@@ -17,8 +17,15 @@ extra_css = ["assets/stylesheets/extra.css"]
 nav = [
   { "Home" = "index.md" },
   { "Projects" = "projects/index.md"},
-  { "Radar" = "radar/index.md"},
-  { "Resume" = "resume/index.md"},
+  { "Radar" = [ { "- Google Cloud" = "radar/index.md" },
+                { "- Data Engineering" = "radar/data-stack.md" },
+                { "- Rust & Python Ecosystem" = "radar/rust-python.md" },
+                { "- AI & MLOps" = "radar/ai-mlops-rag.md" },
+                { "- DevOps & Automation" = "radar/devops-iac.md" },
+                { "- Code Quality" = "radar/quality-security.md" },
+                { "- Developer Productivity" = "radar/productivity.md" } ] },
+  { "Resume" = [ { "- Overview" = "resume/index.md" },
+                 { "- Technical Skills" = "resume/technical-skills.md" } ] }
 ]
 
 # Theme configuration
@@ -34,7 +41,6 @@ features = [
   "navigation.tracking",
   "navigation.tabs",
   "navigation.sections",
-  "navigation.indexes",
   "navigation.top",
   "navigation.path",
   "toc.follow",
