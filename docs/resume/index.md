@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+icon: material/file-document
 ---
 
 # :material-file-document: Professional Experience
