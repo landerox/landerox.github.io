@@ -17,15 +17,18 @@ extra_css = ["assets/stylesheets/extra.css"]
 nav = [
   { "Home" = "index.md" },
   { "Projects" = "projects/index.md"},
-  { "Radar" = [ { "- Google Cloud" = "radar/index.md" },
-                { "- Data Engineering" = "radar/data-stack.md" },
-                { "- Rust & Python Ecosystem" = "radar/rust-python.md" },
-                { "- AI & MLOps" = "radar/ai-mlops-rag.md" },
-                { "- DevOps & Automation" = "radar/devops-iac.md" },
-                { "- Code Quality" = "radar/quality-security.md" },
-                { "- Developer Productivity" = "radar/productivity.md" } ] },
-  { "Resume" = [ { "- Overview" = "resume/index.md" },
-                 { "- Technical Skills" = "resume/technical-skills.md" } ] }
+  { "Radar" = [ { "Tech Radar" = "radar/index.md" },
+                { "AI & MLOps" = "radar/ai-mlops-rag.md" },
+                { "Code Quality" = "radar/security-quality.md" },
+                { "Data Engineering" = "radar/data-stack.md" },
+                { "Developer Productivity" = "radar/productivity-cli.md" },
+                { "DevOps & Automation" = "radar/devops-iac.md" },
+                { "GCP Architecture" = "radar/gcp-architecture.md" },
+                { "Learning" = "radar/learning.md" },
+                { "Rust & Python" = "radar/python-ecosystem.md" },
+                { "Rust Ecosystem" = "radar/rust-ecosystem.md" } ] },
+  { "Resume" = [ { "Professional Experience" = "resume/index.md" },
+                 { "Technical Skills" = "resume/technical-skills.md" } ] }
 ]
 
 # Theme configuration

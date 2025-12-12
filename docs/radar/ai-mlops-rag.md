@@ -1,17 +1,22 @@
 ---
 hide:
   - toc
+icon: material/brain
 ---
 
 # :material-brain: AI Strategy, MLOps & RAG Systems
 
-> Moving beyond notebooks into production-grade AI systems and governance.
+> Building production-grade AI systems beyond notebooks.
 
-* **[Chip Huyen's ML Engineering](https://huyenchip.com/blog/){ target="_blank" }**: World-class resources on Real-time ML and designing machine learning systems for production.
-* **[Hugging Face](https://huggingface.co/){ target="_blank" }**: The hub of modern AI. Critical for finding open-source models, datasets, and understanding the state-of-the-art outside of proprietary APIs.
-* **[LlamaIndex](https://www.llamaindex.ai/){ target="_blank" }**: My preference for complex RAG (Retrieval-Augmented Generation) data ingestion strategies.
-* **[LMSYS Chatbot Arena](https://lmarena.ai/leaderboard){ target="_blank" }**: The open platform for evaluating LLMs by human preference. The definitive leaderboard I check to assess model performance (Elo ratings) before selection.
-* **[Martin Fowler’s MLOps Guide](https://martinfowler.com/articles/cd4ml.html){ target="_blank" }**: Foundational reading on "Continuous Delivery for Machine Learning" (CD4ML). A strict engineering approach to ML lifecycles.
-* **[Ollama](https://ollama.com/){ target="_blank" }**: Essential for running and benchmarking open-source LLMs (Llama 3, Mistral) locally without cloud latency.
-* **[OWASP Top 10 for LLM](https://genai.owasp.org/){ target="_blank" }**: The standard for securing Large Language Model applications. Critical for preventing Prompt Injection and data leakage in RAG systems.
-* **[Vertex AI Documentation](https://cloud.google.com/vertex-ai/docs){ target="_blank" }**: The enterprise backbone for training, deploying, and governing models on GCP. Focus on "Model Garden" and "Generative AI".
+| Resource | Description |
+|----------|-------------|
+| [Chip Huyen's ML Engineering](https://huyenchip.com/blog/){ target="_blank" } | World-class resources on real-time ML and designing machine learning systems for production |
+| [Hugging Face](https://huggingface.co/){ target="_blank" } | The hub of modern AI—critical for open-source models, datasets, and understanding state-of-the-art |
+| [LlamaIndex](https://www.llamaindex.ai/){ target="_blank" } | RAG-first framework, my preference for complex data ingestion strategies |
+| [LangChain](https://www.langchain.com/){ target="_blank" } | Dominant framework for LLM orchestration, agents, and multi-step reasoning workflows |
+| [LMSYS Chatbot Arena](https://lmarena.ai/leaderboard){ target="_blank" } | The definitive leaderboard for evaluating LLMs by human preference (Elo ratings) |
+| [MLflow](https://mlflow.org/){ target="_blank" } | Open-source standard for experiment tracking, model registry, and ML lifecycle management |
+| [Weights & Biases](https://wandb.ai/){ target="_blank" } | Collaborative experiment tracking with superior visualization—widely adopted in MLOps |
+| [Ollama](https://ollama.com/){ target="_blank" } | Run open-source LLMs locally without friction—essential for benchmarking and privacy |
+| [OWASP Top 10 for LLM](https://genai.owasp.org/){ target="_blank" } | Security standard for LLM applications—critical for preventing prompt injection and data leakage |
+| [Vertex AI](https://cloud.google.com/vertex-ai/docs){ target="_blank" } | Enterprise backbone for GCP: Model Garden, Generative AI, and managed ML pipelines |

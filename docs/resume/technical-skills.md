@@ -1,6 +1,7 @@
 ---
 hide:
   - toc
+icon: material/code-braces
 ---
 
 # :material-code-braces: Technical Skills
