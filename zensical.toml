@@ -59,8 +59,28 @@ accent = "indigo"
 
 # Social links (footer)
 [[project.extra.social]]
+icon = "material/account-circle"
+link = "https://app.daily.dev/landerox"
+
+[[project.extra.social]]
+icon = "material/facebook"
+link = "https://www.facebook.com/landero.fernando"
+
+[[project.extra.social]]
+icon = "material/instagram"
+link = "https://www.instagram.com/landero_fernando/"
+
+[[project.extra.social]]
+icon = "material/linkedin"
+link = "https://www.linkedin.com/in/landerox/"
+
+[[project.extra.social]]
 icon = "material/web"
 link = "https://linktr.ee/landerox"
+
+[[project.extra.social]]
+icon = "material/twitter"
+link = "https://x.com/landerox"
 
 # Markdown extensions
 [project.markdown_extensions.toc]
