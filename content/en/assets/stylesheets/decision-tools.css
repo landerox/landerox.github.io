@@ -1,0 +1,228 @@
+/* Local decision worksheets. Consume the shared palette; no new theme. */
+.md-typeset .decision-tool {
+  min-width: 0;
+  color: var(--ink-2);
+}
+.md-typeset .decision-tool .decision-local {
+  margin-block: 0.3rem 0.8rem;
+  color: var(--ink-3);
+  font-size: 0.7rem;
+}
+.decision-form {
+  margin-block: 1.25rem;
+}
+.decision-fields,
+.decision-editors {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-block: 1rem;
+}
+.decision-field {
+  min-width: 0;
+}
+.decision-field > label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--ink-1);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+.decision-tool :is(input, select, textarea) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--target-min);
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-1);
+  background: var(--surface-raised);
+  font: inherit;
+  font-size: max(16px, 0.78rem);
+}
+.decision-tool textarea {
+  display: block;
+  min-height: 10rem;
+  font-family: var(--font-mono);
+  font-size: max(16px, 0.7rem);
+  line-height: 1.5;
+  tab-size: 2;
+  resize: vertical;
+  overflow-wrap: anywhere;
+}
+.decision-tool :is(input, textarea)[aria-invalid="true"] {
+  border: 2px dashed var(--state-warn-ink);
+}
+.md-typeset .decision-tool .decision-hint {
+  margin-block: 0.35rem 0.7rem;
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+.decision-example {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: end;
+  gap: 0.6rem;
+}
+.decision-example > .decision-field {
+  flex: 1 1 15rem;
+}
+.decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+.decision-tool button {
+  max-width: 100%;
+  min-height: var(--target-min);
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-1);
+  background: var(--surface-raised);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color var(--dur-instant) var(--ease-standard);
+}
+.decision-tool button:hover:not(:disabled) {
+  background: var(--brand-tint);
+}
+.decision-tool button.decision-primary {
+  color: var(--brand-contrast);
+  border-color: var(--control-fill);
+  background: var(--control-fill);
+}
+.decision-tool button.decision-primary:hover:not(:disabled) {
+  background: var(--control-hover);
+}
+.decision-tool button:disabled {
+  color: var(--ink-3);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+.decision-tool :is(button, input, select, textarea, summary):focus-visible {
+  outline: var(--ring-width) solid var(--brand);
+  outline-offset: var(--ring-offset);
+}
+.md-typeset .decision-tool .decision-status {
+  margin-block: 0.8rem;
+  font-size: 0.78rem;
+}
+.decision-status:empty {
+  display: none;
+}
+.decision-status[data-state="error"],
+.decision-caution {
+  padding-inline-start: 0.7rem;
+  border-inline-start: 2px dashed var(--state-warn-ink);
+}
+.md-typeset .decision-tool .decision-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: 0.8rem 1rem;
+  margin: 1rem 0;
+  padding-block: 1rem;
+  border-block: 1px solid var(--hairline);
+}
+.decision-metrics > div {
+  min-width: 0;
+}
+.decision-metrics dt {
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+.md-typeset .decision-metrics dd {
+  margin: 0.25rem 0 0;
+  color: var(--ink-1);
+  font-size: 0.95rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+.md-typeset .decision-tool .decision-changes {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.md-typeset .decision-changes > li {
+  margin: 0;
+  padding-block: 1rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.md-typeset .decision-changes > li > h3 {
+  margin: 0 0 0.6rem;
+  font-size: 0.9rem;
+}
+.md-typeset .decision-changes > li > p {
+  margin-block: 0.5rem;
+  font-size: 0.75rem;
+}
+.decision-change-shape {
+  color: var(--ink-3);
+  overflow-wrap: anywhere;
+}
+.md-typeset .decision-tool details.decision-help {
+  margin-top: 1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  font-size: 0.75rem;
+}
+.md-typeset .decision-tool details.decision-help > summary {
+  min-height: var(--target-min);
+  margin: 0;
+  padding: 0.6rem 1.5rem 0.6rem 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--brand-ink);
+  background: transparent;
+}
+.md-typeset .decision-tool details.decision-help > summary::before {
+  display: none;
+}
+.decision-tool [hidden] {
+  display: none !important;
+}
+
+@media screen and (width <= 40em) {
+  .decision-fields,
+  .decision-editors {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (forced-colors: active) {
+  .decision-tool :is(button, input, select, textarea),
+  .decision-tool button.decision-primary {
+    color: CanvasText;
+    border-color: ButtonText;
+    background: Canvas;
+  }
+  .decision-tool
+    :is(
+      .decision-metrics,
+      .decision-changes > li,
+      .decision-caution,
+      .decision-status[data-state="error"]
+    ) {
+    border-color: CanvasText;
+  }
+}
+@media print {
+  .decision-tool :is(.decision-actions, .decision-example > button) {
+    display: none;
+  }
+  .decision-tool :is(input, select, textarea) {
+    background: transparent;
+    box-shadow: none;
+  }
+}

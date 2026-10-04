@@ -1,0 +1,184 @@
+# =============================================================================
+# Pre-commit Configuration
+# =============================================================================
+#
+# This file configures pre-commit hooks for code quality and security checks.
+#
+# Setup:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Manual run:
+#   pre-commit run --all-files
+#
+# Update hooks:
+#   pre-commit autoupdate
+#
+# =============================================================================
+default_install_hook_types: [pre-commit, commit-msg]
+default_language_version:
+  # Keep every isolated Node hook on the same current LTS runtime used by CI.
+  # Without this, nodeenv resolves an unpinned moving release independently.
+  node: "24.21.0"
+
+repos:
+  # General file checks
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: 3e8a8703264a2f4a69428a0aa4dcb512790b2c8c  # frozen: v6.0.0
+    hooks:
+      - id: check-added-large-files
+        args: ["--maxkb=3000"]
+      - id: check-case-conflict
+      - id: check-json
+      - id: check-merge-conflict
+      - id: check-symlinks
+      - id: check-toml
+      - id: check-yaml
+        args: [--unsafe]
+      - id: end-of-file-fixer
+      - id: mixed-line-ending
+        args: ["--fix=lf"]
+      - id: trailing-whitespace
+
+  # Conventional Commits - Validate commit messages
+  - repo: local
+    hooks:
+      - id: commitizen
+        name: commitizen
+        entry: uv run cz check --commit-msg-file
+        language: system
+        stages: [commit-msg]
+
+  # cspell - Spell checking
+  # The Spanish dictionary is not bundled with cspell, so it is installed
+  # here and imported from .config/.cspell.json. Without it every Spanish
+  # word had to be listed by hand in `words`, and each new ES page or
+  # comment failed CI until someone appended to that list.
+  - repo: https://github.com/streetsidesoftware/cspell-cli
+    rev: f5c5d72342f35643988a9ffa0705c05bd3ff8383  # frozen: v10.3.0
+    hooks:
+      - id: cspell
+        args: ["--config", ".config/.cspell.json", "--no-must-find-files"]
+        additional_dependencies:
+          - "@cspell/dict-es-es@3.0.8"
+
+  # Gitleaks - Prevent credential commits
+  # v8.30.1 is the latest release, but its tag is not reachable from the
+  # repository's default branch, so `pre-commit autoupdate` proposes v8.30.0.
+  # Pin the exact release object: a frozen revision is retained when the
+  # proposal is older, whereas freezing a mutable tag at a downgrade is
+  # rejected and blocks the whole hook update.
+  - repo: https://github.com/gitleaks/gitleaks
+    rev: 83d9cd684c87d95d656c1458ef04895a7f1cbd8e  # frozen: v8.30.1
+    hooks:
+      - id: gitleaks
+        exclude: ^content/(?:en|es)/assets/fonts/.*
+
+  # Markdownlint - Markdown Validation
+  - repo: https://github.com/igorshubovych/markdownlint-cli
+    rev: 5b5dddc4fb0f83c3ea1fc5616fa63e115dce83e0  # frozen: v0.49.1
+    hooks:
+      - id: markdownlint
+        args:
+          [
+            "--fix",
+            "--config",
+            ".config/.markdownlint.yaml",
+            "--ignore-path",
+            ".config/.markdownlintignore",
+          ]
+
+  # actionlint - GitHub Actions workflow linting
+  - repo: https://github.com/rhysd/actionlint
+    rev: 914e7df21a07ef503a81201c76d2b11c789d3fca  # frozen: v1.7.12
+    hooks:
+      - id: actionlint
+
+  # zizmor - GitHub Actions security audit
+  - repo: https://github.com/zizmorcore/zizmor-pre-commit
+    rev: fa412071e4f5d44d44f9e365f4676f9df92456a2  # frozen: v1.30.1
+    hooks:
+      - id: zizmor
+
+  # ESLint - JavaScript validation
+  # Keep `rev` and the eslint pin in additional_dependencies on the same
+  # version: the dependency pin is what actually installs eslint, so a
+  # drifted rev silently advertises a different major than the one running.
+  - repo: https://github.com/pre-commit/mirrors-eslint
+    rev: 10e29bbf6681d33cb90d555ea2f7ea71e162d259  # frozen: v10.12.0
+    hooks:
+      - id: eslint
+        files: \.(?:[jt]sx?|mjs)$
+        args: ["--config", "eslint.config.js", "--max-warnings", "0"]
+        additional_dependencies:
+          - eslint@10.12.0
+
+  # Stylelint - CSS validation
+  # No shareable config in `additional_dependencies`: stylelint 17 resolves
+  # `extends` with ESM semantics, which ignores the NODE_PATH that pre-commit
+  # uses to expose these packages, so `extends: stylelint-config-standard`
+  # fails with `Could not find "stylelint-config-standard"`. The ruleset is
+  # inlined in .config/.stylelintrc.yaml instead — see the header there.
+  - repo: https://github.com/thibaudcolas/pre-commit-stylelint
+    rev: d6d653746a0a510b098377a8919bea816eea3c09  # frozen: v17.15.0
+    hooks:
+      - id: stylelint
+        args: ["--config", ".config/.stylelintrc.yaml", "--allow-empty-input"]
+        additional_dependencies:
+          - stylelint@17.15.0
+
+  # pip-audit - Python dependency vulnerability audit
+  # Mirrors the CI step in .github/workflows/lint.yml and the `just audit`
+  # recipe. Scoped to lockfile/pyproject changes so content commits are
+  # not penalized. Closes the gap documented in docs/decisions.md § 9.
+  - repo: local
+    hooks:
+      - id: report-only-automation
+        name: maintenance automation is report-only
+        entry: uv run python3 scripts/check_report_only_automation.py
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: pip-audit
+        name: pip-audit
+        entry: just audit
+        language: system
+        pass_filenames: false
+        files: ^(pyproject\.toml|uv\.lock)$
+
+      - id: check-i18n
+        name: check-i18n
+        entry: uv run python3 scripts/check_i18n.py
+        language: system
+        pass_filenames: false
+        files: ^(content/.*\.md|zensical(?:\.es)?\.toml|scripts/check_i18n\.py)$
+
+      - id: check-glossary
+        name: published glossary matches the bilingual catalog
+        entry: just check-glossary
+        language: system
+        pass_filenames: false
+        files: ^(content/(?:en|es)/glossary\.md|content/en/assets/(?:glossary\.json|javascripts/(?:glossary-core|text-core)\.js)|scripts/build-glossary\.mjs|Justfile)$
+
+      - id: check-ratings
+        name: blog rating tables in descending order
+        entry: just check-ratings
+        language: system
+        pass_filenames: false
+        files: ^(content/(?:en|es)/blog/.*\.md|scripts/sort_ratings\.py)$
+
+      - id: test-workbench
+        name: workbench, SQL, glossary, models and decision tools
+        entry: just test-workbench
+        language: system
+        pass_filenames: false
+        files: ^(content/en/assets/(javascripts/((workbench|sql|glossary|text|failure|comparison|decision-tools).*|features/status-core)\.js|glossary\.json)|scripts/(workbench|comparison|memory-planner|tools-simulations|decision-tools|features)\.test\.mjs|Justfile)$
+
+      - id: test-site-contracts
+        name: bilingual configuration and Markdown contracts
+        entry: uv run python -m unittest discover -s scripts -p test_site_contracts.py
+        language: system
+        pass_filenames: false
+        files: ^(scripts/(check_i18n|post_build|sort_ratings|test_site_contracts)\.py|zensical(?:\.es)?\.toml)$

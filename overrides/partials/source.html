@@ -1,0 +1,38 @@
+{#-
+  Overrides the theme's partials/source.html to drop the
+  `data-md-component="source"` attribute.
+
+  That attribute is the mount point for the repository-facts widget. When
+  it is present the theme fetches, on every page load:
+
+    https://api.github.com/repos/<owner>/<repo>
+    https://api.github.com/repos/<owner>/<repo>/releases/latest
+
+  Both are blocked by the baseline CSP in main.html (`connect-src
+  'self'`), in production as much as in CI — api.github.com is
+  cross-origin either way. So the stars/releases counters never rendered;
+  the only thing the fetch produced was two console errors per page,
+  which Lighthouse counted as third-party requests and as
+  `errors-in-console` failures.
+
+  Removing the attribute stops the widget from mounting. The link itself
+  — icon, repository name, href, title — is unchanged, so nothing that
+  was ever visible is lost.
+
+  If the repo facts are wanted later, the decision is the CSP one: add
+  `https://api.github.com` to `connect-src` and accept a third-party
+  origin on every page. See docs/decisions.md § 24.
+
+  Generated file upstream ("do not edit"): re-check after a Zensical bump
+  — if the component is renamed or the fetch moves, this goes stale
+  silently.
+-#}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source">
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+  </div>
+</a>

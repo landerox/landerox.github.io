@@ -1,0 +1,39 @@
+# Git Attributes Configuration
+# https://git-scm.com/docs/gitattributes
+
+# Auto detect text files and normalize line endings to LF
+* text=auto
+
+# Documentation
+*.md text eol=lf diff=markdown
+
+# Configuration
+*.toml text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.json text eol=lf
+
+# Web
+*.html text eol=lf
+*.css text eol=lf
+
+# Git & Project files
+.gitattributes text eol=lf
+.gitignore text eol=lf
+.editorconfig text eol=lf
+.pre-commit-config.yaml text eol=lf
+
+# Lockfiles
+uv.lock text eol=lf
+
+# Binary files
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.svg binary
+*.woff binary
+*.woff2 binary
+*.pdf binary

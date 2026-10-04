@@ -1,0 +1,82 @@
+name: Security · CodeQL
+run-name: >-
+  CodeQL · ${{
+    github.event_name == 'pull_request' && github.event.pull_request.title
+    || github.event_name == 'push' && github.event.head_commit.message
+    || github.event_name == 'schedule' && 'weekly scan'
+    || github.event_name == 'workflow_dispatch' && 'manual dispatch'
+    || github.ref_name
+  }}
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'content/**'
+      - 'overrides/**'
+      - 'scripts/**'
+      - 'eslint.config.js'
+      - 'pyproject.toml'
+      - '.github/workflows/**'
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'content/**'
+      - 'overrides/**'
+      - 'scripts/**'
+      - 'eslint.config.js'
+      - 'pyproject.toml'
+      - '.github/workflows/**'
+  schedule:
+    # Thursdays 10:00 UTC (well distributed weekly maintenance task)
+    - cron: '0 10 * * 4'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  analyze:
+    name: CodeQL analysis
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      security-events: write
+      contents: read
+
+    strategy:
+      fail-fast: false
+      matrix:
+        # `actions` scans the workflow files themselves (expression
+        # injection, untrusted checkouts, over-broad permissions). It
+        # overlaps zizmor on purpose: two independent rule sets, one
+        # code-scanning inbox. See docs/decisions.md § 26.
+        language: [ 'actions', 'javascript-typescript', 'python' ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Nothing here is compiled — JavaScript and Python are interpreted
+      # and the workflows are YAML — so `build-mode: none` scans the
+      # sources directly and drops the autobuild step that used to run as
+      # a no-op.
+      - name: Initialize CodeQL
+        uses: github/codeql-action/init@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          languages: ${{ matrix.language }}
+          build-mode: none
+          queries: security-and-quality
+
+      - name: Perform CodeQL Analysis
+        uses: github/codeql-action/analyze@2892aa5e19bbd11bc0cff5427e3b750a04d9e3c2 # v4.38.2
+        with:
+          category: "/language:${{ matrix.language }}"

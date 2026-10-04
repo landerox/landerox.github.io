@@ -1,0 +1,116 @@
+# Stylelint Configuration
+# Reference: https://stylelint.io/user-guide/rules
+#
+# Why the rules are inline instead of `extends: stylelint-config-standard`
+# -------------------------------------------------------------------------
+# stylelint 17 resolves `extends` with ESM semantics (import-meta-resolve),
+# which does not consult NODE_PATH. pre-commit installs the packages listed
+# in `additional_dependencies` into its own environment and exposes them
+# only through NODE_PATH, so a shareable config referenced by name cannot
+# be found when the hook runs:
+#
+#   ConfigurationError: Could not find "stylelint-config-standard".
+#
+# Inlining the ruleset removes the module lookup entirely and keeps
+# stylelint on its latest release. Nothing else in the pipeline changed.
+#
+# Provenance: this is the effective ruleset of stylelint-config-standard
+# 40.0.0 (which itself extends stylelint-config-recommended), minus the 19
+# stylistic rules this project opts out of. To diff against a newer
+# upstream baseline:
+#
+#   npx --yes --package stylelint@17 --package stylelint-config-standard \
+#     stylelint --print-config content/en/assets/stylesheets/extra.css
+#
+# Re-evaluation trigger: a stylelint major bump, or upstream restoring
+# NODE_PATH-compatible resolution — at that point `extends` can come back
+# and this file shrinks to the opt-out list again.
+
+rules:
+  # -------------------------------------------------------------------------
+  # Correctness — from stylelint-config-recommended.
+  # Invalid, deprecated or ineffective CSS that browsers silently drop.
+  # -------------------------------------------------------------------------
+  annotation-no-unknown: true
+  at-rule-descriptor-no-unknown: true
+  at-rule-descriptor-value-no-unknown: true
+  at-rule-no-deprecated: true
+  at-rule-no-unknown: true
+  at-rule-prelude-no-invalid: [true, { ignoreAtRules: ["media"] }]
+  block-no-empty: true
+  comment-no-empty: true
+  custom-property-no-missing-var-function: true
+  declaration-block-no-duplicate-custom-properties: true
+  declaration-block-no-duplicate-properties:
+    [true, { ignore: ["consecutive-duplicates-with-different-syntaxes"] }]
+  declaration-block-no-shorthand-property-overrides: true
+  declaration-property-value-keyword-no-deprecated: true
+  declaration-property-value-no-unknown: true
+  font-family-no-duplicate-names: true
+  font-family-no-missing-generic-family-keyword: true
+  function-calc-no-unspaced-operator: true
+  keyframe-block-no-duplicate-selectors: true
+  keyframe-declaration-no-important: true
+  media-feature-name-no-unknown: true
+  media-feature-name-value-no-unknown: true
+  media-query-no-invalid: true
+  media-type-no-deprecated: true
+  named-grid-areas-no-invalid: true
+  nesting-selector-no-missing-scoping-root: true
+  no-duplicate-at-import-rules: true
+  no-empty-source: true
+  no-invalid-double-slash-comments: true
+  no-invalid-position-at-import-rule: true
+  no-invalid-position-declaration: true
+  no-irregular-whitespace: true
+  property-no-deprecated: true
+  property-no-unknown: true
+  selector-anb-no-unmatchable: true
+  selector-pseudo-class-no-unknown: true
+  selector-pseudo-element-no-unknown: true
+  selector-type-no-unknown: [true, { ignore: ["custom-elements"] }]
+  string-no-newline:
+    [true, { ignore: ["at-rule-preludes", "declaration-values"] }]
+  syntax-string-no-invalid: true
+
+  # -------------------------------------------------------------------------
+  # Conventions — added by stylelint-config-standard on top of the above.
+  # Naming patterns and notation choices, not correctness.
+  # -------------------------------------------------------------------------
+  at-rule-no-vendor-prefix: true
+  block-no-redundant-nested-style-rules: true
+  color-function-alias-notation: "without-alpha"
+  comment-whitespace-inside: "always"
+  container-name-pattern: "^(--)?([a-z][a-z0-9]*)(-[a-z0-9]+)*$"
+  custom-media-pattern: "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$"
+  declaration-block-no-redundant-longhand-properties: true
+  function-name-case: "lower"
+  function-url-quotes: "always"
+  keyframe-selector-notation: "percentage-unless-within-keyword-only-block"
+  keyframes-name-pattern: "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$"
+  layer-name-pattern: "^([a-z][a-z0-9]*)([.-][a-z0-9]+)*$"
+  lightness-notation: "percentage"
+  media-feature-name-no-vendor-prefix: true
+  media-feature-range-notation: "context"
+  number-max-precision: 4
+  selector-attribute-quotes: "always"
+  selector-id-pattern: "^([a-z][a-z0-9]*)(-[a-z0-9]+)*$"
+  selector-no-vendor-prefix: true
+  selector-not-notation: "complex"
+  selector-pseudo-element-colon-notation: "double"
+  selector-type-case: "lower"
+  shorthand-property-no-redundant-values: true
+  value-no-vendor-prefix: [true, { ignoreValues: ["box", "inline-box"] }]
+
+  # -------------------------------------------------------------------------
+  # Opted out of stylelint-config-standard (kept here as the record of what
+  # was dropped, so a future re-sync can tell "not adopted" from "new").
+  # -------------------------------------------------------------------------
+  #   alpha-value-notation, at-rule-empty-line-before, color-function-notation,
+  #   color-hex-length, comment-empty-line-before, custom-property-pattern,
+  #   custom-property-empty-line-before, declaration-empty-line-before,
+  #   declaration-block-single-line-max-declarations, font-family-name-quotes,
+  #   hue-degree-notation, import-notation, length-zero-no-unit,
+  #   no-descending-specificity, no-duplicate-selectors,
+  #   property-no-vendor-prefix, rule-empty-line-before,
+  #   selector-class-pattern, value-keyword-case

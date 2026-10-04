@@ -1,0 +1,116 @@
+name: Maintenance · Link Report
+run-name: >-
+  Link report · ${{
+    github.event_name == 'schedule' && 'weekly'
+    || github.event_name == 'workflow_dispatch' && 'manual dispatch'
+    || github.event_name == 'pull_request'
+       && format('PR #{0}', github.event.pull_request.number)
+    || github.ref_name
+  }}
+
+on:
+  schedule:
+    # Mondays 07:00 UTC.
+    - cron: "0 7 * * 1"
+  pull_request:
+    branches: [main]
+    paths:
+      - "content/**"
+      - ".config/lychee.toml"
+      - ".github/workflows/link-report.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  link-check:
+    name: Check outbound links
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Cache entries are immutable, so a constant key would pin the cache
+      # to its first write and `--max-cache-age` could never age anything
+      # out. A per-run key with a shared prefix restores the newest entry
+      # and saves a refreshed one.
+      - name: Restore lychee cache
+        id: cache
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        with:
+          path: .lycheecache
+          key: cache-lychee-${{ github.run_id }}
+          restore-keys: cache-lychee-
+
+      - name: Install just
+        id: just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+        with:
+          # Pinned to the local install; SoT table in docs/decisions.md § 14.
+          just-version: "1.58.0"
+
+      - name: Sync bilingual assets
+        id: sync_assets
+        run: just sync-assets
+
+      - name: Run Lychee link checker
+        id: lychee
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          args: >-
+            --config .config/lychee.toml
+            --root-dir .
+            --cache
+            --max-cache-age 7d
+            'content/**/*.md'
+            content/en/assets/glossary.json
+          format: markdown
+          jobSummary: true
+          fail: true
+
+      # The action publishes its detailed Markdown report before propagating
+      # Lychee's exit code. This compact fallback still explains setup failures
+      # where the checker could not start and therefore produced no report.
+      - name: Publish link-check pipeline status
+        if: always()
+        env:
+          CACHE_OUTCOME: ${{ steps.cache.outcome }}
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          JUST_OUTCOME: ${{ steps.just.outcome }}
+          LYCHEE_EXIT_CODE: ${{ steps.lychee.outputs.exit_code }}
+          LYCHEE_OUTCOME: ${{ steps.lychee.outcome }}
+          SYNC_OUTCOME: ${{ steps.sync_assets.outcome }}
+        run: |
+          set -euo pipefail
+          {
+            echo '## Link-check pipeline'
+            echo
+            echo '> Read-only report: no issue or repository change was created.'
+            echo
+            echo '| Step | Outcome |'
+            echo '| :--- | :------ |'
+            printf '| repository checkout | %s |\n' "$CHECKOUT_OUTCOME"
+            printf '| Lychee cache | %s |\n' "$CACHE_OUTCOME"
+            printf '| just setup | %s |\n' "$JUST_OUTCOME"
+            printf '| asset sync | %s |\n' "$SYNC_OUTCOME"
+            printf '| link checker | %s |\n' "$LYCHEE_OUTCOME"
+            printf '| Lychee exit code | %s |\n' "${LYCHEE_EXIT_CODE:-not produced}"
+
+            if [ "$LYCHEE_OUTCOME" != "success" ]; then
+              echo
+              if [ -n "$LYCHEE_EXIT_CODE" ]; then
+                echo 'Inspect the detailed report above and the failed step logs.'
+              else
+                echo 'The checker produced no detailed report; inspect the table and failed step logs.'
+              fi
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

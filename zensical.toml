@@ -1,0 +1,172 @@
+# Zensical Configuration
+# Documentation: https://zensical.org/docs/setup/basics/
+
+[project]
+site_name = "landerox.com"
+site_url = "https://landerox.com"
+site_description = "Fernando Landero, Senior Consultant & Engineer in Cloud, Data & AI Platforms on Google Cloud, AWS and private cloud."
+site_author = "Fernando Landero"
+copyright = "© Fernando Landero — Cloud, Data & AI Platforms"
+strict = true
+
+docs_dir = "content/en"
+site_dir = "site"
+
+repo_url = "https://github.com/landerox/landerox.github.io"
+repo_name = "landerox.github.io"
+
+extra_css = ["assets/stylesheets/extra.css", "assets/stylesheets/tools-simulations.css", "assets/stylesheets/decision-tools.css"]
+extra_javascript = [{ path = "assets/javascripts/extra.js", type = "module" }]
+
+# Navigation structure.
+# Blog articles lead with a short explanation and practical results.
+# Keep both locales in sync.
+nav = [
+  { "Home" = "index.md" },
+  { "About" = [ { "About" = "about.md" },
+                { "Tech Stack" = "stack.md" },
+                { "Collaboration & Contact" = "collaboration.md" } ] },
+  { "Projects" = [ { "Overview" = "projects/index.md" },
+                   { "Open Source" = "projects/open-source.md" },
+                   { "Production Blueprints" = "projects/blueprints.md" },
+                   { "Research Labs" = "projects/labs.md" },
+                   { "Tech Radar" = "projects/explorations.md" },
+                   { "Interactive Tools" = "projects/tools.md" } ] },
+  { "Blog" = [ { "Overview" = "blog/index.md" },
+                { "Storage & Lakehouse" = [
+                  { "Object Storage" = "blog/object-storage.md" },
+                  { "Table Formats & Catalogs" = "blog/lakehouse-table-formats.md" } ] },
+                { "Data Pipelines" = [
+                  { "Workflow Orchestrators" = "blog/workflow-orchestrators.md" },
+                  { "Transformation & Modeling" = "blog/data-transformation.md" } ] },
+                { "Databases" = [
+                  { "OLAP" = "blog/olap-databases.md" },
+                  { "Vector" = "blog/vector-databases.md" },
+                  { "Graph" = "blog/graph-databases.md" } ] },
+                { "Business Intelligence" = [
+                  { "BI & Visualization" = "blog/business-intelligence.md" } ] },
+                { "Observability" = [
+                  { "Signals & Tools" = "blog/observability.md" } ] } ] },
+]
+
+# Theme configuration
+[project.theme]
+language = "en"
+variant = "modern"
+favicon = "assets/images/favicon.svg"
+logo = "assets/images/logo.svg"
+
+# Template overrides (shared by both locales). overrides/main.html extends
+# the theme's base.html and fills the extrahead block with social/meta tags,
+# the manifest link and font preloads. Keep in sync with zensical.es.toml.
+custom_dir = "overrides"
+
+# Disables Zensical's Google Fonts <link>, which was a render-blocking
+# stylesheet on a cold third-party origin in <head>. Inter, Outfit and
+# MesloLGM are self-hosted from assets/fonts/ instead — see the @font-face
+# block at the top of assets/stylesheets/extra.css and the provenance table
+# in docs/design.md. Keep in sync with zensical.es.toml.
+font = false
+
+features = [
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.instant.progress",
+  "navigation.tracking",
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "search.highlight",
+  "navigation.footer",
+  "content.code.copy",
+  "content.code.annotate",
+  "content.tabs.link",
+  "content.tooltips",
+]
+
+# Palette: explicit light ↔ dark. A new visit starts in light mode;
+# the selected mode persists independently of the OS preference.
+[[project.theme.palette]]
+media = ""
+scheme = "default"
+primary = "indigo"
+accent = "indigo"
+toggle = { icon = "lucide/sun", name = "Switch to dark mode" }
+
+[[project.theme.palette]]
+media = ""
+scheme = "slate"
+primary = "indigo"
+accent = "indigo"
+toggle = { icon = "lucide/moon-star", name = "Switch to light mode" }
+
+[project.extra]
+# One storage scope for both locales: without it the theme keys stored
+# state by base URL, so a palette chosen on / was lost on /es/.
+scope = "/"
+alternate = [
+  { name = "English", link = "https://landerox.com/", lang = "en" },
+  { name = "Español", link = "https://landerox.com/es/", lang = "es" },
+]
+
+# Social links (footer)
+[[project.extra.social]]
+icon = "material/github"
+link = "https://github.com/landerox"
+name = "GitHub"
+
+[[project.extra.social]]
+icon = "material/linkedin"
+link = "https://www.linkedin.com/in/landerox/"
+name = "LinkedIn"
+
+[[project.extra.social]]
+icon = "material/web"
+link = "https://linktr.ee/landerox"
+name = "Linktree"
+
+[[project.extra.social]]
+icon = "material/brain"
+link = "https://huggingface.co/landerox"
+name = "Hugging Face"
+
+[[project.extra.social]]
+icon = "simple/dailydotdev"
+link = "https://app.daily.dev/landerox"
+name = "daily.dev"
+
+# Markdown extensions
+[project.markdown_extensions.toc]
+permalink = false
+
+# Highlight & Code Blocks
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = false
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+# Acronym tooltips generated from the glossary; the only locale-specific
+# extension setting (check_i18n.py allows exactly this path).
+auto_append = ["includes/en/abbreviations.md"]
+check_paths = true
+
+# Tabs
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+# Emojis
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+# Other Utilities
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.blocks]
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]

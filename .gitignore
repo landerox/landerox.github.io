@@ -1,0 +1,69 @@
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+
+# Zensical build output
+site/
+
+# Dependencies
+node_modules/
+
+# Environment
+.env
+.envrc
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Pre-commit
+.pre-commit-cache/
+
+# Misc
+*.log
+.tmp/
+.dev-suite-backups/
+
+# Zensical/MkDocs Cache
+.cache/
+
+# Lighthouse CI reports and disposable Chrome profiles
+.lighthouseci/
+lhci-reports/
+/C:*lighthouse.*/
+
+# AI assistant notes (personal use only)
+AI-ASSISTANT.md
+AI_HELPER.md
+AI_NOTES.md
+COPILOT.md
+QWEN.md
+BARD.md
+.antigravitycli/
+
+# Claude Code: per-developer tool permissions and local overrides.
+# A shared .claude/settings.json is intentionally NOT ignored — commit that
+# if project-wide settings are ever needed.
+.claude/settings.local.json
+
+# Copied Spanish assets (DRY synchronized on serve/build)
+content/es/assets/glossary.json
+content/es/assets/stylesheets/
+content/es/assets/javascripts/
+content/es/assets/fonts/
+content/es/assets/images/logo.svg
+content/es/assets/images/favicon.svg
+content/es/assets/images/profile.webp
+content/es/assets/images/banner.svg
+
+# Local-only AI writing and style instructions
+docs/style-guide.md
+
+# Local-only task runner overrides
+Justfile.local

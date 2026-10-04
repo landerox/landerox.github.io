@@ -1,0 +1,166 @@
+# Zensical Configuration (Spanish)
+# Documentation: https://zensical.org/docs/setup/basics/
+
+[project]
+site_name = "landerox.com"
+site_url = "https://landerox.com/es/"
+site_description = "Fernando Landero, Consultor Senior e Ingeniero en Plataformas de Cloud, Datos e IA sobre Google Cloud, AWS y nube privada."
+site_author = "Fernando Landero"
+copyright = "© Fernando Landero — Plataformas de Cloud, Datos e IA"
+strict = true
+
+docs_dir = "content/es"
+site_dir = "site/es"
+
+repo_url = "https://github.com/landerox/landerox.github.io"
+repo_name = "landerox.github.io"
+
+extra_css = ["assets/stylesheets/extra.css", "assets/stylesheets/tools-simulations.css", "assets/stylesheets/decision-tools.css"]
+extra_javascript = [{ path = "assets/javascripts/extra.js", type = "module" }]
+
+# Estructura de navegación.
+# Artículos del blog con una explicación breve y resultados prácticos primero.
+# Mantener ambas configuraciones en sync.
+nav = [
+  { "Inicio" = "index.md" },
+  { "Sobre mí" = [ { "Sobre mí" = "about.md" },
+                   { "Stack Tecnológico" = "stack.md" },
+                   { "Colaboración y Contacto" = "collaboration.md" } ] },
+  { "Proyectos" = [ { "Resumen" = "projects/index.md" },
+                    { "Código abierto" = "projects/open-source.md" },
+                    { "Blueprints de Producción" = "projects/blueprints.md" },
+                    { "Laboratorios de investigación" = "projects/labs.md" },
+                    { "Radar tecnológico" = "projects/explorations.md" },
+                    { "Herramientas interactivas" = "projects/tools.md" } ] },
+  { "Blog" = [ { "Resumen" = "blog/index.md" },
+                { "Almacenamiento y lakehouse" = [
+                  { "Almacenamiento de objetos" = "blog/object-storage.md" },
+                  { "Formatos de tabla y catálogos" = "blog/lakehouse-table-formats.md" } ] },
+                { "Pipelines de datos" = [
+                  { "Orquestadores de workflows" = "blog/workflow-orchestrators.md" },
+                  { "Transformación y modelado" = "blog/data-transformation.md" } ] },
+                { "Bases de datos" = [
+                  { "OLAP" = "blog/olap-databases.md" },
+                  { "Vectoriales" = "blog/vector-databases.md" },
+                  { "Grafos" = "blog/graph-databases.md" } ] },
+                { "Inteligencia de negocio" = [
+                  { "BI y visualización" = "blog/business-intelligence.md" } ] },
+                { "Observabilidad" = [
+                  { "Señales y herramientas" = "blog/observability.md" } ] } ] },
+]
+
+[project.theme]
+language = "es"
+variant = "modern"
+favicon = "assets/images/favicon.svg"
+logo = "assets/images/logo.svg"
+
+# Overrides de plantilla (compartidos por ambos locales). overrides/main.html
+# extiende base.html del tema y llena el bloque extrahead con meta tags
+# sociales, el manifest y preloads de fuentes. Mantener en sync con
+# zensical.toml.
+custom_dir = "overrides"
+
+# Disables Zensical's Google Fonts <link>, which was a render-blocking
+# stylesheet on a cold third-party origin in <head>. Inter, Outfit and
+# MesloLGM are self-hosted from assets/fonts/ instead — see the @font-face
+# block at the top of assets/stylesheets/extra.css and the provenance table
+# in docs/design.md. Keep in sync with zensical.toml.
+font = false
+
+features = [
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.instant.progress",
+  "navigation.tracking",
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "search.highlight",
+  "navigation.footer",
+  "content.code.copy",
+  "content.code.annotate",
+  "content.tabs.link",
+  "content.tooltips",
+]
+
+# Palette: explicit light ↔ dark. A new visit starts in light mode;
+# the selected mode persists independently of the OS preference.
+[[project.theme.palette]]
+media = ""
+scheme = "default"
+primary = "indigo"
+accent = "indigo"
+toggle = { icon = "lucide/sun", name = "Cambiar a modo oscuro" }
+
+[[project.theme.palette]]
+media = ""
+scheme = "slate"
+primary = "indigo"
+accent = "indigo"
+toggle = { icon = "lucide/moon-star", name = "Cambiar a modo claro" }
+
+[project.extra]
+# One storage scope for both locales: without it the theme keys stored
+# state by base URL, so a palette chosen on / was lost on /es/.
+scope = "/"
+alternate = [
+  { name = "English", link = "https://landerox.com/", lang = "en" },
+  { name = "Español", link = "https://landerox.com/es/", lang = "es" },
+]
+
+[[project.extra.social]]
+icon = "material/github"
+link = "https://github.com/landerox"
+name = "GitHub"
+
+[[project.extra.social]]
+icon = "material/linkedin"
+link = "https://www.linkedin.com/in/landerox/"
+name = "LinkedIn"
+
+[[project.extra.social]]
+icon = "material/web"
+link = "https://linktr.ee/landerox"
+name = "Linktree"
+
+[[project.extra.social]]
+icon = "material/brain"
+link = "https://huggingface.co/landerox"
+name = "Hugging Face"
+
+[[project.extra.social]]
+icon = "simple/dailydotdev"
+link = "https://app.daily.dev/landerox"
+name = "daily.dev"
+
+[project.markdown_extensions.toc]
+permalink = false
+
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = false
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+# Acronym tooltips generated from the glossary; the only locale-specific
+# extension setting (check_i18n.py allows exactly this path).
+auto_append = ["includes/es/abbreviations.md"]
+check_paths = true
+
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.pymdownx.blocks]
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]

@@ -1,0 +1,99 @@
+name: CI · DCO Check
+run-name: >-
+  DCO Check · ${{
+    github.event_name == 'pull_request' && github.event.pull_request.title
+    || github.event_name == 'workflow_dispatch' && 'manual dispatch'
+    || github.ref_name
+  }}
+
+on:
+  pull_request:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  dco:
+    name: Verify DCO Sign-off
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+
+      - name: Run DCO verification
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # On manual dispatch, find base commit relative to origin/main
+            if git rev-parse --verify origin/main >/dev/null 2>&1; then
+              BASE_SHA=$(git merge-base origin/main HEAD)
+            elif git rev-parse --verify HEAD~1 >/dev/null 2>&1; then
+              BASE_SHA="HEAD~1"
+            else
+              BASE_SHA="HEAD"
+            fi
+            HEAD_SHA="HEAD"
+          else
+            BASE_SHA="${{ github.event.pull_request.base.sha }}"
+            HEAD_SHA="${{ github.event.pull_request.head.sha }}"
+          fi
+
+          echo "Checking commits in range: $BASE_SHA..$HEAD_SHA"
+
+          if [ "$BASE_SHA" = "$HEAD_SHA" ]; then
+            commits=$(git log --format="%H" -1 HEAD)
+          else
+            commits=$(git log --format="%H" "$BASE_SHA..$HEAD_SHA")
+          fi
+
+          if [ -z "$commits" ]; then
+            echo "No commits found in the PR range."
+            exit 0
+          fi
+
+          failed=0
+          for commit in $commits; do
+            subject=$(git log -1 --format="%s" "$commit")
+            author_name=$(git log -1 --format="%an" "$commit")
+            author_email=$(git log -1 --format="%ae" "$commit")
+
+            echo "Checking commit $commit: $subject"
+
+            expected="Signed-off-by: $author_name <$author_email>"
+
+            # Parse only the trailer block, then require the exact identity
+            # produced by `git commit -s`. A loose substring check would
+            # accept an empty trailer or the phrase inside normal prose.
+            if ! git log -1 --format="%B" "$commit" \
+              | git interpret-trailers --parse \
+              | grep --fixed-strings --ignore-case --line-regexp \
+                  --quiet -- "$expected"; then
+              echo "::error file=.github/workflows/dco.yml::Commit $commit is missing a valid DCO sign-off!"
+              echo "  Subject: $subject"
+              echo "  Author:  $author_name <$author_email>"
+              echo "  Expected: $expected"
+              failed=1
+            else
+              echo "  Found signature: $expected"
+            fi
+          done
+
+          if [ "$failed" -eq 1 ]; then
+            echo "::error::One or more commits in this PR are missing DCO sign-off. Please sign-off your commits with 'git commit -s'."
+            exit 1
+          fi
+
+          echo "All commits have a valid DCO signature!"

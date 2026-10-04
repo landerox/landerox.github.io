@@ -1,0 +1,71 @@
+{
+  "ci": {
+    "collect": {
+      "staticDistDir": "./site",
+      "url": [
+        "http://localhost/",
+        "http://localhost/about/",
+        "http://localhost/stack/",
+        "http://localhost/collaboration/",
+        "http://localhost/projects/open-source/",
+        "http://localhost/projects/labs/",
+        "http://localhost/projects/tools/",
+        "http://localhost/projects/explorations/",
+        "http://localhost/projects/blueprints/",
+        "http://localhost/blog/object-storage/",
+        "http://localhost/blog/workflow-orchestrators/",
+        "http://localhost/blog/olap-databases/",
+        "http://localhost/blog/vector-databases/",
+        "http://localhost/blog/data-transformation/",
+        "http://localhost/blog/business-intelligence/",
+        "http://localhost/blog/lakehouse-table-formats/",
+        "http://localhost/blog/graph-databases/",
+        "http://localhost/blog/observability/",
+        "http://localhost/glossary/",
+        "http://localhost/es/",
+        "http://localhost/es/about/",
+        "http://localhost/es/projects/open-source/",
+        "http://localhost/es/projects/labs/",
+        "http://localhost/es/projects/tools/",
+        "http://localhost/es/projects/explorations/",
+        "http://localhost/es/projects/blueprints/",
+        "http://localhost/es/blog/object-storage/",
+        "http://localhost/es/blog/workflow-orchestrators/",
+        "http://localhost/es/blog/olap-databases/",
+        "http://localhost/es/blog/vector-databases/",
+        "http://localhost/es/blog/data-transformation/",
+        "http://localhost/es/blog/business-intelligence/",
+        "http://localhost/es/blog/lakehouse-table-formats/",
+        "http://localhost/es/blog/graph-databases/",
+        "http://localhost/es/blog/observability/",
+        "http://localhost/es/glossary/",
+        "http://localhost/es/stack/",
+        "http://localhost/es/collaboration/"
+      ],
+      "numberOfRuns": 3
+    },
+    "assert": {
+      "assertions": {
+        "categories:performance": ["warn", { "minScore": 0.9 }],
+        "cumulative-layout-shift": ["error", { "maxNumericValue": 0.1 }],
+        "categories:accessibility": ["error", { "minScore": 1 }],
+        "categories:best-practices": ["error", { "minScore": 0.9 }],
+        "categories:seo": ["error", { "minScore": 0.9 }],
+        "resource-summary:stylesheet:size": [
+          "warn",
+          { "maxNumericValue": 220000 }
+        ],
+        "resource-summary:script:size": ["warn", { "maxNumericValue": 250000 }],
+        "resource-summary:font:size": ["warn", { "maxNumericValue": 140000 }],
+        "resource-summary:third-party:count": [
+          "error",
+          { "maxNumericValue": 0 }
+        ]
+      }
+    },
+    "upload": {
+      "target": "filesystem",
+      "outputDir": "./lhci-reports"
+    }
+  }
+}

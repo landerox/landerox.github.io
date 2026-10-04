@@ -1,0 +1,16 @@
+{#-
+  Overrides the theme's partials/progress.html (included from base.html)
+  to give the ARIA progressbar an accessible name.
+
+  Upstream ships `role="progressbar"` with no name, which fails
+  Lighthouse's `aria-progressbar-name` audit on every page — 7 of the 198
+  weighted points in the accessibility score. The bar is the instant
+  navigation loading indicator; naming the role is what the audit and
+  screen readers expect, and it costs one attribute.
+
+  The rest of the markup is byte-identical to the theme's version. It is
+  a generated file upstream ("do not edit"), so re-check this override
+  after a Zensical bump — see docs/runbook.md.
+-#}
+<div class="md-progress" data-md-component="progress" role="progressbar"
+  aria-label="{% if config.theme.language == 'es' %}Progreso de carga de la página{% else %}Page loading progress{% endif %}"></div>

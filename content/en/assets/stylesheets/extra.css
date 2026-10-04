@@ -1,0 +1,4182 @@
+/* ==========================================================================
+   landerox.com — custom stylesheet for the Zensical "modern" theme variant.
+
+   Sections, in cascade order (later sections consume earlier tokens):
+
+     1. Typography assets  — self-hosted @font-face
+     2. Primitive tokens   — motion, radii, focus ring (scheme-agnostic)
+     3. Semantic tokens    — light scheme ("default")
+     4. Semantic tokens    — dark scheme ("slate")
+     5. Base typography    — scale, rhythm, prose
+     6. Chrome             — header, tabs, sidebar, footer
+     7. Components         — links, code, quotes, cards, tabs, buttons
+     8. Content pages      — reading panels, references, editorial records
+     9. Home               — profile HUD
+    10. Home               — landing blocks
+    11. Ambient background — particle canvas
+    12. Workbench          — dock, native dialog, local tools
+    13. Accessibility      — focus, touch, reduced motion, forced colors, print
+
+   Two rules. No `@layer`: Zensical ships unlayered CSS, which always beats
+   layered rules. No raw brand literals: each scheme declares `--brand-rgb`
+   once and every tint derives from it. Rationale lives in docs/design.md;
+   every override is checked against the compiled theme in site/, not the
+   Material for MkDocs docs.
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. Typography assets — self-hosted, zero third-party requests
+   --------------------------------------------------------------------------
+   `theme.font = false` in both zensical*.toml files drops the theme's
+   render-blocking Google Fonts <link>. `unicode-range` keeps latin-ext off
+   the critical path. Provenance and licenses: docs/design.md, "Typography".
+   -------------------------------------------------------------------------- */
+
+/* Inter — body text. Variable, 100–900. */
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Variable-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("../fonts/Inter-Variable-latin-ext.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* Outfit — display headings. Variable, 400–700. */
+@font-face {
+  font-family: "Outfit";
+  src: url("../fonts/Outfit-Variable-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: "Outfit";
+  src: url("../fonts/Outfit-Variable-latin-ext.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+/* MesloLGM Nerd Font — wordmark, code, HUD micro-labels. `local()` first so
+   a developer with the font installed pays no download. */
+@font-face {
+  font-family: "MesloLGM Nerd Font Propo";
+  src:
+    local("MesloLGM Nerd Font Propo"),
+    local("MesloLGMNerdFontPropo-Regular"),
+    url("../fonts/MesloLGMNerdFontPropo-Regular.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "MesloLGM Nerd Font Propo";
+  src:
+    local("MesloLGM Nerd Font Propo Bold"),
+    local("MesloLGMNerdFontPropo-Bold"),
+    url("../fonts/MesloLGMNerdFontPropo-Bold.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+/* --------------------------------------------------------------------------
+   2. Primitive tokens — scheme-agnostic
+   -------------------------------------------------------------------------- */
+
+:root {
+  /* Feed the theme's own font chain instead of re-declaring `font-family`
+     on body/.md-typeset: Zensical resolves --md-text-font-family as
+     `var(--md-text-font, _), -apple-system, …, sans-serif`. */
+  --md-text-font: "Inter";
+  --md-code-font: "MesloLGM Nerd Font Propo";
+
+  /* Motion. `--ease-emphasized` decelerates hard — for entrances and
+     anything that should feel physical. `--ease-standard` for state flips. */
+  --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-instant: 120ms;
+  --dur-quick: 220ms;
+  --dur-settled: 400ms;
+  --dur-flip: 650ms;
+  --dur-wipe: 950ms;
+
+  --radius-xs: 4px;
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+
+  --ring-width: 2px;
+  --ring-offset: 3px;
+  /* Minimum touch target (WCAG 2.5.8 asks 24px; the site keeps 44px). */
+  --target-min: 44px;
+
+  /* Overlays stay dark in both schemes, so they read above any page. */
+  --scrim: rgb(8 15 30 / 62%);
+  --tooltip-bg: hsl(220 30% 8%);
+  --tooltip-border: hsl(210 40% 98% / 15%);
+  --tooltip-ink: hsl(210 40% 98%);
+  --tooltip-shadow: 0 4px 15px hsl(0 0% 0% / 45%);
+  --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  /* Global stacking layers. Only layers that cross component boundaries
+     get a token; z-indexes inside a component's own stacking context
+     (card ::before/::after, HUD rings) stay local integers on purpose. */
+  --z-ambient: -1;
+}
+
+/* The theme declares `--md-text-font-family` / `--md-code-font-family` on
+   `body`, not `:root`. Custom properties inherit downwards only, so deriving
+   from them one level up resolves to nothing and every `var(--font-display)`
+   silently falls back to the body font. Derive on the same element. */
+body {
+  --font-display: "Outfit", var(--md-text-font-family);
+  --font-mono: var(--md-code-font-family);
+}
+
+/* --------------------------------------------------------------------------
+   3. Semantic tokens — light scheme
+   --------------------------------------------------------------------------
+   Contrast ratios against --surface-page are recorded in docs/design.md.
+   -------------------------------------------------------------------------- */
+
+[data-md-color-scheme="default"] {
+  --brand-rgb: 0 112 243;
+  --brand: rgb(var(--brand-rgb));
+  --brand-hover: rgb(0 96 215);
+  --brand-ink: rgb(0 80 196);
+  --brand-tint-weak: rgb(var(--brand-rgb) / 6%);
+  --brand-tint: rgb(var(--brand-rgb) / 10%);
+  --brand-tint-strong: rgb(var(--brand-rgb) / 18%);
+  --brand-contrast: #ffffff;
+  /* Text-bearing fills retain AA margin beneath the white sheen. */
+  --control-fill: rgb(0 72 180);
+  --control-hover: rgb(0 58 148);
+
+  /* Surfaces: page < raised < overlay, each a step further forward. */
+  --surface-page: hsl(220 18% 97%);
+  --surface-raised: hsl(0 0% 100%);
+  --surface-sunken: hsl(220 16% 93%);
+  --surface-overlay: hsl(0 0% 100% / 82%);
+  --surface-rail: hsl(0 0% 100% / 68%);
+
+  /* `--hairline*` are decorative separators. `--border-interactive` is the
+     boundary of an actual control and is held to WCAG 1.4.11's 3:1 against
+     the adjacent background. */
+  --hairline: hsl(220 14% 89%);
+  --hairline-strong: hsl(220 14% 80%);
+  --border-interactive: hsl(215 16% 54%);
+
+  /* Ink: 1 = headings, 2 = body, 3 = secondary/meta. */
+  --ink-1: hsl(222 47% 11%);
+  --ink-2: hsl(217 33% 20%);
+  --ink-3: hsl(215 16% 40%);
+
+  /* Elevation. `--edge-highlight` is a 1px top-edge highlight folded into
+     both shadow tokens, so every raised surface reads as lit from above.
+     Invisible on the white light surfaces by design; the dark scheme needs
+     it. `--sheen` is the matching top-light gradient for filled controls. */
+  --edge-highlight: hsl(0 0% 100% / 80%);
+  --sheen: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 22%) 0%,
+    hsl(0 0% 100% / 0%) 100%
+  );
+  --shadow-raised:
+    0 1px 2px 0 rgb(15 23 42 / 4%), 0 4px 12px -2px rgb(15 23 42 / 4%),
+    inset 0 1px 0 var(--edge-highlight);
+  --shadow-lifted:
+    0 12px 28px -4px rgb(15 23 42 / 8%),
+    0 6px 16px -2px rgb(var(--brand-rgb) / 12%),
+    inset 0 1px 0 var(--edge-highlight);
+  --shadow-rail: 0 4px 20px rgb(15 23 42 / 5%);
+
+  /* Availability-pill dot colors, kept apart in CIEDE2000 (docs/design.md). */
+  --status-triage: rgb(117 121 55);
+  --status-sessions: rgb(107 33 168);
+  --status-available: rgb(21 128 61);
+  --status-coffee: rgb(108 79 55);
+  --status-lunch: rgb(194 65 12);
+  --status-focus: rgb(3 105 161);
+  --status-reviews: rgb(13 116 108);
+  --status-lab: rgb(161 98 7);
+  --status-offline: rgb(71 85 105);
+  --status-weekend: rgb(150 25 25);
+
+  /* Tool states (Failure Lab nodes, SQL and decision statuses): the dots'
+     hue families, inks tuned for 4.5:1 text contrast (docs/design.md). */
+  --state-success-ink: hsl(142 76% 27%);
+  --state-warn-rgb: 231 176 8;
+  --state-warn-ink: hsl(38 92% 30%);
+
+  /* ---- Bridge into Zensical's own variables ---------------------------- */
+  --md-default-bg-color: var(--surface-page);
+  --md-default-bg-color--light: var(--surface-overlay);
+  --md-default-fg-color: var(--ink-2);
+  --md-default-fg-color--light: var(--ink-3);
+  --md-default-fg-color--lighter: var(--hairline);
+  --md-default-fg-color--lightest: color-mix(
+    in srgb,
+    var(--hairline) 60%,
+    transparent
+  );
+
+  --md-typeset-color: var(--ink-2);
+  --md-typeset-table-color: hsl(220 25% 22% / 32%);
+  --md-typeset-table-color--light: var(--brand-tint-weak);
+  --md-typeset-mark-color: rgb(var(--brand-rgb) / 14%);
+
+  --md-code-bg-color: var(--surface-sunken);
+  --md-code-fg-color: var(--ink-1);
+
+  /* `--md-primary-*` drives the primary button. Modern also paints
+     `.md-progress` with the background half, so that component is targeted
+     directly in section 6 instead of swapping this pair. */
+  --md-primary-fg-color: var(--brand);
+  --md-primary-bg-color: var(--brand-contrast);
+  --md-accent-fg-color: var(--brand-ink);
+  --md-accent-fg-color--transparent: var(--brand-tint-weak);
+
+  --code-border-color: rgb(var(--brand-rgb) / 12%);
+  --code-shadow: 0 1px 3px hsl(220 25% 15% / 4%);
+  --inline-code-bg-color: rgb(var(--brand-rgb) / 6%);
+  --inline-code-fg-color: var(--brand-ink);
+  --inline-code-border-color: rgb(var(--brand-rgb) / 14%);
+  --quote-bg-color: var(--surface-sunken);
+  --quote-fg-color: var(--ink-2);
+
+  /* Ambient canvas. Deliberately NOT derived from --brand-rgb: retheming
+     the accent must not restyle a background effect tuned by eye. */
+  --ambient-rgb: 0 114 245;
+  --ambient-opacity: 0.85;
+}
+
+/* --------------------------------------------------------------------------
+   4. Semantic tokens — dark scheme
+   --------------------------------------------------------------------------
+   Surfaces step *lighter* as they come forward — the inverse of the light
+   scheme — so recessed panels do not read as holes.
+   -------------------------------------------------------------------------- */
+
+[data-md-color-scheme="slate"] {
+  --brand-rgb: 96 165 250;
+  --brand: rgb(var(--brand-rgb));
+  --brand-hover: rgb(147 197 253);
+  --brand-ink: rgb(var(--brand-rgb));
+  --brand-tint-weak: rgb(var(--brand-rgb) / 8%);
+  --brand-tint: rgb(var(--brand-rgb) / 14%);
+  --brand-tint-strong: rgb(var(--brand-rgb) / 22%);
+  --brand-contrast: hsl(222 47% 6.5%);
+  --control-fill: var(--brand);
+  --control-hover: var(--brand-hover);
+
+  /* Inverted: `--surface-sunken` steps *up* from the page here. */
+  --surface-page: hsl(222 47% 6.5%);
+  --surface-raised: hsl(222 35% 10.5%);
+  --surface-sunken: hsl(222 38% 8%);
+  --surface-overlay: hsl(222 47% 6.5% / 82%);
+  --surface-rail: hsl(222 35% 10.5% / 65%);
+
+  /* Lighter than a straight inversion: at 20% / 60% the borders composited
+     to 1.21:1 against the page and vanished. Decorative — the composited
+     ratios (1.45:1, 2.21:1) are recorded in docs/design.md. */
+  --hairline: hsl(217 24% 24% / 75%);
+  --hairline-strong: hsl(217 24% 34% / 85%);
+  /* 65%, not 40%: composited over `--surface-raised` the secondary button
+     boundary lands at 3.55:1 (WCAG 1.4.11). At 40% it measured 2.15:1. */
+  --border-interactive: hsl(215 20% 65% / 65%);
+
+  --ink-1: hsl(210 40% 98%);
+  --ink-2: hsl(215 20% 86%);
+  --ink-3: hsl(215 16% 65%);
+
+  /* Elevation — see the light block. Here the highlight is what separates
+     a panel from the page. */
+  --edge-highlight: hsl(210 40% 98% / 8.5%);
+  --sheen: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 15%),
+    hsl(0 0% 100% / 0%) 60%
+  );
+  --shadow-raised:
+    0 1px 3px 0 rgb(0 0 0 / 40%), 0 4px 14px -2px rgb(0 0 0 / 35%),
+    inset 0 1px 0 var(--edge-highlight);
+  --shadow-lifted:
+    0 16px 36px -4px rgb(0 0 0 / 60%),
+    0 0 24px -2px rgb(var(--brand-rgb) / 18%),
+    inset 0 1px 0 var(--edge-highlight);
+  --shadow-rail: 0 4px 25px hsl(0 0% 0% / 30%);
+
+  /* Availability-pill state colors — lighter steps of the light-scheme
+     hues. Same rules as above. */
+  --status-triage: rgb(201 209 148);
+  --status-sessions: rgb(205 140 255);
+  --status-available: rgb(74 222 128);
+  --status-coffee: rgb(208 175 128);
+  --status-lunch: rgb(251 146 60);
+  --status-focus: rgb(56 189 248);
+  --status-reviews: rgb(45 212 191);
+  --status-lab: rgb(250 204 21);
+  --status-offline: rgb(148 163 184);
+  --status-weekend: rgb(248 113 113);
+
+  /* Tool states — lighter inks for the dark surfaces. */
+  --state-success-ink: hsl(142 71% 60%);
+  --state-warn-rgb: 231 176 8;
+  --state-warn-ink: hsl(45 93% 60%);
+
+  /* ---- Bridge into Zensical's own variables ---------------------------- */
+  --md-default-bg-color: var(--surface-page);
+  --md-default-bg-color--light: var(--surface-overlay);
+  --md-default-fg-color: var(--ink-2);
+  --md-default-fg-color--light: var(--ink-3);
+  --md-default-fg-color--lighter: var(--hairline-strong);
+  --md-default-fg-color--lightest: var(--hairline);
+
+  --md-typeset-color: var(--ink-2);
+  --md-typeset-table-color: rgb(var(--brand-rgb) / 14%);
+  --md-typeset-table-color--light: var(--brand-tint-weak);
+  --md-typeset-mark-color: rgb(var(--brand-rgb) / 24%);
+
+  --md-code-bg-color: var(--surface-sunken);
+  --md-code-fg-color: var(--ink-1);
+
+  --md-primary-fg-color: var(--brand);
+  --md-primary-bg-color: var(--brand-contrast);
+  --md-accent-fg-color: var(--brand);
+  --md-accent-fg-color--transparent: var(--brand-tint-weak);
+
+  --code-border-color: rgb(var(--brand-rgb) / 16%);
+  --code-shadow: 0 4px 20px hsl(0 0% 0% / 45%);
+  --inline-code-bg-color: rgb(var(--brand-rgb) / 12%);
+  --inline-code-fg-color: var(--brand-hover);
+  --inline-code-border-color: rgb(var(--brand-rgb) / 20%);
+  --quote-bg-color: var(--surface-sunken);
+  --quote-fg-color: var(--ink-2);
+
+  /* Ambient canvas — the dark-scheme counterpart, same independence. */
+  --ambient-rgb: 59 130 246;
+  --ambient-opacity: 0.85;
+}
+
+/* palette.css scopes the dark link color to a two-attribute selector that
+   outranks the single-attribute scheme blocks above. Match it for both
+   schemes, or prose links fall back to the theme's stock #5488e8. */
+[data-md-color-scheme="default"][data-md-color-primary],
+[data-md-color-scheme="slate"][data-md-color-primary] {
+  --md-typeset-a-color: var(--brand-ink);
+}
+
+/* --------------------------------------------------------------------------
+   5. Base typography
+   --------------------------------------------------------------------------
+   Sizes stay in `em` so the scale keys off `.md-typeset`, as the theme's
+   own does. Scale and computed sizes: docs/design.md, "Typography".
+   -------------------------------------------------------------------------- */
+
+/* Grayscale antialiasing: subpixel fringes make light-on-dark glyphs read
+   heavier than they are. */
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.md-typeset {
+  font-size: 0.85rem;
+  line-height: 1.68;
+}
+
+.md-typeset p,
+.md-typeset li {
+  text-wrap: pretty;
+}
+
+/* Measure. The 61rem grid puts a paragraph at ~89 characters per line; cap
+   the text blocks at 72ch and let tables, card grids and tab panels keep
+   the full column. */
+.md-content__inner.md-typeset > :is(p, ul, ol) {
+  max-width: 72ch;
+}
+
+.md-typeset h1,
+.md-typeset h2,
+.md-typeset h3,
+.md-typeset h4,
+.md-typeset h5,
+.md-typeset h6 {
+  font-family: var(--font-display);
+  text-wrap: balance;
+}
+
+/* h1/h2 are fluid so the scale holds on desktop and steps down on narrow
+   phones; h3 and below never crowd a viewport. */
+.md-typeset h1 {
+  color: var(--ink-1);
+  font-size: clamp(1.42em, 1.26em + 0.8vw, 1.62em);
+  font-weight: 700;
+  letter-spacing: -0.022em;
+  line-height: 1.18;
+  margin: 0 0 0.9em;
+}
+
+.md-typeset h2 {
+  color: var(--ink-1);
+  font-size: clamp(1.22em, 1.14em + 0.4vw, 1.32em);
+  font-weight: 700;
+  letter-spacing: -0.018em;
+  line-height: 1.28;
+  margin: 2em 0 0.7em;
+}
+
+.md-typeset h3 {
+  color: var(--ink-1);
+  font-size: 1.12em;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  line-height: 1.4;
+  margin: 1.6em 0 0.6em;
+}
+
+.md-typeset h4 {
+  color: var(--ink-1);
+  font-size: 1em;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+}
+
+/* Heading icons: the theme's 1.125em reads oversized beside display type.
+   Numeric alignment centres the smaller glyph on the cap height. */
+.md-typeset :is(h1, h2, h3) > .twemoji {
+  --md-icon-size: 0.85em;
+
+  vertical-align: -0.06em;
+}
+
+/* Page-title icons arrive with a spring (scale + settle) shortly after the
+   page paints, on every page — the hero hand keeps its wave. `backwards`,
+   not `both`: once the entrance ends the animation releases `transform`,
+   so the hover nudge below can transition normally. */
+@keyframes icon-arrive {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-14deg);
+  }
+
+  55% {
+    opacity: 1;
+    transform: scale(1.14) rotate(5deg);
+  }
+
+  80% {
+    transform: scale(0.96) rotate(-2deg);
+  }
+
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+.md-typeset :is(h1, h2) > .twemoji:not(.icon-wave) {
+  animation: icon-arrive 720ms var(--ease-emphasized) 180ms backwards;
+  transform-origin: 50% 60%;
+  transition: transform var(--dur-quick) var(--ease-emphasized);
+}
+
+.md-typeset :is(h1, h2):hover > .twemoji:not(.icon-wave) {
+  transform: scale(1.12) rotate(-6deg);
+}
+
+/* Home hero. The landing title alone takes display scale; the floor stays
+   above the h2 size, so the hierarchy never inverts. */
+.md-typeset .landing-hero h1 {
+  font-size: clamp(1.55em, 1.2em + 1.1vw, 1.9em);
+  letter-spacing: -0.026em;
+  margin: 0.35em 0 0.55em;
+}
+
+/* Role line — the `**Role** · Area` paragraph opening the home and About
+   pages. A kicker on secondary ink; the bold lead stays on `--ink-1` via
+   the `strong` rule below. Ordinary opening paragraphs do not match. */
+.md-typeset > h1 + p:has(> strong:first-child) {
+  color: var(--ink-3);
+  font-size: 0.92rem;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+}
+
+.md-typeset strong,
+.md-typeset b {
+  color: var(--ink-1);
+  font-weight: 650;
+}
+
+.md-header__title {
+  font-family: var(--font-mono);
+}
+
+.md-typeset code,
+.md-typeset kbd,
+.md-typeset pre {
+  font-family: var(--font-mono);
+}
+
+::selection {
+  background-color: var(--brand-tint-strong);
+  color: var(--ink-1);
+}
+
+/* `* **Label:** description` rows dominate the reference pages; the gap
+   turns them into scannable spec rows instead of one bold slab. */
+.md-typeset ul li + li {
+  margin-top: 0.4em;
+}
+
+.md-typeset hr {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--hairline-strong) 25%,
+    var(--hairline-strong) 75%,
+    transparent
+  );
+  border: none;
+  height: 1px;
+  margin: 2.5rem 0;
+}
+
+/* --------------------------------------------------------------------------
+   6. Chrome — header, tabs, sidebar, footer
+   -------------------------------------------------------------------------- */
+
+/* Modern blurs the header itself and reads `--md-default-bg-color--light`,
+   which the scheme blocks set — no background override needed here. */
+.md-header {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border-bottom: 1px solid var(--hairline);
+  box-shadow: var(--shadow-raised);
+  color: var(--ink-1);
+}
+
+.md-header__title,
+.md-header__topic,
+.md-ellipsis,
+.md-header__button {
+  color: inherit;
+}
+
+.md-header__inner > .md-header__title {
+  flex-grow: 1;
+}
+
+/* The drawer and search labels reserve their 44px target before header.js
+   wraps them in buttons; growing on boot shifted the whole page by 4px. */
+.md-header__button:has(> .theme-toggle-button),
+label.md-header__button:is([for="__drawer"], [for="__search"]) {
+  position: relative;
+  min-width: var(--target-min);
+  min-height: var(--target-min);
+}
+
+.theme-toggle-button {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+}
+
+/* Motion toggle (motion.js): pauses the canvas, HUD rings and status ping
+   (WCAG 2.2.2). Lucide pause/play glyphs as masks, so no SVG lives in JS. */
+.motion-toggle {
+  --motion-icon: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect width='5' height='18' x='14' y='3' rx='1'/%3E%3Crect width='5' height='18' x='5' y='3' rx='1'/%3E%3C/svg%3E");
+
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-radius: var(--radius-sm);
+  display: inline-flex;
+  font: inherit;
+  justify-content: center;
+  min-height: var(--target-min);
+  min-width: var(--target-min);
+}
+
+.motion-toggle[aria-pressed="true"] {
+  --motion-icon: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M5 5a2 2 0 0 1 3.008-1.728l11.997 6.998a2 2 0 0 1 .003 3.458l-12 7A2 2 0 0 1 5 19z'/%3E%3C/svg%3E");
+
+  color: var(--brand-ink);
+}
+
+.motion-toggle__icon {
+  background-color: currentcolor;
+  display: block;
+  height: 1.2rem;
+  -webkit-mask: var(--motion-icon) no-repeat 50% 50% / contain;
+  mask: var(--motion-icon) no-repeat 50% 50% / contain;
+  width: 1.2rem;
+}
+
+/* Phones: five 44px header controls plus the wordmark only fit once the
+   theme's inline button margins go; the targets keep their full size.
+   Below 22.5em even that is too tight, so the footer copy takes over. */
+@media screen and (width <= 30em) {
+  .md-header__button {
+    margin-inline: 0;
+  }
+}
+
+.motion-option--footer {
+  display: none;
+}
+
+@media screen and (width < 22.5em) {
+  .motion-option--header {
+    display: none;
+  }
+
+  .motion-option--footer {
+    display: flex;
+  }
+}
+
+html[data-motion="paused"] :is(.hud-ring-outer, .hud-ring-inner) {
+  animation-play-state: paused;
+}
+
+html[data-motion="paused"] .hud-status-dot::before {
+  animation: none;
+  opacity: 0;
+}
+
+/* Logo sits flush against the wordmark. */
+.md-header__button.md-logo {
+  margin-right: 0;
+  padding-right: 0;
+}
+
+.md-header__button.md-logo img {
+  margin-right: 0;
+}
+
+/* One slow turn on the vertical axis per hover or keyboard focus; header.js
+   clears `.is-turning` on animationend so a started turn always finishes. */
+@keyframes logo-turn {
+  from {
+    transform: perspective(12rem) rotateY(0deg);
+  }
+
+  to {
+    transform: perspective(12rem) rotateY(360deg);
+  }
+}
+
+.md-header__button.md-logo.is-turning img {
+  animation: logo-turn 1.2s var(--ease-standard);
+}
+
+.md-header__title {
+  align-items: flex-start;
+  margin-left: 0.4rem;
+  padding-left: 0;
+}
+
+/* The tab bar takes the header's translucent surface rather than going
+   transparent: on the bare canvas an inactive `--ink-3` label fell from
+   5.54:1 to 2.38:1 wherever a node core crossed it. */
+.md-tabs {
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  background-color: var(--md-default-bg-color--light);
+  border-bottom: 1px solid var(--hairline);
+  box-shadow: none;
+  height: auto;
+}
+
+.md-tabs__link {
+  border-radius: var(--radius-sm);
+  color: var(--ink-3);
+  font-size: 0.72rem;
+  font-weight: 600;
+  height: auto;
+  letter-spacing: 0.02em;
+  margin-top: 0;
+  opacity: 1;
+  padding: 0.45rem 0.75rem;
+  transition:
+    color var(--dur-quick) var(--ease-standard),
+    background-color var(--dur-quick) var(--ease-standard);
+}
+
+.md-tabs__link:hover {
+  background-color: var(--brand-tint-weak);
+  color: var(--ink-1);
+}
+
+.md-tabs__item--active {
+  border-bottom: none;
+  position: relative;
+}
+
+.md-tabs__item--active .md-tabs__link {
+  color: var(--brand-ink);
+  font-weight: 700;
+  opacity: 1;
+}
+
+.md-tabs__item--active::after {
+  background-color: var(--brand);
+  border-radius: var(--radius-full);
+  bottom: 0;
+  box-shadow: 0 0 12px rgb(var(--brand-rgb) / 65%);
+  content: "";
+  height: 2px;
+  left: 0.6rem;
+  position: absolute;
+  right: 0.6rem;
+}
+
+/* Modern paints the progress line with `--md-primary-bg-color`, the primary
+   button's contrast ink — invisible in both schemes. Target the component. */
+.md-progress {
+  background: var(--brand);
+}
+
+/* Modern's search is a `.md-search__button` opening a dialog; styled as a
+   command-palette trigger. The theme owns the `Ctrl+K` / `⌘K` hint text
+   (swapped per `data-platform`) and the key binding itself — only the
+   hint's box is restyled here. */
+.md-search__button {
+  align-items: center;
+  background-color: var(--brand-tint-weak);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  color: var(--ink-3);
+  display: inline-flex;
+  font-size: 0.72rem;
+  font-weight: 500;
+  gap: 0.6rem;
+  padding: 0.35rem 0.8rem;
+  transition:
+    background-color var(--dur-quick) var(--ease-standard),
+    border-color var(--dur-quick) var(--ease-standard),
+    box-shadow var(--dur-quick) var(--ease-standard),
+    color var(--dur-quick) var(--ease-standard);
+}
+
+.md-search__button:hover {
+  background-color: var(--brand-tint);
+  border-color: rgb(var(--brand-rgb) / 40%);
+  box-shadow: 0 2px 8px rgb(var(--brand-rgb) / 12%);
+  color: var(--brand-ink);
+}
+
+@media screen and (width >= 60em) {
+  .md-search__button {
+    justify-content: space-between;
+    min-width: 9.5rem;
+  }
+
+  .md-search__button::after {
+    background: var(--surface-sunken);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-xs);
+    color: var(--ink-3);
+    font-family: var(--font-mono);
+    font-size: 0.58rem;
+    font-weight: 700;
+    line-height: 1;
+    padding: 0.2em 0.4em;
+  }
+}
+
+/* Breadcrumbs: block margins only; the theme's inline margins align the
+   path with the content column. */
+.md-path {
+  font-family: var(--font-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.02em;
+  margin-block: 0.5rem 1rem;
+}
+
+.md-path__link {
+  color: var(--ink-3);
+  transition: color var(--dur-quick) var(--ease-standard);
+}
+
+.md-path__link:hover {
+  color: var(--brand-ink);
+}
+
+.md-path__item:not(:first-child)::before {
+  background-color: var(--ink-3);
+  opacity: 0.6;
+}
+
+.md-nav--primary .md-nav__link[for]:hover:not(.md-nav__link--active),
+.md-nav--primary .md-nav__link[href]:hover:not(.md-nav__link--active) {
+  background-color: var(--brand-tint-weak);
+  color: var(--brand-ink);
+}
+
+.md-sidebar--primary .md-nav__link--active {
+  background-color: var(--brand-tint);
+  color: var(--brand-ink);
+  font-weight: 700;
+}
+
+/* Only the wide-viewport rail gets the frosted panel treatment; the mobile
+   drawer keeps the theme's own solid background. */
+@media screen and (width >= 76.25em) {
+  .md-sidebar__inner {
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    background-color: var(--surface-rail);
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-rail);
+    padding: 0.75rem 0.5rem;
+  }
+}
+
+.md-footer__link:hover {
+  color: var(--brand-ink);
+  opacity: 1;
+}
+
+.md-footer__link:hover .md-footer__direction {
+  opacity: 1;
+}
+
+.md-social__link {
+  transition:
+    color var(--dur-quick) var(--ease-standard),
+    transform var(--dur-quick) var(--ease-emphasized);
+}
+
+.md-social__link:hover {
+  color: var(--brand);
+  transform: scale(1.35) translateY(-2px);
+}
+
+/* The theme's .8rem glyphs read undersized against the copyright line. */
+.md-social__link svg {
+  max-height: 0.9rem;
+}
+
+/* --------------------------------------------------------------------------
+   7. Components
+   -------------------------------------------------------------------------- */
+
+/* Prose links keep an underline: color alone fails WCAG 1.4.1 in running
+   text. Nav and card links, where position carries the affordance, stay
+   clean. */
+.md-typeset a {
+  text-decoration-color: var(--brand-tint-strong);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.18em;
+  transition:
+    color var(--dur-instant) var(--ease-standard),
+    text-decoration-color var(--dur-instant) var(--ease-standard);
+}
+
+.md-typeset a:hover {
+  color: var(--brand-hover);
+  text-decoration-color: currentcolor;
+}
+
+.md-typeset a:hover strong,
+.md-typeset a:hover b {
+  color: var(--brand-hover);
+}
+
+.md-footer a,
+.md-typeset .grid.cards a,
+.md-typeset h1 a,
+.md-typeset h2 a,
+.md-typeset h3 a,
+.md-typeset h4 a,
+.md-typeset a.md-button {
+  text-decoration: none;
+}
+
+/* The copyright link sits inside a sentence, so it keeps its underline: at
+   2.2:1 against the surrounding text, color alone misses WCAG 1.4.1
+   (Lighthouse `link-in-text-block`). */
+.md-copyright a {
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+
+/* External-link affordance. The mask URL is stored once in a custom property
+   instead of being pasted into both the prefixed and unprefixed property. */
+.md-typeset :is(p, li, td, h1, h2, h3, h4) a[target="_blank"]::after {
+  --external-icon: url("data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M14,3V5H17.59L7.76,14.83L9.17,16.24L19,6.41V10H21V3M19,19H5V5H12V3H5C3.89,3 3,3.9 3,5V19A2,2 0 0,0 5,21H19A2,2 0 0,0 21,19V12H19V19Z'/%3E%3C/svg%3E");
+
+  background-color: currentcolor;
+  content: "";
+  display: inline-block;
+  height: 0.72em;
+  margin-left: 0.25em;
+  -webkit-mask: var(--external-icon) no-repeat 50% 50%;
+  mask: var(--external-icon) no-repeat 50% 50%;
+  -webkit-mask-size: contain;
+  mask-size: contain;
+  opacity: 0.55;
+  transition: opacity var(--dur-instant) var(--ease-standard);
+  vertical-align: middle;
+  width: 0.72em;
+}
+
+.md-typeset :is(p, li, td, h1, h2, h3, h4) a[target="_blank"]:hover::after {
+  opacity: 1;
+}
+
+/* Modern's `.md-button` has no border, so both variants set one explicitly. */
+.md-typeset .md-button {
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  padding: 0.52em 1.25em;
+  transition:
+    background-color var(--dur-quick) var(--ease-standard),
+    border-color var(--dur-quick) var(--ease-standard),
+    box-shadow var(--dur-quick) var(--ease-standard),
+    color var(--dur-quick) var(--ease-standard),
+    transform var(--dur-quick) var(--ease-emphasized);
+}
+
+.md-typeset .md-button:hover {
+  transform: translateY(-2px);
+}
+
+/* Pressed state: tactile contact feedback */
+.md-typeset .md-button:active {
+  transform: translateY(0) scale(0.98);
+  transition-duration: var(--dur-instant);
+}
+
+/* `--sheen` lights the pill from the top so it reads as a solid control
+   rather than a flat swatch; the rest shadow is a brand-tinted contact
+   shadow, lighter than the hover glow below it. */
+.md-typeset .md-button--primary {
+  background-color: var(--control-fill);
+  background-image: var(--sheen);
+  border-color: var(--control-fill);
+  box-shadow:
+    0 1px 3px rgb(var(--brand-rgb) / 30%),
+    inset 0 1px 0 hsl(0 0% 100% / 22%);
+  color: var(--brand-contrast);
+}
+
+/* `:focus-visible`, so a click does not leave the hover state on; the glow
+   matches the active tab and HUD accents. */
+.md-typeset .md-button--primary:hover,
+.md-typeset .md-button--primary:focus-visible {
+  background-color: var(--control-hover);
+  border-color: var(--control-hover);
+  box-shadow:
+    0 6px 20px rgb(var(--brand-rgb) / 35%),
+    inset 0 1px 0 hsl(0 0% 100% / 28%);
+  color: var(--brand-contrast);
+  opacity: 1;
+}
+
+.md-typeset .md-button--primary:active {
+  box-shadow: 0 2px 8px rgb(var(--brand-rgb) / 25%);
+}
+
+/* The rest shadow is what keeps the secondary readable as a raised control;
+   its border is calibrated for WCAG 1.4.11, not for presence. */
+.md-typeset .md-button:not(.md-button--primary) {
+  background-color: var(--surface-raised);
+  border-color: var(--border-interactive);
+  box-shadow: var(--shadow-raised);
+  color: var(--ink-2);
+}
+
+.md-typeset .md-button:not(.md-button--primary):hover,
+.md-typeset .md-button:not(.md-button--primary):focus-visible {
+  background-color: var(--brand-tint-weak);
+  border-color: var(--brand);
+  box-shadow: 0 4px 14px rgb(var(--brand-rgb) / 16%);
+  color: var(--brand-ink);
+}
+
+.md-typeset .md-button:not(.md-button--primary):active {
+  box-shadow: var(--shadow-raised);
+}
+
+/* Phones: stacked, full-width pills. Two inline pills of different widths
+   wrapped onto separate lines. */
+@media screen and (width <= 30em) {
+  .md-typeset .md-button {
+    box-sizing: border-box;
+    display: flex;
+
+    /* Flex drops the whitespace between the icon and the label; the gap
+       restores it. */
+    gap: 0.4em;
+    justify-content: center;
+    margin: 0.5rem 0 0;
+    width: 100%;
+  }
+}
+
+/* Icon micro-animations: a wave for the tagged hero greeting, a spring pop
+   for card title icons (in the cards block), a bell-ring for button and
+   social icons. Every keyframe set ends at rest, so the reduced-motion
+   block's 1ms zeroing lands icons in their neutral frame. */
+@keyframes icon-wave {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  17% {
+    transform: rotate(16deg);
+  }
+
+  33% {
+    transform: rotate(-9deg);
+  }
+
+  50% {
+    transform: rotate(14deg);
+  }
+
+  67% {
+    transform: rotate(-5deg);
+  }
+
+  83% {
+    transform: rotate(8deg);
+  }
+}
+
+@keyframes icon-pop {
+  0% {
+    transform: scale(1);
+  }
+
+  45% {
+    transform: scale(1.24) rotate(-7deg) translateY(-2px);
+  }
+
+  70% {
+    transform: scale(1.05) rotate(4deg) translateY(-2px);
+  }
+
+  100% {
+    transform: scale(1.12) translateY(-2px);
+  }
+}
+
+@keyframes icon-ring {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+
+  25% {
+    transform: rotate(-11deg);
+  }
+
+  55% {
+    transform: rotate(8deg);
+  }
+
+  80% {
+    transform: rotate(-4deg);
+  }
+}
+
+/* One 1.7s wave after entry, then rest: a finite gesture beside the
+   always-moving canvas. Tagged per icon with attr_list (`{ .icon-wave }`);
+   the origin sits at the wrist. */
+.md-typeset .icon-wave {
+  animation: icon-wave 1.7s var(--ease-standard) 1.2s 1 both;
+  transform-origin: 72% 82%;
+}
+
+/* Button icons swing from a top pivot, like a small bell. The animation
+   only exists while hovered, so it re-arms on every hover-in. */
+.md-typeset .md-button .twemoji {
+  transform-origin: 50% 20%;
+}
+
+.md-typeset .md-button:hover .twemoji {
+  animation: icon-ring 600ms var(--ease-standard);
+}
+
+.md-social__link:hover svg {
+  animation: icon-ring 600ms var(--ease-standard);
+}
+
+/* Code. */
+.md-typeset .highlight pre {
+  background-color: var(--md-code-bg-color);
+  border: 1px solid var(--code-border-color);
+  border-radius: var(--radius-md);
+  box-shadow: var(--code-shadow);
+  padding: 0.8rem;
+}
+
+.md-typeset code {
+  background-color: var(--inline-code-bg-color);
+  border: 1px solid var(--inline-code-border-color);
+  border-radius: var(--radius-xs);
+  color: var(--inline-code-fg-color);
+  font-size: 0.82em;
+  padding: 0.1em 0.35em;
+
+  /* `overflow-wrap`, not the deprecated `word-break: break-word`: long
+     tokens break only when they would overflow. */
+  overflow-wrap: break-word;
+}
+
+/* Inline code inside a link inherits the link color so the two cues agree. */
+.md-typeset a code {
+  color: inherit;
+}
+
+.md-typeset pre > code {
+  background-color: transparent;
+  border: none;
+  color: var(--md-code-fg-color);
+  padding: 0;
+}
+
+/* The theme's `[dir=ltr] .md-typeset blockquote` (0,2,1) owns the left
+   rule, so a quote keeps its 4px hairline edge; only surface and inset
+   change here. */
+.md-typeset blockquote {
+  background-color: var(--quote-bg-color);
+  border-radius: 0 var(--radius-md) var(--radius-md) 0;
+  color: var(--quote-fg-color);
+  margin-left: 0;
+  margin-right: 0;
+  padding: 0.8rem 1.2rem;
+}
+
+.md-typeset table:not([class]) {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+
+  /* The theme's .64rem is a caption size; this is a table-first site, so
+     .75rem keeps tables subordinate to prose without punishing the read. */
+  font-size: 0.75rem;
+  overflow: hidden;
+}
+
+/* Column labels: small uppercase tracking on secondary ink, the standard
+   data-table header. Body cells stay on `--ink-2`, so the hierarchy reads
+   label → value without a heavier tint. */
+.md-typeset table:not([class]) th {
+  background-color: var(--brand-tint-weak);
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink-3);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.md-typeset table:not([class]) tbody tr {
+  transition: background-color var(--dur-instant) var(--ease-standard);
+}
+
+.md-typeset table:not([class]) tbody tr:hover {
+  background-color: var(--brand-tint-weak);
+}
+
+/* Key/value tables (spike reports) have an empty head row Markdown still
+   requires; collapse it instead of showing a blank tinted strip. */
+.md-typeset table:not([class]) thead:not(:has(th:not(:empty))) {
+  display: none;
+}
+
+/* Editorial ratings on the Blog comparison tables: five glyph stars whose
+   fill tracks `--rating`, set from `data-rating` in 0.5 steps. The glyphs
+   are decorative (aria-hidden); the number beside them carries the value.
+   Forced colors keep the fill/track split through system colors. */
+.md-typeset .tool-rating {
+  align-items: center;
+  display: inline-flex;
+  gap: 0.35em;
+  white-space: nowrap;
+}
+
+.md-typeset .tool-rating__stars {
+  color: var(--hairline-strong);
+  display: inline-block;
+  line-height: 1;
+  position: relative;
+}
+
+.md-typeset .tool-rating__stars::after {
+  color: var(--brand);
+  content: "★★★★★";
+  inset: 0 auto 0 0;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: calc(var(--rating, 0) / 5 * 100%);
+}
+
+.md-typeset .tool-rating__value {
+  color: var(--ink-2);
+  font-variant-numeric: tabular-nums;
+}
+
+.tool-rating[data-rating="0.5"] {
+  --rating: 0.5;
+}
+
+.tool-rating[data-rating="1"] {
+  --rating: 1;
+}
+
+.tool-rating[data-rating="1.5"] {
+  --rating: 1.5;
+}
+
+.tool-rating[data-rating="2"] {
+  --rating: 2;
+}
+
+.tool-rating[data-rating="2.5"] {
+  --rating: 2.5;
+}
+
+.tool-rating[data-rating="3"] {
+  --rating: 3;
+}
+
+.tool-rating[data-rating="3.5"] {
+  --rating: 3.5;
+}
+
+.tool-rating[data-rating="4"] {
+  --rating: 4;
+}
+
+.tool-rating[data-rating="4.5"] {
+  --rating: 4.5;
+}
+
+.tool-rating[data-rating="5"] {
+  --rating: 5;
+}
+
+
+/* Page lead — the `> **…**` line after the H1. A summary, not a quotation:
+   same raised material as tables and cards. A quote further down the page
+   keeps the quiet treatment. */
+.md-typeset h1 + blockquote {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  color: var(--ink-1);
+  font-size: 0.85rem;
+  line-height: 1.65;
+  padding: 1rem 1.25rem;
+}
+
+/* The theme's direction-scoped rule outranks the plain one, so the lead's
+   left edge has to be matched at (0,2,2) to stay a 1px hairline like the
+   other three sides — the same frame cards, tables and callouts use. */
+[dir="ltr"] .md-typeset h1 + blockquote {
+  border-left: 1px solid var(--hairline);
+  padding-left: 1.25rem;
+}
+
+.md-typeset h1 + blockquote > p:first-child {
+  margin-top: 0;
+}
+
+.md-typeset h1 + blockquote > p:last-child {
+  margin-bottom: 0;
+}
+
+/* Callouts. The title bar reuses the table header tint so callouts and
+   tables read as one family. The doubled class is deliberate: the theme
+   paints surfaces per type (`.md-typeset .admonition.info`, 0,3,0), so a
+   plain `.md-typeset .admonition` loses on specificity, not source order. */
+.md-typeset .admonition.admonition {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  font-size: 0.72rem;
+  overflow: hidden;
+
+  /* The theme insets the box by `0 .8rem`, which stops the title bar short
+     of the border. Zero it; children carry their own inset. */
+  padding: 0;
+}
+
+.md-typeset .admonition > .admonition-title {
+  background-color: var(--brand-tint-weak);
+  border-bottom: 1px solid var(--hairline);
+  color: var(--ink-1);
+  font-size: 0.76rem;
+  font-weight: 700;
+  margin: 0;
+  padding: 0.6rem 1rem 0.6rem 2.2rem;
+}
+
+/* Center the type icon and put it on `--brand`; the theme paints it per type
+   at 0,3,1. */
+.md-typeset .admonition > .admonition-title::before {
+  background-color: var(--brand);
+  left: 0.8rem;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.md-typeset .admonition > :not(.admonition-title) {
+  line-height: 1.7;
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+
+.md-typeset .admonition > .admonition-title + * {
+  margin-top: 0.7rem;
+}
+
+.md-typeset .admonition > :not(.admonition-title):last-child {
+  margin-bottom: 0.7rem;
+}
+
+/* FAQ rows: native details/summary. Modern compiles `??? info faq-item` as
+   `details.info.faq-item`; the `+` sits in the theme's disclosure-icon slot
+   and becomes `−` when open. */
+.md-typeset details.faq-item {
+  /* Page color, but opaque: the ambient canvas must not cross the question
+     text. */
+  background-color: var(--surface-page);
+  border-bottom: 1px solid var(--hairline);
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.72rem;
+  margin: 0;
+  overflow: visible;
+  padding: 0;
+}
+
+.md-typeset h2 + details.faq-item {
+  border-top: 1px solid var(--hairline);
+}
+
+.md-typeset details.faq-item > summary {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink-1);
+  font-size: 0.76rem;
+  line-height: 1.5;
+  margin: 0;
+  padding: 0.85rem 2rem 0.85rem 0;
+  transition: color var(--dur-instant) var(--ease-standard);
+}
+
+.md-typeset details.faq-item > summary:hover,
+.md-typeset details.faq-item > summary:focus-visible {
+  color: var(--brand-ink);
+}
+
+.md-typeset details.faq-item > summary::before {
+  content: none;
+}
+
+.md-typeset details.faq-item > summary::after {
+  -webkit-mask-image: none;
+  background: transparent;
+  color: var(--brand);
+  content: "+";
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  font-weight: 700;
+  height: 1rem;
+  line-height: 1;
+  mask-image: none;
+  text-align: center;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+}
+
+.md-typeset details.faq-item[open] > summary::after {
+  content: "−";
+  transform: translateY(-50%);
+}
+
+html .md-typeset details.faq-item > :not(summary) {
+  color: var(--ink-2);
+  line-height: 1.7;
+  margin: 0;
+  max-width: 42rem;
+  padding: 0 2rem 0.9rem 0;
+}
+
+/* Cards — tilt from --rx/--ry/--ty (cards.js). Content only uses the
+   `grid cards` list syntax; `.grid > .card` is intentionally unstyled. */
+.md-typeset .grid.cards {
+  gap: 0.75rem;
+}
+
+/* From 60em the four expertise cards are pinned to a 2×2 rather than left
+   to auto-fit, which produced a 3+1 or 1-column layout at some widths. */
+.md-typeset .grid.cards.expertise-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr));
+}
+
+@media screen and (width >= 60em) {
+  .md-typeset .grid.cards.expertise-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.md-typeset .grid.cards > ul > li {
+  --rx: 0deg;
+  --ry: 0deg;
+  --ty: 0px;
+
+  background-color: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-raised);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 1.15rem 1.25rem;
+  position: relative;
+  transform: perspective(1000px) rotateX(var(--rx)) rotateY(var(--ry))
+    translateY(var(--ty));
+  transform-style: preserve-3d;
+  transition:
+    transform var(--dur-settled) var(--ease-emphasized),
+    box-shadow var(--dur-settled) var(--ease-emphasized),
+    border-color var(--dur-quick) var(--ease-standard),
+    background-color var(--dur-quick) var(--ease-standard);
+}
+
+.md-typeset .grid.cards > ul > li:hover,
+.md-typeset .grid.cards > ul > li:focus-within {
+  --ty: -3px;
+
+  border-color: rgb(var(--brand-rgb) / 45%);
+  box-shadow: var(--shadow-lifted);
+}
+
+/* Micro top-edge gradient glow on card hover */
+.md-typeset .grid.cards > ul > li::after {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgb(var(--brand-rgb) / 55%),
+    transparent
+  );
+  content: "";
+  height: 1.5px;
+  left: 0;
+  opacity: 0;
+  position: absolute;
+  right: 0;
+  top: 0;
+  transition: opacity var(--dur-quick) var(--ease-standard);
+  z-index: 2;
+}
+
+.md-typeset .grid.cards > ul > li:hover::after,
+.md-typeset .grid.cards > ul > li:focus-within::after {
+  opacity: 1;
+}
+
+/* The title icon pops (spring overshoot), the footer arrow slides.
+   `icon-pop`'s 100% frame equals the static hover transform, so the
+   animation hands off with no seam. */
+.md-typeset .grid.cards > ul > li .twemoji {
+  transition:
+    transform var(--dur-quick) var(--ease-emphasized),
+    color var(--dur-quick) var(--ease-standard),
+    background-color var(--dur-quick) var(--ease-standard),
+    border-color var(--dur-quick) var(--ease-standard);
+}
+
+/* Title icon chip: a flex pair, so two-line titles wrap beside it; solid
+   brand fill on hover. */
+.md-typeset .grid.cards > ul > li > p:first-child {
+  align-items: center;
+  display: flex;
+  gap: 0.65em;
+}
+
+.md-typeset .grid.cards > ul > li > p:first-child > .twemoji:first-child {
+  --md-icon-size: 1.1em;
+
+  align-items: center;
+  background-color: var(--brand-tint);
+  border: 1px solid rgb(var(--brand-rgb) / 16%);
+  border-radius: var(--radius-md);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+  color: var(--brand-ink);
+  flex: none;
+  height: 1.95em;
+  justify-content: center;
+  transition:
+    background-color var(--dur-quick) var(--ease-standard),
+    border-color var(--dur-quick) var(--ease-standard),
+    color var(--dur-quick) var(--ease-standard),
+    box-shadow var(--dur-quick) var(--ease-standard),
+    transform var(--dur-settled) var(--ease-spring);
+  width: 1.95em;
+}
+
+.md-typeset .grid.cards > ul > li:hover > p:first-child > .twemoji:first-child {
+  background-color: var(--brand);
+  border-color: var(--brand);
+  box-shadow: 0 4px 12px rgb(var(--brand-rgb) / 30%);
+  color: var(--brand-contrast);
+  transform: scale(1.08);
+}
+
+.md-typeset .grid.cards > ul > li:hover .twemoji {
+  color: var(--brand);
+}
+
+.md-typeset .grid.cards > ul > li:hover > p > .twemoji {
+  animation: icon-pop var(--dur-settled) var(--ease-standard);
+}
+
+.md-typeset .grid.cards > ul > li:hover a .twemoji {
+  transform: translateX(4px);
+}
+
+/* Four expertise cards settle into a 2×2 grid on desktop; flex keeps their
+   destination links on one baseline. Other grids keep Modern's auto-fit. */
+.md-typeset .expertise-grid > ul > li > p:last-child:has(> a) {
+  margin-top: auto;
+  padding-top: 0.35rem;
+}
+
+/* Content tabs. Zensical already ships the active treatment (sliding
+   `::before` indicator, bolder label); restyling the indicator is the whole
+   override. */
+.js .md-typeset .tabbed-labels::before {
+  background: var(--brand);
+}
+
+.md-typeset .tabbed-set .tabbed-labels > label {
+  transition:
+    background-color var(--dur-instant) var(--ease-standard),
+    color var(--dur-instant) var(--ease-standard),
+    border-color var(--dur-instant) var(--ease-standard);
+}
+
+.md-typeset .tabbed-set .tabbed-labels > label:hover {
+  background-color: var(--brand-tint-weak);
+  color: var(--brand-ink);
+}
+
+/* The set reads as a panel — same material as tables and callouts. Modern
+   renders `.tabbed-labels` as a flex row on screen, so the theme keeps the
+   scrolling labels and the indicator. */
+.md-typeset .tabbed-set {
+  background-color: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-raised);
+  padding: 0.25rem 1.1rem 0.6rem;
+}
+
+.md-typeset .tabbed-set > .tabbed-content {
+  border-top: 1px solid var(--hairline);
+  padding-top: 0.4rem;
+}
+
+/* Below 44.9844em the theme bleeds the label strip to the viewport
+   (`max-width: 100vw; margin: 0 -.8rem`), which put horizontal scroll on
+   the page once the panel inset it. Re-clamp the strip to the panel. */
+@media screen and (width <= 44.9844em) {
+  .md-content__inner > .tabbed-set .tabbed-labels,
+  .md-typeset .reading-panel-heading + .tabbed-set .tabbed-labels {
+    margin-inline: 0;
+    max-width: 100%;
+    padding-inline-start: 0;
+    scroll-padding-inline-start: 0;
+  }
+}
+
+/* The heading and native tab set form one visual panel without an HTML
+   wrapper: md_in_html nesting can split the first research tab into code. */
+.md-typeset .reading-panel-heading + .tabbed-set > .tabbed-content {
+  border-top: 0;
+  padding-top: 0.25rem;
+}
+/* Theme switch — circular wipe, driven from theme.js. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-new(root) {
+  animation: var(--dur-wipe) var(--ease-standard) both reveal-circle;
+}
+
+@keyframes reveal-circle {
+  from {
+    clip-path: circle(0 at var(--click-x, 50%) var(--click-y, 50%));
+  }
+
+  to {
+    clip-path: circle(
+      var(--clip-radius, 100%) at var(--click-x, 50%) var(--click-y, 50%)
+    );
+  }
+}
+
+/* Copy tooltip — a dark surface in both schemes, so it reads as an overlay. */
+.md-tooltip {
+  background-color: var(--tooltip-bg);
+  border: 1px solid var(--tooltip-border);
+  border-radius: var(--radius-sm);
+  box-shadow: var(--tooltip-shadow);
+  color: var(--tooltip-ink);
+  font-size: 0.7rem;
+  padding: 0.35rem 0.6rem;
+}
+
+/* Code block copy button — tactile active feedback */
+.md-clipboard {
+  color: var(--ink-3);
+  transition:
+    color var(--dur-quick) var(--ease-standard),
+    transform var(--dur-instant) var(--ease-emphasized);
+}
+
+.md-clipboard:hover {
+  color: var(--brand);
+}
+
+.md-clipboard:active {
+  transform: scale(0.88);
+}
+
+/* --------------------------------------------------------------------------
+   8. Content pages — reading panels, references, editorial records
+   -------------------------------------------------------------------------- */
+
+/* Quiet section surfaces group related reading; they are not action cards.
+   Opt-in only: no homepage selector, hover lift or extra clipping context. */
+.md-typeset .reading-panel,
+.md-typeset .reading-panel-heading,
+.md-typeset .reading-panel-heading + .tabbed-set {
+  min-width: 0;
+  margin-block: 1.5rem 2rem;
+  padding: clamp(0.65rem, 2vw, 1.25rem);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  background: var(--surface-raised);
+  box-shadow: inset 0 1px 0 var(--edge-highlight);
+}
+.md-typeset .reading-panel-heading {
+  margin-bottom: 0;
+  border-bottom: 0;
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+}
+.md-typeset .reading-panel-heading + .tabbed-set {
+  margin-top: 0;
+  padding-top: 0;
+  border-top: 0;
+  border-radius: 0 0 var(--radius-lg) var(--radius-lg);
+  box-shadow: none;
+}
+.md-typeset .reading-panel > :first-child {
+  margin-top: 0;
+}
+.md-typeset .reading-panel > :last-child {
+  margin-bottom: 0;
+}
+.md-typeset .reading-panel > h2:first-child {
+  margin-bottom: 0.9rem;
+}
+.reading-panel > .comparison-source {
+  margin-bottom: 0;
+}
+
+/* Reference reading: visible recommendations, optional evidence, one filter. */
+.comparison-source {
+  margin-block: 1.25rem 2rem;
+}
+.reference-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.reference-filters button {
+  min-height: 2.2rem;
+  padding: 0.4rem 0.8rem;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-full);
+  background: var(--surface-raised);
+  color: var(--ink-1);
+  font: inherit;
+  font-size: 0.72rem;
+  cursor: pointer;
+}
+.reference-filters button:hover,
+.reference-filters button[aria-pressed="true"] {
+  background: var(--brand-tint);
+  border-color: var(--brand);
+}
+.reference-filters button[aria-pressed="true"] {
+  color: var(--brand-ink);
+  font-weight: 650;
+}
+.reference-filters button:focus-visible,
+.reference-details > summary:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 3px;
+}
+
+.md-typeset .reference-count {
+  margin-block: 0.7rem 1rem;
+  color: var(--ink-2);
+  font-size: 0.7rem;
+}
+.comparison-ready .comparison-entry {
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--hairline);
+  scroll-margin-top: 5rem;
+}
+.comparison-ready .comparison-entry:first-child {
+  border-top: 1px solid var(--hairline);
+}
+.md-typeset .comparison-ready .reference-anchor {
+  margin: 0;
+}
+.md-typeset .comparison-ready .comparison-entry > h3 {
+  margin: 0 0 0.55rem;
+  font-size: 1.02rem;
+}
+.md-typeset .reference-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.3rem 0.75rem;
+  margin: 0 0 0.45rem;
+  color: var(--ink-2);
+  font-size: 0.65rem;
+}
+.reference-position {
+  padding-inline-start: 0.65rem;
+  border-inline-start: 2px solid var(--border-interactive);
+  font-weight: 650;
+}
+.reference-position[data-position="use"] {
+  border-color: var(--brand);
+}
+.md-typeset :is(.reference-overview, .reference-tradeoff) {
+  max-width: 72ch;
+  margin: 0.55rem 0;
+}
+.md-typeset .reference-tradeoff {
+  color: var(--ink-2);
+  font-size: 0.76rem;
+}
+.md-typeset details.reference-details {
+  margin: 0.8rem 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  font-size: inherit;
+}
+.md-typeset details.reference-details > summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 2.2rem;
+  margin: 0;
+  padding: 0.35rem 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--brand-ink);
+  background: transparent;
+  font-size: 0.72rem;
+  font-weight: 600;
+  list-style: none;
+  cursor: pointer;
+}
+.md-typeset details.reference-details > summary::before {
+  display: none;
+}
+.md-typeset details.reference-details > summary::after {
+  position: static;
+  width: auto;
+  height: auto;
+  background: none;
+  mask: none;
+  content: "+";
+  transform: none;
+  font: 500 1rem var(--font-mono);
+}
+.md-typeset details.reference-details[open] > summary::after {
+  content: "−";
+}
+.reference-details > summary::-webkit-details-marker {
+  display: none;
+}
+.reference-evidence {
+  max-width: 72ch;
+  padding: 0.5rem 0 0.3rem 1rem;
+  border-inline-start: 2px solid var(--hairline);
+}
+.reference-evidence > :first-child {
+  margin-top: 0;
+}
+.reference-evidence > :last-child {
+  margin-bottom: 0;
+}
+.comparison-ready .comparison-entry[hidden] {
+  display: none !important;
+}
+
+/* Editorial records, not clickable cards. Home-page cards are unchanged. */
+.md-typeset :is(.lab-entry, .experience-entry) {
+  padding-block: 1.25rem;
+  border-bottom: 1px solid var(--hairline);
+  scroll-margin-top: 5rem;
+}
+.md-typeset :is(.lab-entry, .experience-entry):first-child {
+  border-top: 1px solid var(--hairline);
+}
+.md-typeset :is(.lab-entry, .experience-entry) > h3 {
+  margin: 0 0 0.65rem;
+  font-size: 1.05rem;
+}
+.md-typeset :is(.lab-entry, .experience-entry) > p {
+  max-width: 75ch;
+}
+.md-typeset :is(.lab-entry, .experience-entry) > :last-child {
+  margin-bottom: 0;
+}
+.md-typeset .lab-entry > h3 + p {
+  color: var(--ink-1);
+  font-size: 0.88rem;
+}
+.md-typeset .lab-entry :is(ul, ol) {
+  max-width: 75ch;
+}
+.md-typeset .service-list > ul {
+  margin-left: 0;
+  list-style: none;
+}
+.md-typeset .service-list > ul > li {
+  margin: 0;
+  padding-block: 0.85rem;
+  border-bottom: 1px solid var(--hairline);
+}
+.reading-panel-heading + .tabbed-set .lab-entry:first-child {
+  border-top: 0;
+}
+.reading-panel-heading + .tabbed-set .lab-entry:last-child,
+.reading-panel .comparison-entry:last-child,
+.reading-panel.service-list > ul > li:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+.reading-panel.service-list > ul > li:first-child {
+  padding-top: 0;
+}
+
+@media screen and (width <= 40em) {
+  /* Keep all three research states visible in one row. A long label may
+     use two lines within its tab; the native radio keyboard model stays.
+     Modern adds padding on linked anchors and a trailing strip spacer.
+     The labels already own touch padding; keep whole words at 320px. */
+  .md-typeset .reading-panel-heading + .tabbed-set .tabbed-labels::after {
+    content: none;
+  }
+
+  .md-typeset
+    .tabbed-set:has(> .tabbed-content > .tabbed-block > .lab-entry)
+    .tabbed-labels
+    > label {
+    flex: 1 1 0;
+    min-width: min-content;
+    padding: 0.65rem 0.1rem;
+    text-align: center;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+  }
+
+  .md-typeset
+    .tabbed-set:has(> .tabbed-content > .tabbed-block > .lab-entry)
+    .tabbed-labels
+    > label
+    > a {
+    padding: 0;
+    white-space: normal;
+    overflow-wrap: normal;
+    word-break: normal;
+    line-height: 1.35;
+  }
+}
+
+
+/* Radar and Blueprints review line. */
+.md-typeset .research-meta {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  margin: 0.9rem 0 1.3rem;
+}
+
+/* Public glossary page: controls host, entries and targets. */
+.glossary-page-controls:not(:empty) {
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-lg);
+  margin-block: 1rem;
+}
+/* Reserve the filled controls' height before glossary-page.js mounts them,
+   so the definitions do not shift (CLS). Without scripting there is no gap. */
+@media (scripting: enabled) {
+  .glossary-page-controls:empty {
+    margin-block: 1rem;
+    min-height: 7.66rem;
+  }
+}
+/* Measured: the filters take a second row below 328px (EN) and 373px (ES). */
+@media (scripting: enabled) and (width < 20.5em) {
+  .glossary-page-controls:empty {
+    min-height: 9.86rem;
+  }
+}
+@media (scripting: enabled) and (width < 23.3em) {
+  :lang(es) .glossary-page-controls:empty {
+    min-height: 9.86rem;
+  }
+}
+.glossary-page-controls .glossary-empty,
+.glossary-page-controls .glossary-retry {
+  margin-inline: 1.15rem;
+}
+.glossary-page-controls .glossary-count {
+  margin: 0;
+}
+.glossary-entry {
+  border-top: 1px solid var(--hairline);
+  padding-block: 0.8rem;
+  overflow-wrap: anywhere;
+}
+.glossary-entry[hidden] {
+  display: none;
+}
+.glossary-entry:has(:target) {
+  background: var(--brand-tint-weak);
+  border-inline-start: 3px solid var(--brand-ink);
+  padding-inline: 1rem;
+}
+.glossary-entry h2 {
+  scroll-margin-top: 6rem;
+}
+/* The heading is the definition; its acronym needs no tooltip cue, which the
+   theme draws as a dotted bottom border. */
+.glossary-entry h2 abbr {
+  border-bottom: 0;
+  cursor: inherit;
+}
+.glossary-entry-domain {
+  color: var(--ink-3);
+  font-size: 0.72rem;
+}
+.glossary-related a {
+  text-underline-offset: 0.15em;
+}
+
+/* --------------------------------------------------------------------------
+   9. Home — profile HUD
+   --------------------------------------------------------------------------
+   A 210px wrapper with the coin inset 25px. features/hud.js and features/status.js
+   inject the nodes and the pill; offsets derive from the tokens below.
+   -------------------------------------------------------------------------- */
+
+.profile-hud-wrapper {
+  --hud-pill-height: 1.5rem;
+  --hud-gap: 0.55rem;
+  --hud-gap-x: 0.8rem;
+  --hud-side: 5.75rem;
+
+  height: 210px;
+
+  /* Reserves flow space for the node above, the pill and node below, and
+     the side nodes, which reach ~108px past the box. */
+  margin: 3.25rem var(--hud-side) 4.75rem;
+  perspective: 800px;
+  position: relative;
+  width: 210px;
+
+  /* Own stacking context with local integers (rings 2, coin 3, nodes and
+     pill 4), kept under the sticky header (4). */
+  z-index: 1;
+}
+
+/* Coin: photo on the front, one icon disc per data node on the back. No
+   overflow, opacity or filter here — each of them flattens the faces. */
+.hud-coin {
+  height: 160px;
+  left: 25px;
+  position: absolute;
+  top: 25px;
+  transform: rotateX(0deg) rotateY(0deg);
+  transform-style: preserve-3d;
+  transition: transform var(--dur-flip) var(--ease-emphasized);
+  width: 160px;
+  z-index: 3;
+}
+
+/* `data-hud-flip` names the node that started the roll, so the coin rolls
+   toward it. Every state keeps the same function list, so a retargeted
+   transition interpolates per axis. */
+.profile-hud-wrapper[data-hud-flip="top"] .hud-coin {
+  transform: rotateX(180deg) rotateY(0deg);
+}
+
+.profile-hud-wrapper[data-hud-flip="right"] .hud-coin {
+  transform: rotateX(0deg) rotateY(180deg);
+}
+
+.profile-hud-wrapper[data-hud-flip="bottom"] .hud-coin {
+  transform: rotateX(-180deg) rotateY(0deg);
+}
+
+.profile-hud-wrapper[data-hud-flip="left"] .hud-coin {
+  transform: rotateX(0deg) rotateY(-180deg);
+}
+
+/* Front face, scoped to `.md-typeset` to outrank the theme's
+   `.md-typeset img { height: auto }`. */
+.md-typeset .profile-hud-image {
+  backface-visibility: hidden;
+  border: 2px solid var(--brand-tint-strong);
+  border-radius: 50%;
+  box-shadow:
+    0 0 24px -2px rgb(var(--brand-rgb) / 25%),
+    inset 0 1px 0 var(--edge-highlight);
+  float: none;
+  height: 160px;
+  inset: 0;
+  margin: 0;
+  object-fit: cover;
+  position: absolute;
+  transition: box-shadow var(--dur-settled) var(--ease-emphasized);
+  width: 160px;
+}
+
+.profile-hud-wrapper:hover .profile-hud-image {
+  box-shadow: 0 0 30px 2px rgb(var(--brand-rgb) / 35%);
+}
+
+/* One back disc for every node, pre-rotated on `data-hud-axis` and showing
+   `data-hud-face`, so no second face can show through. */
+.hud-coin__back {
+  backface-visibility: hidden;
+  background: radial-gradient(
+    circle at 50% 30%,
+    rgb(var(--brand-rgb) / 24%),
+    var(--surface-raised) 72%
+  );
+  border: 2px solid var(--brand-tint-strong);
+  border-radius: 50%;
+  box-shadow:
+    0 0 24px -2px rgb(var(--brand-rgb) / 25%),
+    inset 0 0 0 6px var(--surface-raised),
+    inset 0 0 0 7px rgb(var(--brand-rgb) / 35%);
+  color: var(--brand);
+  inset: 0;
+  position: absolute;
+  transform: rotateX(180deg);
+}
+
+.profile-hud-wrapper[data-hud-axis="y"] .hud-coin__back {
+  transform: rotateY(180deg);
+}
+
+.hud-glyph {
+  align-items: center;
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  opacity: 0;
+  position: absolute;
+  transition: opacity var(--dur-instant) var(--ease-standard);
+}
+
+.profile-hud-wrapper[data-hud-face="top"] .hud-glyph--top,
+.profile-hud-wrapper[data-hud-face="right"] .hud-glyph--right,
+.profile-hud-wrapper[data-hud-face="bottom"] .hud-glyph--bottom,
+.profile-hud-wrapper[data-hud-face="left"] .hud-glyph--left {
+  opacity: 1;
+}
+
+.md-typeset .hud-coin__back .twemoji {
+  --md-icon-size: 3.2rem;
+}
+
+.hud-ring-outer {
+  animation: rotate-hud 28s linear infinite;
+  border: 1.5px solid rgb(var(--brand-rgb) / 25%);
+  border-top-color: rgb(var(--brand-rgb) / 85%);
+  border-radius: 50%;
+  box-shadow:
+    0 0 20px -2px rgb(var(--brand-rgb) / 20%),
+    inset 0 0 16px -2px rgb(var(--brand-rgb) / 10%);
+  height: 210px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  width: 210px;
+  z-index: 2;
+}
+
+.hud-ring-outer::before {
+  background: rgb(var(--brand-rgb));
+  border-radius: 50%;
+  box-shadow: 0 0 10px 2px rgb(var(--brand-rgb) / 80%);
+  content: "";
+  height: 6px;
+  left: 50%;
+  position: absolute;
+  top: -3px;
+  transform: translateX(-50%);
+  width: 6px;
+}
+
+.hud-ring-inner {
+  animation: rotate-hud-reverse 18s linear infinite;
+  border: 1px dashed rgb(var(--brand-rgb) / 45%);
+  border-radius: 50%;
+  height: 190px;
+  left: 10px;
+  pointer-events: none;
+  position: absolute;
+  top: 10px;
+  width: 190px;
+  z-index: 2;
+}
+
+@keyframes rotate-hud {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes rotate-hud-reverse {
+  from {
+    transform: rotate(360deg);
+  }
+
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+/* Unboxed data labels. Centering rides the `translate` property so
+   `transform` stays free for the entrance and the hover lift; the entrance
+   fills `backwards`, not `forwards`, or it would pin `transform` for good
+   and the lift could never apply. */
+.hud-data-node {
+  animation: hud-node-in var(--dur-settled) var(--ease-emphasized) backwards;
+  background-color: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  box-shadow: none;
+  color: var(--ink-1);
+  cursor: default;
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+  letter-spacing: 0.02em;
+  line-height: 1.3;
+  padding: 0.25rem 0.55rem;
+  position: absolute;
+  transition:
+    background-color var(--dur-quick) var(--ease-standard),
+    text-shadow var(--dur-quick) var(--ease-standard),
+    transform var(--dur-quick) var(--ease-emphasized);
+  white-space: nowrap;
+  z-index: 4;
+}
+
+/* Hover and the tap-selected state (touch has no hover) read the same. */
+.hud-data-node:hover,
+.profile-hud-wrapper[data-hud-flip][data-hud-face="top"] .hud-data-node--top,
+.profile-hud-wrapper[data-hud-flip][data-hud-face="right"]
+  .hud-data-node--right,
+.profile-hud-wrapper[data-hud-flip][data-hud-face="bottom"]
+  .hud-data-node--bottom,
+.profile-hud-wrapper[data-hud-flip][data-hud-face="left"] .hud-data-node--left {
+  background-color: var(--brand-tint);
+  text-shadow: 0 0 16px rgb(var(--brand-rgb) / 20%);
+  transform: translateY(-2px);
+}
+
+.hud-data-node strong {
+  color: var(--brand-ink);
+  display: block;
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.hud-data-node--top {
+  --hud-in-y: -8px;
+
+  animation-delay: 0.15s;
+  bottom: calc(100% + var(--hud-gap));
+  left: 50%;
+  text-align: center;
+  translate: -50% 0;
+}
+
+.hud-data-node--right {
+  --hud-in-x: 8px;
+
+  animation-delay: 0.55s;
+  left: calc(100% + var(--hud-gap-x));
+  top: 50%;
+  translate: 0 -50%;
+}
+
+.hud-data-node--bottom {
+  --hud-in-y: 8px;
+
+  animation-delay: 0.35s;
+  left: 50%;
+  text-align: center;
+
+  /* Clears the pill, which straddles the wrapper's edge by half its height. */
+  top: calc(100% + var(--hud-pill-height) / 2 + var(--hud-gap));
+  translate: -50% 0;
+}
+
+.hud-data-node--left {
+  --hud-in-x: -8px;
+
+  animation-delay: 0.75s;
+  right: calc(100% + var(--hud-gap-x));
+  text-align: right;
+  top: 50%;
+  translate: 0 -50%;
+}
+
+@keyframes hud-node-in {
+  from {
+    opacity: 0;
+    transform: translate(var(--hud-in-x, 0), var(--hud-in-y, 0));
+  }
+}
+
+/* Availability pill: only the dot takes `--status-color`, and the label says
+   the same in words (WCAG 1.4.1). A fixed height lets the bottom node clear it. */
+.hud-status-pill {
+  --hud-in-y: 8px;
+
+  align-items: center;
+  animation: hud-node-in var(--dur-settled) var(--ease-emphasized) 0.25s
+    backwards;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background-color: var(--surface-overlay);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-full);
+  bottom: calc(var(--hud-pill-height) / -2);
+  box-shadow: var(--shadow-raised);
+  box-sizing: border-box;
+  color: var(--ink-2);
+  cursor: default;
+  display: flex;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  gap: 0.55em;
+  height: var(--hud-pill-height);
+  left: 50%;
+  letter-spacing: 0.02em;
+  line-height: 1;
+  padding: 0 0.95em;
+  position: absolute;
+  transition:
+    border-color var(--dur-quick) var(--ease-standard),
+    box-shadow var(--dur-quick) var(--ease-standard);
+  translate: -50% 0;
+  white-space: nowrap;
+  z-index: 4;
+}
+
+.hud-status-pill:hover {
+  border-color: var(--brand);
+  box-shadow: var(--shadow-lifted);
+}
+
+/* State dot — the single carrier of `--status-color`, with a radar ping. */
+.hud-status-dot {
+  background-color: var(--status-color, var(--status-available));
+  border-radius: 50%;
+  box-shadow: 0 0 8px var(--status-color, var(--status-available));
+  flex: none;
+  height: 7px;
+  position: relative;
+  transition: background-color var(--dur-quick) var(--ease-standard);
+  width: 7px;
+}
+
+.hud-status-dot::before {
+  animation: status-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  background-color: var(--status-color, var(--status-available));
+  border-radius: 50%;
+  content: "";
+  inset: -2px;
+  opacity: 0.75;
+  pointer-events: none;
+  position: absolute;
+  z-index: -1;
+}
+
+@keyframes status-ping {
+  0% {
+    opacity: 0.8;
+    transform: scale(1);
+  }
+
+  75%,
+  100% {
+    opacity: 0;
+    transform: scale(2.6);
+  }
+}
+
+/* Too narrow for the side nodes and their reserved margins: dropped. */
+@media screen and (width < 30em) {
+  .profile-hud-wrapper {
+    --hud-side: 0;
+  }
+
+  .hud-data-node--left,
+  .hud-data-node--right {
+    display: none;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   10. Home — landing blocks
+   --------------------------------------------------------------------------
+   The home hides navigation, table of contents and footer links, so these
+   blocks own the full column.
+   -------------------------------------------------------------------------- */
+
+.md-typeset .landing-hero {
+  column-gap: 2.5rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  margin-bottom: 1.5rem;
+  place-items: center;
+}
+
+.md-typeset .landing-hero__copy {
+  justify-self: stretch;
+  min-width: 0;
+}
+
+/* Copy leads on every width; the HUD takes its own column once both fit. */
+@media screen and (width >= 64em) {
+  .md-typeset .landing-hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}
+
+/* Greeting and role on secondary ink, like the About kicker. */
+.md-typeset .landing-eyebrow {
+  color: var(--ink-3);
+  font-size: 0.92rem;
+  letter-spacing: -0.005em;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.md-typeset .landing-hero h1 + p {
+  color: var(--ink-2);
+  font-size: 0.95rem;
+  line-height: 1.6;
+  max-width: 36rem;
+}
+
+/* Fixed column counts, never auto-fit: the four facts read 1 → 2 → 4, so no
+   width leaves a lone orphan. */
+.md-typeset .landing-proof > ul {
+  display: grid;
+  gap: 1rem 1.5rem;
+  grid-template-columns: minmax(0, 1fr);
+  list-style: none;
+  margin: 0.5rem 0 1rem;
+  padding: 0;
+}
+
+@media screen and (width >= 30em) {
+  .md-typeset .landing-proof > ul {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media screen and (width >= 64em) {
+  .md-typeset .landing-proof > ul {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+.md-typeset .landing-proof > ul > li {
+  border-top: 1px solid var(--hairline-strong);
+  color: var(--ink-3);
+  font-size: 0.78rem;
+  line-height: 1.55;
+  margin: 0;
+  padding-top: 0.7rem;
+}
+
+.md-typeset .landing-proof > ul > li > strong:first-child {
+  color: var(--ink-1);
+  display: block;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: -0.01em;
+  margin-bottom: 0.3rem;
+  text-wrap: balance;
+}
+
+/* --------------------------------------------------------------------------
+   11. Ambient background — particle canvas
+   --------------------------------------------------------------------------
+   `width: 100%`, not `100vw`, which includes a classic scrollbar gutter.
+   Site-wide by owner decision (docs/design.md).
+   -------------------------------------------------------------------------- */
+
+#neural-background {
+  display: block;
+  height: 100%;
+  left: 0;
+  opacity: var(--ambient-opacity);
+  pointer-events: none;
+  position: fixed;
+  top: 0;
+  transition: opacity var(--dur-settled) var(--ease-standard);
+  width: 100%;
+  z-index: var(--z-ambient);
+}
+
+/* --------------------------------------------------------------------------
+   12. Workbench — dock, native dialog, local tools
+   -------------------------------------------------------------------------- */
+
+body.console-open {
+  overflow: hidden;
+}
+
+/* The launcher has no action while its modal owns focus. Hide it explicitly
+   so it cannot compete visually or appear as an overlapping touch target. */
+body.console-open .landerox-dock-launcher {
+  visibility: hidden;
+}
+
+/* The tools own their natural-height slot before the footer. Sticky keeps
+   them in reach while reading and stops them at that slot, without a blank
+   strip below the footer or covering the final article/footer links. */
+.landerox-dock-host {
+  align-self: flex-end;
+  bottom: 0;
+  flex-shrink: 0;
+  max-width: 100%;
+  padding-right: max(1rem, env(safe-area-inset-right));
+  padding-bottom: max(1rem, env(safe-area-inset-bottom));
+  position: sticky;
+  z-index: 4;
+}
+
+/* A very short viewport cannot fit the header, tools and a wrapped footer.
+   Keep the tools in their normal slot, reachable by scrolling or keyboard. */
+@media screen and (height <= 24em) {
+  .landerox-dock-host {
+    position: relative;
+  }
+}
+
+/* Below 40em the centered back-to-top button would sit on the dock. */
+@media screen and (width < 40em) {
+  .md-top {
+    bottom: 5.25rem;
+  }
+}
+
+.landerox-dock-launcher {
+  align-items: center;
+  background: var(--surface-raised);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-full);
+  box-shadow: var(--shadow-lifted);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.15rem;
+  justify-content: center;
+  padding: 0.2rem;
+  position: relative;
+}
+
+.dock-pill-btn {
+  align-items: center;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--ink-2);
+  cursor: pointer;
+  display: flex;
+  font-family: var(--md-text-font-family);
+  font-size: 0.72rem;
+  font-weight: 600;
+  gap: 0.4rem;
+  min-height: var(--target-min);
+  padding: 0.35rem 0.7rem;
+  transition:
+    background-color var(--dur-instant),
+    color var(--dur-instant);
+}
+
+.dock-pill-btn--glossary {
+  background: var(--brand-tint);
+  color: var(--brand-ink);
+}
+.dock-pill-btn:hover {
+  background: var(--brand-tint-strong);
+  color: var(--brand-ink);
+}
+.dock-pill-icon {
+  font-family: var(--font-mono);
+  font-weight: 700;
+}
+
+.dock-notice:not(:empty) {
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-md);
+  bottom: calc(100% + 0.5rem);
+  color: var(--ink-2);
+  font-size: 0.72rem;
+  max-width: min(16rem, 85vw);
+  padding: 0.6rem;
+  position: absolute;
+  right: 0;
+  width: max-content;
+}
+
+.console-window {
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lifted);
+  color: var(--ink-2);
+  font-family: var(--md-text-font-family);
+  font-size: 0.8rem;
+  height: min(740px, calc(100dvh - 2rem));
+  inset: 0;
+  line-height: 1.55;
+  margin: auto;
+  max-height: calc(100dvh - 2rem);
+  max-width: calc(100vw - 2rem);
+  overflow: hidden;
+  padding: 0;
+  width: 800px;
+}
+
+.console-window[open] {
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.console-window::backdrop {
+  background: var(--scrim);
+}
+
+/* Hidden panels must beat the author's flex rule, not just the UA rule. */
+.console-window [hidden] {
+  display: none !important;
+}
+.console-window p {
+  margin: 0;
+}
+.console-window button {
+  font-family: inherit;
+}
+.console-window :is(input, textarea) {
+  font-size: max(16px, 0.8rem);
+}
+
+.console-header {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  justify-content: space-between;
+  padding: 1.1rem 1.15rem;
+}
+
+.console-identity {
+  align-items: center;
+  display: flex;
+  gap: 0.65rem;
+  min-width: 0;
+}
+.console-identity strong {
+  color: var(--ink-1);
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+.console-identity p {
+  color: var(--ink-3);
+  font-size: 0.66rem;
+  margin-top: 0.1rem;
+  max-width: 48ch;
+}
+
+.console-toolbar {
+  align-items: center;
+  border-block: 1px solid var(--hairline);
+  display: flex;
+  gap: 0.5rem;
+  justify-content: space-between;
+  padding: 0.2rem 1.15rem;
+}
+
+.console-nav-tabs {
+  display: flex;
+  gap: 0.4rem;
+}
+.console-tab-btn {
+  border-bottom: 2px solid transparent;
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 0.72rem;
+  font-weight: 600;
+  min-height: var(--target-min);
+  padding: 0.45rem 0.6rem;
+}
+.console-tab-btn[aria-selected="true"] {
+  border-bottom-color: var(--brand);
+  color: var(--brand-ink);
+}
+
+.console-icon-button,
+.console-text-button {
+  align-items: center;
+  border-radius: var(--radius-sm);
+  color: var(--ink-3);
+  cursor: pointer;
+  display: inline-flex;
+  flex-shrink: 0;
+  justify-content: center;
+  min-height: var(--target-min);
+  min-width: var(--target-min);
+}
+.console-icon-button {
+  font-size: 1.3rem;
+}
+.console-text-button {
+  font-size: 0.64rem;
+  padding: 0.25rem 0.4rem;
+}
+.console-window button:hover {
+  background-color: var(--brand-tint);
+  color: var(--brand-ink);
+}
+.console-window button:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
+.console-tab-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+}
+
+.console-sr-only {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+.console-eyebrow {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  letter-spacing: 0.04em;
+}
+.console-source {
+  color: var(--brand-ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.console-source:hover {
+  color: var(--brand-hover);
+}
+.sql-presets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+.tool-chip,
+.tool-button {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-2);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.7rem;
+  min-height: var(--target-min);
+  padding: 0.35rem 0.65rem;
+}
+.tool-chip:hover,
+.tool-button:hover {
+  background: var(--brand-tint);
+  color: var(--brand-ink);
+}
+.tool-button:disabled {
+  cursor: default;
+  opacity: 0.55;
+}
+/* Scenario link: button, status, and a fallback field when copying fails. */
+.tool-share {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.75rem;
+  margin-top: 0.75rem;
+}
+.tool-share-status {
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  margin: 0;
+}
+.tool-share-field {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-2);
+  flex: 1 1 100%;
+  font: inherit;
+  /* At least 16px, or iOS zooms the page when select() focuses it. */
+  font-size: max(16px, 0.7rem);
+  min-height: var(--target-min);
+  padding: 0.35rem 0.65rem;
+}
+.glossary-search,
+.calc-select,
+.sql-textarea {
+  background: var(--surface-raised);
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-1);
+  font-family: var(--md-text-font-family);
+  font-size: max(16px, 0.75rem);
+  min-width: 0;
+  padding: 0.55rem 0.65rem;
+}
+.glossary-search {
+  flex: 1;
+  width: 100%;
+}
+.glossary-search::placeholder {
+  color: var(--ink-3);
+}
+.glossary-search-bar {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.85rem 1.15rem 0.5rem;
+}
+.glossary-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  padding-inline: 1.15rem;
+}
+.glossary-filter {
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  color: var(--ink-3);
+  cursor: pointer;
+  font-size: 0.65rem;
+  min-height: var(--target-min);
+  padding: 0.25rem 0.7rem;
+}
+.glossary-filter[aria-pressed="true"] {
+  background: var(--brand-tint);
+  border-color: var(--brand-ink);
+  color: var(--brand-ink);
+  font-weight: 650;
+}
+.glossary-count {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  padding: 0.4rem 1.15rem;
+}
+.glossary-meta {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+.glossary-browse {
+  color: var(--brand-ink);
+  font-size: 0.65rem;
+  padding: 0.4rem 1.15rem;
+  text-decoration: underline;
+}
+.glossary-match-note {
+  color: var(--ink-3);
+  font-size: 0.62rem;
+  grid-column: 1 / -1;
+}
+.glossary-entry-links {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+.glossary-body a {
+  color: var(--brand-ink);
+  overflow-wrap: anywhere;
+  text-decoration: underline;
+}
+.glossary-results {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 0 1.15rem 0.6rem;
+  scrollbar-gutter: stable;
+}
+.glossary-card {
+  border-bottom: 1px solid var(--hairline);
+}
+.glossary-card > summary {
+  align-items: baseline;
+  cursor: pointer;
+  display: grid;
+  gap: 0.3rem 0.7rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+  list-style: none;
+  padding: 0.85rem 0;
+}
+.glossary-card > summary::-webkit-details-marker {
+  display: none;
+}
+.glossary-term {
+  color: var(--ink-1);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+.glossary-term::before {
+  color: var(--brand-ink);
+  content: "+";
+  display: inline-block;
+  width: 1.15em;
+}
+.glossary-card[open] .glossary-term::before {
+  content: "−";
+}
+.glossary-domain {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.58rem;
+}
+.glossary-definition {
+  color: var(--ink-2);
+  font-size: 0.71rem;
+  grid-column: 1 / -1;
+  line-height: 1.65;
+}
+.glossary-body {
+  background: var(--brand-tint-weak);
+  border-left: 2px solid var(--brand-ink);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  font-size: 0.7rem;
+  margin-bottom: 0.85rem;
+  padding: 0.65rem 0.8rem;
+}
+.glossary-body p + p {
+  margin-top: 0.5rem;
+}
+.glossary-body .console-source {
+  display: inline-block;
+  margin-top: 0.7rem;
+}
+.glossary-empty {
+  padding-block: 1rem;
+}
+.console-primary-button {
+  background: var(--control-fill);
+  border: 1px solid var(--control-fill);
+  border-radius: var(--radius-md);
+  color: var(--brand-contrast);
+  cursor: pointer;
+  font-family: var(--md-text-font-family);
+  font-size: 0.72rem;
+  font-weight: 600;
+  min-height: var(--target-min);
+  min-width: var(--target-min);
+  padding: 0.4rem 0.8rem;
+}
+.console-window .console-primary-button:hover,
+.console-primary-button:hover {
+  background: var(--control-hover);
+  color: var(--brand-contrast);
+}
+
+.term-screen {
+  background: var(--surface-sunken);
+  color: var(--ink-2);
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+  padding: 1.15rem;
+  scrollbar-gutter: stable;
+}
+.term-line {
+  margin-bottom: 0.75rem;
+  overflow-wrap: anywhere;
+  white-space: pre-wrap;
+}
+.term-line--cmd {
+  border-top: 1px solid var(--hairline);
+  color: var(--ink-1);
+  font-weight: 700;
+  padding-top: 0.75rem;
+}
+.term-line--accent {
+  color: var(--brand-ink);
+}
+.term-line--dim {
+  color: var(--ink-3);
+}
+.term-line--error {
+  color: var(--state-warn-ink);
+}
+.term-line--structured {
+  white-space: normal;
+}
+/* A command can hand off to a tool, e.g. nines → SLO & error budget. */
+.term-line a {
+  color: var(--brand-ink);
+  text-decoration: underline;
+  text-underline-offset: 0.15em;
+}
+.term-line a:hover {
+  color: var(--brand-hover);
+}
+.term-command-list {
+  display: grid;
+  gap: 0.65rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.term-help-summary {
+  margin: 0;
+}
+.term-help-summary > div {
+  align-items: baseline;
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: 5rem minmax(0, 1fr);
+  padding-block: 0.2rem;
+}
+.term-help-summary dd {
+  font-family: var(--md-text-font-family);
+  font-size: 0.68rem;
+  margin: 0;
+}
+.term-help-link {
+  color: var(--brand-ink);
+  cursor: pointer;
+  font: inherit;
+  min-height: var(--target-min);
+  text-align: left;
+  text-decoration: underline;
+}
+.term-command {
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+.term-command:only-child {
+  grid-column: 1 / -1;
+}
+.term-command p {
+  font-family: var(--md-text-font-family);
+  font-size: 0.68rem;
+  line-height: 1.6;
+  margin: 0.4rem 0;
+}
+.term-syntax {
+  color: var(--brand-ink);
+  font-weight: 600;
+}
+.term-example {
+  align-items: baseline;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  min-height: var(--target-min);
+  padding-top: 0.45rem;
+  text-align: left;
+  width: 100%;
+}
+.term-example span {
+  color: var(--ink-3);
+  font-family: var(--md-text-font-family);
+  font-size: 0.62rem;
+}
+.term-example code {
+  color: var(--brand-ink);
+  font-size: 0.65rem;
+  overflow-wrap: anywhere;
+}
+.term-example:hover code {
+  text-decoration: underline;
+  text-underline-offset: 0.18em;
+}
+.term-values {
+  margin: 0;
+}
+.term-values > div {
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(6rem, 0.65fr) minmax(0, 1fr);
+  padding: 0.4rem 0;
+}
+.term-values dt {
+  color: var(--ink-3);
+  font-family: var(--md-text-font-family);
+}
+.term-values dd {
+  margin: 0;
+}
+.term-input-line {
+  align-items: center;
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-shrink: 0;
+  gap: 0.5rem;
+  padding: 0.5rem 1.15rem;
+}
+.term-prompt {
+  color: var(--brand-ink);
+  font-family: var(--font-mono);
+  font-size: 0.65rem;
+  white-space: nowrap;
+}
+.term-input-wrap {
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: max(16px, 0.8rem);
+  line-height: 1.5;
+  min-width: 0;
+  position: relative;
+}
+.term-ghost {
+  align-items: center;
+  color: var(--ink-3);
+  display: flex;
+  inset: 0;
+  overflow: hidden;
+  padding: 0.3rem;
+  pointer-events: none;
+  position: absolute;
+  white-space: pre;
+}
+.term-ghost-text {
+  flex: none;
+}
+.term-ghost-prefix {
+  visibility: hidden;
+}
+.term-input {
+  background: transparent;
+  border: 0;
+  color: var(--ink-1);
+  flex: 1;
+  font-family: var(--font-mono);
+  font-size: inherit;
+  line-height: inherit;
+  min-height: var(--target-min);
+  min-width: 0;
+  padding: 0.3rem;
+  position: relative;
+  width: 100%;
+}
+.term-hint {
+  color: var(--ink-3);
+  flex-shrink: 0;
+  font-size: 0.6rem;
+  padding: 0.35rem 1.15rem;
+}
+
+.interactive-lab-embed {
+  background: var(--surface-raised);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-lg);
+  margin: 1rem 0;
+  min-width: 0;
+  overflow: hidden;
+  padding: clamp(0.8rem, 2.5vw, 1.25rem);
+  scroll-margin-top: 6rem;
+}
+.lab-widget-header {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 1rem;
+  justify-content: space-between;
+  margin-bottom: 0.5rem;
+}
+.md-typeset .lab-widget-title {
+  font-size: 1.1em;
+  margin: 0;
+}
+.lab-widget-badge {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  white-space: nowrap;
+}
+.md-typeset .lab-widget-note {
+  color: var(--ink-3);
+  font-size: 0.72rem;
+  line-height: 1.6;
+  margin: 0.5rem 0 0.8rem;
+}
+.calc-grid {
+  align-items: start;
+  display: grid;
+  gap: 1.2rem;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+}
+.calc-inputs {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  min-width: 0;
+}
+.calc-row {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  min-width: 0;
+}
+/* Wrapped labels must not push their control below its neighbor's. */
+.calc-inputs > .calc-row {
+  justify-content: flex-end;
+}
+.calc-wide {
+  grid-column: 1 / -1;
+}
+.memory-comparison,
+.memory-explanation {
+  margin-top: 1.2rem;
+  min-width: 0;
+}
+/* Worked explanation of the estimate: one line per formula term. */
+.md-typeset ul.memory-explanation-list {
+  display: grid;
+  gap: 0.45rem;
+  list-style: none;
+  margin: 0.4rem 0 0;
+  padding: 0;
+}
+.md-typeset ul.memory-explanation-list > li {
+  border-left: 2px solid var(--hairline-strong);
+  color: var(--ink-2);
+  font-size: 0.72rem;
+  line-height: 1.55;
+  margin: 0;
+  padding-left: 0.7rem;
+}
+.memory-table-scroll {
+  max-width: 100%;
+  overflow-x: auto;
+}
+.md-typeset .memory-table-scroll table {
+  display: table;
+  font-size: 0.68rem;
+  width: 100%;
+}
+.memory-table-scroll td {
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.memory-baseline-settings {
+  display: grid;
+  gap: 0.35rem 1rem;
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+.md-typeset .memory-baseline-settings dd {
+  margin: 0;
+}
+.tool-question {
+  color: var(--ink-1);
+  font-weight: 500;
+}
+/* The six tools stay discoverable on narrow screens: native radio/label
+   behavior stays, and the Modern indicator is hidden because it cannot span
+   grid rows, so the checked label carries its own tint and border. */
+@media screen and (width <= 40em) {
+  .calc-inputs > .calc-row:has(select) {
+    grid-column: 1 / -1;
+  }
+  .md-typeset .tabbed-set:has(#interactive-slo-budget) > .tabbed-labels {
+    display: grid;
+    gap: 0.25rem;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    overflow: visible;
+  }
+  .md-typeset .tabbed-set:has(#interactive-slo-budget) > .tabbed-labels::before,
+  .md-typeset .tabbed-set:has(#interactive-slo-budget) > .tabbed-labels::after,
+  .md-typeset .tabbed-set:has(#interactive-slo-budget) > .tabbed-control {
+    display: none;
+  }
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > .tabbed-labels
+    > label {
+    align-content: center;
+    border: 1px solid var(--hairline);
+    border-radius: var(--radius-sm);
+    min-height: var(--target-min);
+    padding: 0.5rem;
+    text-align: center;
+    white-space: normal;
+  }
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > .tabbed-labels
+    > label
+    a {
+    padding: 0;
+    white-space: normal;
+  }
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > input:nth-child(1):checked
+    ~ .tabbed-labels
+    > label:nth-child(1),
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > input:nth-child(2):checked
+    ~ .tabbed-labels
+    > label:nth-child(2),
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > input:nth-child(3):checked
+    ~ .tabbed-labels
+    > label:nth-child(3),
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > input:nth-child(4):checked
+    ~ .tabbed-labels
+    > label:nth-child(4),
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > input:nth-child(5):checked
+    ~ .tabbed-labels
+    > label:nth-child(5),
+  .md-typeset
+    .tabbed-set:has(#interactive-slo-budget)
+    > input:nth-child(6):checked
+    ~ .tabbed-labels
+    > label:nth-child(6) {
+    background: var(--brand-tint);
+    border-color: var(--brand-ink);
+    color: var(--brand-ink);
+    /* Invisible normally; forced colors paint it, marking the selection. */
+    outline: 2px solid transparent;
+    outline-offset: -4px;
+  }
+}
+.calc-label {
+  color: var(--ink-2);
+  display: block;
+  font-size: 0.66rem;
+  font-weight: 600;
+  line-height: 1.5;
+}
+.calc-select {
+  min-height: var(--target-min);
+  width: 100%;
+}
+.calc-select[aria-invalid="true"] {
+  border-color: var(--state-warn-ink);
+}
+.calc-results {
+  background: var(--surface-sunken);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+}
+.calc-stat-metric {
+  align-items: baseline;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  justify-content: space-between;
+  margin-top: 0.75rem;
+}
+.calc-stat-label {
+  color: var(--ink-3);
+  font-size: 0.66rem;
+}
+.calc-stat-value {
+  color: var(--ink-1);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-variant-numeric: tabular-nums;
+}
+.calc-stat-metric--total {
+  border-bottom: 1px solid var(--hairline-strong);
+  flex-direction: column;
+  margin-bottom: 1rem;
+  padding-bottom: 0.8rem;
+}
+.calc-stat-metric--total .calc-stat-value {
+  font-size: clamp(1.2rem, 3vw, 1.6rem);
+  font-weight: 700;
+}
+
+.md-typeset details.lab-widget-details {
+  background: transparent;
+  border: 0;
+  border-top: 1px solid var(--hairline);
+  border-radius: 0;
+  box-shadow: none;
+  font-size: 0.7rem;
+  margin: 1rem 0 0;
+}
+.md-typeset details.lab-widget-details > summary {
+  background: transparent;
+  color: var(--ink-2);
+  font-size: 0.7rem;
+  min-height: var(--target-min);
+  padding: 0.55rem 1.5rem 0.55rem 0;
+}
+.md-typeset details.lab-widget-details > summary::before {
+  display: none;
+}
+.md-typeset details.lab-widget-details code {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.sql-presets {
+  margin-bottom: 0.75rem;
+}
+.sql-textarea {
+  display: block;
+  font-family: var(--font-mono);
+  line-height: 1.6;
+  margin-top: 0.3rem;
+  resize: vertical;
+  width: 100%;
+}
+.sql-run-bar {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+  margin: 0.65rem 0;
+}
+.sql-status {
+  color: var(--ink-3);
+  flex: 1;
+  font-size: 0.68rem;
+  min-width: 8rem;
+}
+.sql-status[data-state="error"] {
+  background: rgb(var(--state-warn-rgb) / 8%);
+  border-left: 3px solid var(--state-warn-ink);
+  color: var(--state-warn-ink);
+  padding: 0.65rem;
+}
+.sql-status[data-state="stale"] {
+  border-left: 3px solid var(--border-interactive);
+  padding-left: 0.65rem;
+}
+.sql-field-type {
+  color: var(--ink-3);
+  display: block;
+  font-size: 0.6rem;
+  margin-bottom: 0.3rem;
+}
+.md-typeset .tool-section-title {
+  font-size: 0.72rem;
+  margin: 1.1rem 0 0.55rem;
+}
+.md-typeset .tool-boundary {
+  background: var(--surface-sunken);
+  border-left: 2px solid var(--border-interactive);
+  color: var(--ink-3);
+  font-size: 0.66rem;
+  line-height: 1.7;
+  padding: 0.7rem;
+}
+.sql-results-wrapper {
+  max-width: 100%;
+  overflow-x: auto;
+  overscroll-behavior-inline: contain;
+}
+.sql-results-table {
+  border-collapse: collapse;
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  text-align: left;
+  width: 100%;
+}
+.sql-results-table caption {
+  color: var(--ink-3);
+  font-family: var(--md-text-font-family);
+  font-size: 0.62rem;
+  padding: 0.5rem 0;
+  text-align: left;
+}
+.sql-results-table th {
+  background: var(--surface-sunken);
+  font-weight: 600;
+}
+.sql-results-table th,
+.sql-results-table td {
+  border-bottom: 1px solid var(--hairline);
+  padding: 0.5rem;
+  white-space: nowrap;
+}
+.sql-results-table td {
+  font-variant-numeric: tabular-nums;
+}
+.sql-results-table .sql-number {
+  text-align: right;
+}
+.sql-reference-table {
+  font-family: var(--md-text-font-family);
+  min-width: 30rem;
+}
+.sql-reference-table th,
+.sql-reference-table td {
+  font-size: 0.66rem;
+  line-height: 1.65;
+  vertical-align: top;
+  white-space: normal;
+}
+.sql-reference-table th[scope="row"] {
+  background: transparent;
+  width: 25%;
+}
+.sql-guide .sql-reference-table th[scope="row"] {
+  width: 22%;
+}
+.sql-guide .sql-reference-table td:nth-child(2) {
+  width: 38%;
+}
+.md-typeset .sql-reference-table pre {
+  background: transparent;
+  box-shadow: none;
+  margin: 0;
+  padding: 0;
+}
+.md-typeset .sql-reference-table pre code {
+  background: transparent;
+  font-size: 0.62rem;
+  line-height: 1.65;
+  overflow-wrap: normal;
+  padding: 0;
+  white-space: pre-wrap;
+}
+
+@media screen and (width <= 42em) {
+  .calc-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .console-header {
+    padding: 0.75rem;
+  }
+  .console-toolbar {
+    padding-inline: 0.6rem;
+  }
+  .console-identity p {
+    display: none;
+  }
+  .console-text-button {
+    max-width: 6rem;
+  }
+  .term-screen {
+    padding: 0.75rem;
+  }
+  .term-input-line {
+    padding-inline: 0.65rem;
+  }
+  .term-prompt {
+    font-size: 0.6rem;
+  }
+}
+
+@media screen and (width <= 30em) {
+  .console-window {
+    border-radius: var(--radius-lg);
+    height: calc(100dvh - 1rem);
+    max-height: calc(100dvh - 1rem);
+    max-width: calc(100vw - 1rem);
+  }
+  .landerox-dock-host {
+    padding-right: max(0.6rem, env(safe-area-inset-right));
+    padding-bottom: max(0.6rem, env(safe-area-inset-bottom));
+  }
+  .console-identity strong {
+    font-size: 0.95rem;
+  }
+  .console-tab-btn {
+    font-size: 0.66rem;
+    padding-inline: 0.4rem;
+  }
+  .calc-inputs {
+    gap: 0.65rem;
+  }
+}
+
+/* A landscape window or an open mobile keyboard must leave room for the
+   command controls. Only the log shrinks; buttons remain usable. */
+@media screen and (height <= 30em) {
+  .console-header {
+    padding: 0.3rem 0.75rem;
+  }
+  .console-identity strong {
+    font-size: 0.85rem;
+  }
+  .console-identity p {
+    display: none;
+  }
+  .console-toolbar {
+    padding-block: 0;
+  }
+  .term-input-line {
+    padding-block: 0.2rem;
+  }
+  .term-screen {
+    padding-block: 0.5rem;
+  }
+  .term-hint {
+    padding-block: 0.2rem;
+  }
+}
+
+
+/* Failure Lab uses the existing brand and warning tokens. State is also text. */
+.md-typeset ol.tool-steps {
+  display: grid;
+  gap: 0.75rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  list-style: none;
+  margin: 1rem 0;
+  padding: 0;
+}
+.md-typeset .tool-steps > li {
+  align-items: start;
+  color: var(--ink-3);
+  display: flex;
+  font-size: 0.65rem;
+  gap: 0.45rem;
+  line-height: 1.6;
+  margin: 0;
+}
+.tool-step-number {
+  background: var(--brand-tint);
+  border-radius: 50%;
+  color: var(--brand-ink);
+  flex: none;
+  font-family: var(--font-mono);
+  height: 1.2rem;
+  line-height: 1.2rem;
+  text-align: center;
+  width: 1.2rem;
+}
+.failure-controls {
+  display: grid;
+  gap: 0.8rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.failure-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block: 0.8rem 1.1rem;
+}
+/* Modern gives ol:not([hidden]) flow-root; match its specificity before
+   applying the grid, and also beat its directional list margins. */
+.md-typeset ol.failure-flow {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.md-typeset .failure-node {
+  background: var(--surface-sunken);
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin: 0;
+  min-width: 0;
+  padding: 0.7rem 0.55rem;
+  position: relative;
+  text-align: center;
+  transition:
+    background-color var(--dur-quick),
+    border-color var(--dur-quick);
+}
+.failure-node:not(:last-child)::after {
+  color: var(--ink-3);
+  content: "→";
+  position: absolute;
+  right: -0.85rem;
+  top: 40%;
+}
+.failure-node-label {
+  color: var(--ink-3);
+  font-size: 0.64rem;
+}
+.failure-node strong {
+  color: var(--ink-1);
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-variant-numeric: tabular-nums;
+}
+.failure-node-status {
+  color: var(--state-success-ink);
+  font-size: 0.6rem;
+}
+.failure-node-help {
+  color: var(--ink-3);
+  font-size: 0.58rem;
+  line-height: 1.5;
+}
+.md-typeset .failure-node[data-state="blocked"] {
+  background: rgb(var(--state-warn-rgb) / 8%);
+  border-color: var(--state-warn-ink);
+  border-style: dashed;
+}
+.failure-node[data-state="blocked"] .failure-node-status {
+  color: var(--state-warn-ink);
+}
+.failure-capacity {
+  align-items: center;
+  display: flex;
+  gap: 1rem;
+  margin-block: 1rem;
+}
+.failure-capacity label {
+  color: var(--ink-3);
+  font-size: 0.64rem;
+}
+.failure-capacity meter {
+  accent-color: var(--brand-ink);
+  flex: 1;
+  height: 1rem;
+  min-width: 0;
+}
+.md-typeset .failure-metrics {
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin: 0;
+}
+.failure-metrics > div {
+  background: var(--surface-page);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  padding: 0.65rem;
+}
+.md-typeset .failure-metrics dt {
+  color: var(--ink-3);
+  font-size: 0.62rem;
+  font-weight: 400;
+  margin: 0;
+}
+.md-typeset .failure-metrics dd {
+  color: var(--ink-1);
+  font-family: var(--font-mono);
+  font-size: 1.1rem;
+  font-variant-numeric: tabular-nums;
+  margin: 0.2rem 0 0;
+}
+.md-typeset .failure-metrics .failure-metric-help {
+  color: var(--ink-3);
+  font-family: var(--md-text-font-family);
+  font-size: 0.58rem;
+  line-height: 1.5;
+  margin-top: 0.3rem;
+}
+.failure-insight {
+  background: var(--brand-tint);
+  border-left: 2px solid var(--brand-ink);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink-2);
+  font-size: 0.7rem;
+  line-height: 1.7;
+  margin-top: 0.85rem;
+  padding: 0.75rem;
+}
+.md-typeset .failure-insight p {
+  margin: 0.3rem 0 0;
+}
+.failure-model > div {
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  gap: 0.5rem;
+  grid-template-columns: minmax(6rem, 0.65fr) minmax(0, 1fr);
+  padding: 0.5rem 0;
+}
+.md-typeset .failure-model dt,
+.md-typeset .failure-model dd {
+  margin: 0;
+}
+.md-typeset .failure-model dd {
+  color: var(--ink-3);
+}
+.md-typeset .failure-notice {
+  min-height: 2.5em;
+}
+.md-typeset ol.failure-trace {
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  list-style: none;
+  margin: 0;
+  max-height: 12rem;
+  overflow: auto;
+  padding: 0.6rem;
+}
+.md-typeset .failure-trace li {
+  border-bottom: 1px solid var(--hairline);
+  display: grid;
+  gap: 0.6rem;
+  grid-template-columns: 3.2rem minmax(0, 1fr);
+  margin: 0.35rem 0;
+  padding: 0.25rem 0;
+}
+
+@media screen and (width <= 42em) {
+  .term-command-list,
+  .md-typeset ol.tool-steps {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .term-values > div,
+  .failure-model > div {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .glossary-search-bar {
+    padding-inline: 0.75rem;
+  }
+  .glossary-filters {
+    gap: 0;
+    padding-inline: 0.4rem;
+  }
+  .glossary-filter {
+    padding-inline: 0.55rem;
+  }
+  .glossary-results {
+    padding-inline: 0.75rem;
+  }
+  .glossary-term {
+    font-size: 0.8rem;
+  }
+  .glossary-definition {
+    font-size: 0.7rem;
+  }
+  .glossary-domain {
+    font-size: 0.52rem;
+  }
+  .failure-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-typeset ol.failure-flow {
+    gap: 0.85rem;
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .md-typeset .failure-node {
+    align-items: center;
+    display: grid;
+    gap: 0.3rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    text-align: left;
+  }
+  .failure-node-status {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  .failure-node-help {
+    grid-column: 1;
+    grid-row: 2;
+  }
+  .failure-node:not(:last-child)::after {
+    content: "↓";
+    inset: auto auto -0.8rem 50%;
+  }
+  .md-typeset .failure-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* --------------------------------------------------------------------------
+   13. Accessibility — focus, touch, reduced motion, forced colors, print
+   -------------------------------------------------------------------------- */
+
+/* One focus ring for every interactive surface. `:focus-visible` keeps it
+   off mouse clicks; the `:has()` rule below lifts it onto the card. */
+:where(
+  a,
+  button,
+  label,
+  summary,
+  input,
+  select,
+  textarea,
+  .md-button,
+  .md-nav__link,
+  .md-tabs__link,
+  .md-social__link,
+  .tabbed-labels > label
+):focus-visible {
+  border-radius: var(--radius-xs);
+  outline: var(--ring-width) solid var(--brand);
+  outline-offset: var(--ring-offset);
+}
+
+/* Keyboard-scrollable regions draw the ring inside their own edge, so a
+   clipping parent (the console window, a card) cannot cut it off. */
+:is(
+    .term-screen,
+    .glossary-results,
+    .sql-results-wrapper,
+    .failure-trace,
+    .memory-table-scroll,
+    .md-typeset__scrollwrap[data-keyboard-scroll]
+  ):focus-visible {
+  outline: var(--ring-width) solid var(--brand);
+  outline-offset: calc(-1 * var(--ring-width));
+}
+
+/* Generic visually hidden text: announced, not shown. */
+.visually-hidden {
+  clip-path: inset(50%);
+  height: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+  width: 1px;
+}
+
+/* `:where()` lands the rule above at (0,1,0), so the theme's
+   `.md-typeset a.focus-visible` (0,2,1) won on prose and card links. Match
+   it where it is contested rather than raising the whole block. */
+.md-typeset a:focus-visible,
+.md-typeset .md-button:focus-visible {
+  outline: var(--ring-width) solid var(--brand);
+  outline-offset: var(--ring-offset);
+}
+
+/* The card takes the ring on behalf of its link, clear of its own
+   `overflow: hidden`; the link gives its ring up, or two nested rings draw. */
+.md-typeset .grid.cards > ul > li:has(a:focus-visible) {
+  outline: var(--ring-width) solid var(--brand);
+  outline-offset: var(--ring-offset);
+}
+
+.md-typeset .grid.cards > ul > li a:focus-visible {
+  outline: none;
+}
+
+/* Touch has no hover: after a tap `:hover` sticks. Sticky colors read as
+   "selected"; sticky transforms do not. */
+@media (hover: none) {
+  .md-typeset .grid.cards > ul > li:hover {
+    --ty: 0px;
+  }
+
+  .md-typeset .md-button:hover,
+  .md-social__link:hover,
+  .md-typeset :is(h1, h2):hover > .twemoji {
+    transform: none;
+  }
+
+  /* The tap-selected node keeps its lift through the higher-specificity
+     `[data-hud-flip]` rules; a stale hover alone does not. */
+  .hud-data-node:hover {
+    background: transparent;
+    border-color: transparent;
+    box-shadow: none;
+    text-shadow: none;
+    transform: none;
+  }
+
+  /* Card selectors mirror the hover rules exactly — a shorter selector loses
+     on specificity. */
+  .md-typeset .grid.cards > ul > li:hover > p > .twemoji,
+  .md-typeset .grid.cards > ul > li:hover a .twemoji,
+  .md-typeset .md-button:hover .twemoji,
+  .md-social__link:hover svg {
+    animation: none;
+    transform: none;
+  }
+}
+
+/* Everything motion-driven is switched off here, not just the entrances. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-delay: -1ms !important;
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 1ms !important;
+  }
+
+  /* The canvas stays as a still frame; nothing moves, so no pause control. */
+  .motion-option {
+    display: none !important;
+  }
+
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none !important;
+  }
+
+  .md-typeset .grid.cards > ul > li {
+    transform: none !important;
+  }
+
+  .md-typeset .md-button:hover,
+  .md-social__link:hover {
+    transform: none !important;
+  }
+
+  /* Residual *static* hover transforms — not animations, so they need their
+     own reset. */
+  .md-typeset .grid.cards > ul > li:hover .twemoji,
+  .md-typeset .md-button:hover .twemoji,
+  .md-typeset :is(h1, h2):hover > .twemoji,
+  .md-social__link:hover svg {
+    transform: none !important;
+  }
+}
+
+/* Windows High Contrast: hand colors back to the OS, drop decorative layers. */
+@media (forced-colors: active) {
+  #neural-background,
+  .hud-ring-inner,
+  .hud-ring-outer {
+    display: none;
+  }
+
+  .md-typeset .grid.cards > ul > li,
+  .md-typeset .grid.cards > ul > li > p:first-child > .twemoji:first-child,
+  .md-typeset .md-button {
+    border: 1px solid CanvasText;
+  }
+
+  /* Masked icons paint with background-color, which forced colors replace
+     with Canvas; keep them visible in the system text colors. */
+  .motion-toggle__icon {
+    background-color: ButtonText;
+    forced-color-adjust: none;
+  }
+
+  .md-typeset :is(p, li, td, h1, h2, h3, h4) a[target="_blank"]::after {
+    background-color: LinkText;
+    forced-color-adjust: none;
+  }
+
+  /* Blog ratings. */
+  .md-typeset .tool-rating__stars {
+    color: GrayText;
+  }
+
+  .md-typeset .tool-rating__stars::after {
+    color: CanvasText;
+  }
+
+  /* Reading panels and reference lists. */
+  .md-typeset .reading-panel,
+  .md-typeset .reading-panel-heading,
+  .md-typeset .reading-panel-heading + .tabbed-set {
+    border-color: CanvasText;
+    background: Canvas;
+    box-shadow: none;
+  }
+  .reference-filters button,
+  .reference-position,
+  .reference-evidence {
+    border-color: CanvasText;
+  }
+  .reference-filters button[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+
+  /* Console, tools and their selected states. */
+  .console-window,
+  .calc-results {
+    border: 1px solid CanvasText;
+  }
+  .console-tab-btn[aria-selected="true"] {
+    border-bottom-color: Highlight;
+  }
+  .console-primary-button {
+    border-color: ButtonText;
+  }
+  .glossary-filter[aria-pressed="true"] {
+    outline: 2px solid Highlight;
+    outline-offset: 2px;
+  }
+}
+
+@media print {
+  #neural-background,
+  .motion-option,
+  .hud-ring-inner,
+  .hud-ring-outer,
+  .hud-status-pill,
+  .md-social__link,
+  .landerox-dock-host,
+  .landerox-dock-launcher,
+  .console-window,
+  .tool-share {
+    display: none;
+  }
+
+  /* Same selector as the screen rule, so it wins on specificity. */
+  .md-typeset :is(p, li, td, h1, h2, h3, h4) a[target="_blank"]::after {
+    display: none;
+  }
+
+  .md-typeset .grid.cards > ul > li {
+    box-shadow: none;
+    break-inside: avoid;
+    transform: none;
+  }
+
+  /* Reading panels and reference lists print as plain, fully open text. */
+  .md-typeset .reading-panel,
+  .md-typeset .reading-panel-heading,
+  .md-typeset .reading-panel-heading + .tabbed-set {
+    margin-block: 1rem;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  .reference-filters,
+  .reference-count,
+  .reference-details > summary {
+    display: none !important;
+  }
+  .comparison-ready .comparison-entry[hidden] {
+    display: block !important;
+  }
+  .reference-evidence {
+    padding-inline-start: 0;
+    border: 0;
+  }
+
+  /* The public glossary prints every definition. */
+  .glossary-page-controls {
+    display: none;
+  }
+  .glossary-entry[hidden] {
+    display: block;
+  }
+  .glossary-entry:has(:target) {
+    background: none;
+    border-inline-start: 0;
+    padding-inline: 0;
+  }
+}

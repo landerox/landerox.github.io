@@ -1,0 +1,38 @@
+[project]
+name = "landerox-website"
+version = "0.1.0"
+description = "Source code of landerox.com, the bilingual (EN/ES) site of Fernando Landero, Senior Consultant & Engineer in Cloud, Data & AI Platforms. Powered by Zensical."
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+license-files = ["LICENSE"]
+dependencies = [
+    "zensical>=0.0.67",
+]
+
+[dependency-groups]
+dev = [
+    "commitizen>=4.19.1",
+    "pip-audit>=2.10.1",
+    "playwright>=1.63.0",
+    "pre-commit>=4.6.2",
+]
+
+[project.urls]
+Homepage = "https://landerox.com"
+Repository = "https://github.com/landerox/landerox.github.io"
+Issues = "https://github.com/landerox/landerox.github.io/issues"
+
+[tool.uv]
+package = false
+
+[tool.commitizen]
+name = "cz_conventional_commits"
+version = "0.1.0"
+tag_format = "v$version"
+version_files = ["pyproject.toml:^version"]
+gpg_sign = true
+pre_bump_hooks = [
+    "uv sync",
+    "git add uv.lock"
+]

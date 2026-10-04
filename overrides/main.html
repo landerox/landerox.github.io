@@ -1,0 +1,145 @@
+{#-
+  Template override shared by both locale builds (zensical.toml and
+  zensical.es.toml both set theme.custom_dir = "overrides").
+
+  Fills the theme's empty extrahead block with the head tags Zensical does
+  not emit on its own: social-sharing metadata (Open Graph / Twitter), the
+  web-app manifest link, font preloads, and a baseline Content Security
+  Policy. site_meta preserves the Modern metadata; sitemap hreflang
+  identifies equivalent pages. Title and palette-aware theme-color remain
+  owned by the theme.
+-#}
+{% extends "base.html" %}
+
+{% block site_meta %}
+  {#- Modern treats head alternates as locale roots and requests a sitemap
+      beneath each. Publish page-level hreflang in the XML sitemaps instead;
+      partials/alternate.html provides direct equivalent-page navigation.
+      Recheck against the installed theme after a Zensical upgrade. -#}
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  {% if page.meta and page.meta.description %}
+    <meta name="description" content="{{ page.meta.description }}">
+  {% elif config.site_description %}
+    <meta name="description" content="{{ config.site_description }}">
+  {% endif %}
+  {% if page.meta and page.meta.robots %}
+    <meta name="robots" content="{{ page.meta.robots }}">
+  {% endif %}
+  {% if page.meta and page.meta.reviewed %}
+    <meta property="article:modified_time" content="{{ page.meta.reviewed }}">
+  {% endif %}
+  {% if page.meta and page.meta.author %}
+    <meta name="author" content="{{ page.meta.author }}">
+  {% elif config.site_author %}
+    <meta name="author" content="{{ config.site_author }}">
+  {% endif %}
+  {% if page.canonical_url %}
+    <link rel="canonical" href="{{ page.canonical_url }}">
+  {% endif %}
+  {% if page.previous_page %}
+    <link rel="prev" href="{{ page.previous_page.url | url }}">
+  {% endif %}
+  {% if page.next_page %}
+    <link rel="next" href="{{ page.next_page.url | url }}">
+  {% endif %}
+  <link rel="icon" href="{{ config.theme.favicon | url }}">
+{% endblock %}
+
+{% block extrahead %}
+  {#- Baseline CSP. GitHub Pages cannot send response headers, so this is
+      the <meta> variant: frame-ancestors / report-uri / sandbox cannot be
+      expressed here, and 'unsafe-inline' is required because Zensical
+      inlines its bootstrap and palette scripts. See
+      docs/security-assessment.md (T8) and docs/decisions.md § 24. -#}
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'">
+
+  {#- Run after the theme's base helpers but before its body palette script.
+      That script otherwise dereferences removed OS-media inputs for a saved
+      automatic palette. Map explicit choices by scheme, not old index.
+      Only the theme's existing __palette key is read/written; unavailable or
+      malformed storage falls back to light without a first-load animation.
+      The current document keeps its selection even when persistence fails.
+      Other theme preferences retain their values or safely read as unset.
+      This shares the theme bootstrap's existing inline-script CSP allowance. -#}
+  <script>
+    (() => {
+      const read = window.__md_get;
+      const write = window.__md_set;
+      const normalize = (saved) => {
+        const dark = saved?.color?.scheme === "slate" &&
+          saved?.color?.media !== "(prefers-color-scheme)";
+        return {
+          index: dark ? 1 : 0,
+          color: {
+            media: "",
+            scheme: dark ? "slate" : "default",
+            primary: "indigo",
+            accent: "indigo"
+          }
+        };
+      };
+      let current;
+      try { current = normalize(read("__palette")); }
+      catch { current = normalize(null); }
+      window.__md_get = (key, ...args) => {
+        if (key === "__palette") return current;
+        try { return read(key, ...args); }
+        catch { return null; }
+      };
+      window.__md_set = (key, value, ...args) => {
+        if (key === "__palette") current = normalize(value);
+        try { return write(key, key === "__palette" ? current : value, ...args); }
+        catch { return undefined; }
+      };
+      window.__md_set("__palette", window.__md_get("__palette"));
+    })();
+  </script>
+
+  {#- Root-absolute: a single manifest (built from content/en/) serves both
+      locales, mirroring robots.txt. -#}
+  <link rel="manifest" href="/manifest.json">
+
+  {#- Fonts are otherwise discovered only after extra.css parses, which
+      guarantees a fallback-then-swap on first paint. Preload the three on
+      the critical path: Inter (body), Outfit (h1, above the fold on every
+      page) and MesloLGM (header wordmark, code). Together 94 KB against
+      the 140 KB font budget in .config/lighthouserc.json.
+      The | url filter resolves per locale, matching each build's copy. -#}
+  <link rel="preload" href="{{ 'assets/fonts/Inter-Variable-latin.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'assets/fonts/Outfit-Variable-latin.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="{{ 'assets/fonts/MesloLGMNerdFontPropo-Regular.woff2' | url }}" as="font" type="font/woff2" crossorigin>
+
+  {#- Social sharing metadata. Title logic mirrors the theme's htmltitle
+      block; description mirrors its site_meta block. -#}
+  {% if page.meta and page.meta.title %}
+    {% set og_title = page.meta.title ~ " - " ~ config.site_name %}
+  {% elif page.title and not page.is_homepage %}
+    {% set og_title = page.title | striptags ~ " - " ~ config.site_name %}
+  {% else %}
+    {% set og_title = config.site_name %}
+  {% endif %}
+  {% if page.meta and page.meta.description %}
+    {% set og_description = page.meta.description %}
+  {% else %}
+    {% set og_description = config.site_description %}
+  {% endif %}
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="{{ config.site_name }}">
+  <meta property="og:title" content="{{ og_title }}">
+  <meta property="og:description" content="{{ og_description }}">
+  {% if page.canonical_url %}
+    <meta property="og:url" content="{{ page.canonical_url }}">
+  {% endif %}
+  {#- Root-absolute: the card ships only in the EN asset tree (sync-assets
+      copies images by name), and one image serves both locales. -#}
+  <meta property="og:image" content="https://landerox.com/assets/images/social-card.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:locale" content="{{ 'es_ES' if config.theme.language == 'es' else 'en_US' }}">
+  <meta property="og:locale:alternate" content="{{ 'en_US' if config.theme.language == 'es' else 'es_ES' }}">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="{{ og_title }}">
+  <meta name="twitter:description" content="{{ og_description }}">
+  <meta name="twitter:image" content="https://landerox.com/assets/images/social-card.png">
+{% endblock %}

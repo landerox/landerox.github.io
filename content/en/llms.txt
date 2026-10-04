@@ -1,0 +1,72 @@
+# Fernando Landero — landerox.com
+
+> Fernando Landero is an independent Senior Consultant & Engineer in Cloud,
+> Data & AI Platforms, with over 15 years in technology (the last 7 on cloud
+> and data platforms). He designs architectures, writes production code and
+> automates platforms on Google Cloud (GCP), AWS and private cloud: Terraform
+> and policy-checked infrastructure, GKE/Kubernetes, batch and streaming
+> pipelines with Apache Spark, BigQuery, dbt and Airflow, and AI workflows
+> with RAG retrieval, agent orchestration and observability (OpenTelemetry,
+> Langfuse). Recent work: banking and finance, retail and energy.
+
+Bilingual site: English at https://landerox.com/, Spanish at
+https://landerox.com/es/.
+
+## Pages
+
+- [Home](https://landerox.com/): introduction, proof, core expertise and
+  contact
+- [About](https://landerox.com/about/): profile, focus areas, experience
+- [Tech Stack](https://landerox.com/stack/): production tools and research candidates
+- [Technical Glossary](https://landerox.com/glossary/): 59 bilingual terms
+  with stable anchors, related concepts, examples and primary sources
+- [Collaboration & Contact](https://landerox.com/collaboration/): typical
+  requests, engagements, time zones, scheduling
+- [Projects](https://landerox.com/projects/): open-source software, production
+  blueprints, research labs, the tech radar and interactive tools
+- [Open Source](https://landerox.com/projects/open-source/): ZDX, an MIT-licensed
+  fzf-powered developer suite for Zsh (251 commands, 15 suites,
+  https://github.com/landerox/zdx-suite), and this site's audited pipeline
+- [Research Labs](https://landerox.com/projects/labs/): internal project status,
+  evaluation contracts and research baselines
+- [Interactive Tools](https://landerox.com/projects/tools/): reproducible failure-policy
+  comparisons, memory scenarios, SQL stages, SLO/error budgets, schema diffs and
+  a lakehouse table-file planner; shareable scenario links, no remote execution
+- [Blog](https://landerox.com/blog/): concise explanations and practical
+  technology comparisons with results, dated editorial 1–5 ratings per tool
+  and primary sources
+- [Object Storage](https://landerox.com/blog/object-storage/): open-source
+  server and gateway choices by workload, release status, S3 limits and recovery
+- [Workflow Orchestrators](https://landerox.com/blog/workflow-orchestrators/):
+  Airflow, Dagster and alternatives by execution model, licensing and recovery
+- [OLAP Databases](https://landerox.com/blog/olap-databases/): distributed,
+  embedded and PostgreSQL options, including AGPL candidates
+- [Vector Databases](https://landerox.com/blog/vector-databases/): Qdrant and
+  alternatives by filtered retrieval, license, deployment and evaluation
+- [Graph Databases](https://landerox.com/blog/graph-databases/): Neo4j Community,
+  AGE and alternatives by graph model, edition, deployment and recovery
+- [Transformation](https://landerox.com/blog/data-transformation/): dbt Core,
+  SQLMesh, Dataform and Bruin by model lifecycle and deployment responsibility
+- [BI and Visualization](https://landerox.com/blog/business-intelligence/):
+  Superset, Metabase and alternatives by reader workflow and permissions
+- [Lakehouse Table Formats](https://landerox.com/blog/lakehouse-table-formats/):
+  Iceberg, Delta, Hudi and DuckLake; table, catalog and engine boundaries
+- [Observability](https://landerox.com/blog/observability/): metrics, logs,
+  traces, profiles, collectors and dashboards compared by architectural role
+- [Production Blueprints](https://landerox.com/projects/blueprints/): upstream
+  foundations, workload fit, shared Ops responsibilities, UX/UI principles
+  and production readiness gates
+- [Tech Radar](https://landerox.com/projects/explorations/): dated upstream
+  research and adoption conditions, not published internal benchmark results
+
+The technical glossary contains 36 authored bilingual definitions, practical
+examples, caveats and primary-source links. Static pages are available in both
+locales, with local typo-tolerant filtering and links between terms. It does not
+call an AI service and does not repeat the site's biography or project pages.
+
+## Contact
+
+- Email: contacto@landerox.com
+- Meetings: https://calendly.com/landerox/30min
+- GitHub: https://github.com/landerox
+- LinkedIn: https://www.linkedin.com/in/landerox/

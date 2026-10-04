@@ -1,0 +1,99 @@
+name: Quality · Lighthouse
+run-name: >-
+  Lighthouse · ${{
+    github.event_name == 'pull_request' && github.event.pull_request.title
+    || github.event_name == 'push' && github.event.head_commit.message
+    || github.event_name == 'workflow_dispatch' && 'manual dispatch'
+    || github.ref_name
+  }}
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "content/**"
+      - "includes/**"
+      - "overrides/**"
+      - "scripts/**"
+      - "zensical.toml"
+      - "zensical.es.toml"
+      - ".config/404-router.html"
+      - ".github/workflows/quality.yml"
+      - ".config/lighthouserc.json"
+      - ".python-version"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Justfile"
+  pull_request:
+    branches:
+      - main
+    paths:
+      - "content/**"
+      - "includes/**"
+      - "overrides/**"
+      - "scripts/**"
+      - "zensical.toml"
+      - "zensical.es.toml"
+      - ".config/404-router.html"
+      - ".github/workflows/quality.yml"
+      - ".config/lighthouserc.json"
+      - ".python-version"
+      - "pyproject.toml"
+      - "uv.lock"
+      - "Justfile"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  lighthouse:
+    name: Lighthouse audit
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.19"
+          enable-cache: true
+
+      - name: Setup Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.21.0"
+
+      - name: Install just
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+        with:
+          # Pinned to the local install; SoT table in docs/decisions.md § 14.
+          just-version: "1.58.0"
+
+      - name: Install Python dependencies
+        run: uv sync --frozen
+
+      - name: Build site (EN + ES)
+        run: just build
+
+      - name: Install browser from the locked Playwright release
+        run: uv run playwright install --with-deps chromium
+
+      - name: Check bilingual browser interactions
+        run: just test-browser
+
+      - name: Run Lighthouse CI
+        uses: treosh/lighthouse-ci-action@3e7e23fb74242897f95c0ba9cabad3d0227b9b18 # 12.6.2
+        with:
+          configPath: .config/lighthouserc.json
+          uploadArtifacts: true
+          temporaryPublicStorage: false

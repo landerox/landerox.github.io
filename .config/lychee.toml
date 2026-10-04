@@ -1,0 +1,26 @@
+timeout = 8
+max_concurrency = 4
+no_progress = true
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+accept = [200, 301, 302]
+
+# Skip 404 pages: they contain only root-relative site navigation links
+# (/, /practice/, /projects/, /radar/, /es/, …) that only resolve correctly
+# post-build on the web server, not as local file paths.
+exclude_path = ["404\\.md$"]
+
+# Exclude domains that block automated crawlers.
+# LinkedIn answers non-browser clients with HTTP 999 — a non-standard code
+# meaning "bot detected", not a broken link. It is served regardless of
+# user_agent, so the profile URL in both about.md files fails every run and
+# would fail the weekly report for a link that resolves fine in a browser.
+exclude = [
+    "https://www.linkedin.com/.*",
+    "https://openai.com/.*",
+    "https://leetcode.com/.*",
+    "https://www.terraform.io/.*",
+    "https://www.vaultproject.io/.*",
+    "https://opencv.org/.*",
+    "https://hazelcast.com/.*",
+    "https://www.llama.com/.*"
+]

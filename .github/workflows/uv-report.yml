@@ -1,0 +1,189 @@
+name: Maintenance · uv Lock Report
+run-name: >-
+  uv lock report · ${{
+    github.event_name == 'schedule' && 'weekly'
+    || github.event_name == 'workflow_dispatch' && 'manual dispatch'
+    || github.ref_name
+  }}
+
+on:
+  schedule:
+    # Tuesdays 06:00 UTC — away from Monday's Lychee and Scorecard runs.
+    - cron: "0 6 * * 2"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+# Only the newest dependency report matters. The upgraded lockfile exists
+# solely in the runner workspace and is never committed or pushed.
+concurrency:
+  group: ${{ github.workflow }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    name: Report and verify available updates
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - name: Install uv
+        id: setup_uv
+        uses: astral-sh/setup-uv@c18668ad3cf93ea998bef934396af7bb5c839dc7 # v10.2.0
+        with:
+          version: "0.12.19"
+          enable-cache: true
+
+      - name: Resolve latest lockfile
+        id: refresh
+        run: |
+          set -euo pipefail
+          uv lock --upgrade --no-progress --color never 2>&1 \
+            | tee "$RUNNER_TEMP/uv-upgrade.log"
+          if git diff --quiet -- uv.lock; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      # ---------------------------------------------------------------------
+      # Verification runs only inside this ephemeral workspace. It proves
+      # whether the available lockfile update is viable without persisting it.
+      # Keep these steps aligned with lint.yml and deploy.yml.
+      # ---------------------------------------------------------------------
+      - name: Setup Node.js
+        id: node
+        if: steps.refresh.outputs.changed == 'true'
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: "24.21.0"
+
+      - name: Install just
+        id: just
+        if: steps.refresh.outputs.changed == 'true'
+        uses: extractions/setup-just@53165ef7e734c5c07cb06b3c8e7b647c5aa16db3 # v4.0.0
+        with:
+          # Pinned to the local install; SoT table in docs/decisions.md § 14.
+          just-version: "1.58.0"
+
+      - name: Install dependencies from the upgraded lockfile
+        id: sync
+        if: steps.refresh.outputs.changed == 'true'
+        run: uv sync --frozen --all-groups
+
+      - name: Test hook preparation
+        id: hook_tests
+        if: steps.refresh.outputs.changed == 'true'
+        run: uv run python -m unittest discover -s scripts -p test_install_precommit_hooks.py
+
+      - name: Identify hook cache
+        id: hook_cache_key
+        if: steps.refresh.outputs.changed == 'true'
+        run: uv run python scripts/install_precommit_hooks.py --cache-key >> "$GITHUB_OUTPUT"
+
+      - name: Restore hook environments
+        id: hook_cache
+        if: steps.refresh.outputs.changed == 'true'
+        uses: actions/cache@55cc8345863c7cc4c66a329aec7e433d2d1c52a9 # v6.1.0
+        env:
+          SEGMENT_DOWNLOAD_TIMEOUT_MINS: "1"
+        with:
+          path: ~/.cache/pre-commit
+          key: ${{ steps.hook_cache_key.outputs.key }}
+
+      - name: Prepare pre-commit environments
+        id: hooks
+        if: steps.refresh.outputs.changed == 'true'
+        run: uv run python scripts/install_precommit_hooks.py
+
+      - name: Verify — pre-commit and dependency audit
+        id: precommit
+        if: steps.refresh.outputs.changed == 'true'
+        run: uv run pre-commit run --all-files
+
+      - name: Verify — build both locales
+        id: build
+        if: steps.refresh.outputs.changed == 'true'
+        run: just build
+
+      - name: Publish dependency report
+        if: always()
+        env:
+          BUILD_OUTCOME: ${{ steps.build.outcome }}
+          CHANGED: ${{ steps.refresh.outputs.changed }}
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          HOOKS_OUTCOME: ${{ steps.hooks.outcome }}
+          HOOK_CACHE_KEY_OUTCOME: ${{ steps.hook_cache_key.outcome }}
+          HOOK_CACHE_OUTCOME: ${{ steps.hook_cache.outcome }}
+          HOOK_TESTS_OUTCOME: ${{ steps.hook_tests.outcome }}
+          JUST_OUTCOME: ${{ steps.just.outcome }}
+          NODE_OUTCOME: ${{ steps.node.outcome }}
+          PRECOMMIT_OUTCOME: ${{ steps.precommit.outcome }}
+          REFRESH_OUTCOME: ${{ steps.refresh.outcome }}
+          SETUP_UV_OUTCOME: ${{ steps.setup_uv.outcome }}
+          SYNC_OUTCOME: ${{ steps.sync.outcome }}
+        run: |
+          set -euo pipefail
+          {
+            echo '## Weekly uv lock report'
+            echo
+            echo '> Read-only report: no commit, branch, or pull request was created.'
+            echo
+
+            if [ "$CHECKOUT_OUTCOME" = "failure" ]; then
+              echo 'Repository checkout failed, so dependency resolution did not run.'
+            elif [ "$SETUP_UV_OUTCOME" = "failure" ]; then
+              echo 'uv setup failed, so dependency resolution did not run.'
+            elif [ "$REFRESH_OUTCOME" = "failure" ]; then
+              echo 'The dependency resolution failed. See the resolver output below.'
+            elif [ "$REFRESH_OUTCOME" != "success" ]; then
+              echo 'Dependency resolution did not run. Inspect the pipeline outcomes below.'
+            elif [ "$CHANGED" != "true" ]; then
+              echo 'The committed lockfile is already current.'
+            else
+              echo 'Candidate updates are available; verification was attempted in the runner.'
+            fi
+
+            echo
+            echo '### Pipeline outcomes'
+            echo
+            echo '| Step | Outcome |'
+            echo '| :--- | :------ |'
+            printf '| repository checkout | %s |\n' "$CHECKOUT_OUTCOME"
+            printf '| uv setup | %s |\n' "$SETUP_UV_OUTCOME"
+            printf '| dependency resolution | %s |\n' "$REFRESH_OUTCOME"
+
+            if [ "$CHANGED" = "true" ]; then
+              printf '| Node.js setup | %s |\n' "$NODE_OUTCOME"
+              printf '| just setup | %s |\n' "$JUST_OUTCOME"
+              printf '| dependency sync | %s |\n' "$SYNC_OUTCOME"
+              printf '| hook preparation tests | %s |\n' "$HOOK_TESTS_OUTCOME"
+              printf '| hook cache identity | %s |\n' "$HOOK_CACHE_KEY_OUTCOME"
+              printf '| hook cache restore | %s |\n' "$HOOK_CACHE_OUTCOME"
+              printf '| hook preparation | %s |\n' "$HOOKS_OUTCOME"
+              printf '| pre-commit and audit | %s |\n' "$PRECOMMIT_OUTCOME"
+              printf '| bilingual build | %s |\n' "$BUILD_OUTCOME"
+            fi
+
+            if [ -f "$RUNNER_TEMP/uv-upgrade.log" ]; then
+              echo
+              echo '### Resolver output'
+              echo
+              echo '```text'
+              resolver_lines=$(wc -l < "$RUNNER_TEMP/uv-upgrade.log")
+              if [ "$resolver_lines" -le 240 ]; then
+                cat "$RUNNER_TEMP/uv-upgrade.log"
+              else
+                sed -n '1,120p' "$RUNNER_TEMP/uv-upgrade.log"
+                printf '\n... %s lines omitted ...\n\n' "$((resolver_lines - 240))"
+                tail -n 120 "$RUNNER_TEMP/uv-upgrade.log"
+              fi
+              echo '```'
+            fi
+          } >> "$GITHUB_STEP_SUMMARY"

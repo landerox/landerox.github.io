@@ -1,0 +1,6 @@
+# Ignore Justfile as it is not a markdown document
+Justfile
+**/Justfile
+
+# Generated acronym tooltips (scripts/build-glossary.mjs), appended to every page
+includes/

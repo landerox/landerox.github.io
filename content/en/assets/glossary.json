@@ -1,0 +1,2044 @@
+{
+  "version": 1,
+  "license": "CC-BY-4.0",
+  "terms": [
+    {
+      "id": "private-cloud",
+      "category": "cloud",
+      "aliases": [
+        "private",
+        "nube privada"
+      ],
+      "en": {
+        "term": "Private cloud",
+        "definition": "Cloud resources dedicated to one organization, whether operated on its premises or by a provider.",
+        "example": "An internal platform offers self-service environments to several business units.",
+        "caveat": "Virtual machines alone do not establish a cloud operating model."
+      },
+      "es": {
+        "term": "Nube privada",
+        "definition": "Recursos cloud dedicados a una organización, operados en sus instalaciones o por un proveedor.",
+        "example": "Una plataforma interna ofrece entornos de autoservicio a varias unidades de negocio.",
+        "caveat": "Tener máquinas virtuales no establece por sí solo un modelo operativo cloud."
+      },
+      "source": {
+        "label": "NIST SP 800-145",
+        "url": "https://csrc.nist.gov/pubs/sp/800/145/final"
+      },
+      "related": [
+        "vpc",
+        "landing-zone",
+        "iac",
+        "finops"
+      ]
+    },
+    {
+      "id": "vpc",
+      "category": "cloud",
+      "aliases": [
+        "virtual private cloud",
+        "red virtual"
+      ],
+      "en": {
+        "term": "VPC",
+        "definition": "A logically isolated virtual network in a cloud provider, with controlled addressing and connectivity.",
+        "example": "Separate application subnets from a database subnet and define their routes.",
+        "caveat": "A VPC is a network boundary, not proof of complete workload isolation."
+      },
+      "es": {
+        "term": "VPC",
+        "definition": "Red virtual lógicamente aislada en un proveedor cloud, con direccionamiento y conectividad controlados.",
+        "example": "Separar las subredes de aplicación y base de datos y definir sus rutas.",
+        "caveat": "Una VPC delimita una red; no demuestra el aislamiento completo de las cargas."
+      },
+      "source": {
+        "label": "AWS VPC",
+        "url": "https://docs.aws.amazon.com/vpc/latest/userguide/what-is-amazon-vpc.html"
+      },
+      "related": [
+        "private-cloud",
+        "zero-trust",
+        "landing-zone",
+        "iac",
+        "devsecops"
+      ],
+      "abbr": {
+        "VPC": {
+          "en": "Virtual private cloud",
+          "es": "Nube privada virtual"
+        }
+      }
+    },
+    {
+      "id": "iac",
+      "category": "cloud",
+      "aliases": [
+        "infrastructure as code",
+        "infraestructura como código",
+        "terraform"
+      ],
+      "en": {
+        "term": "Infrastructure as code",
+        "definition": "Infrastructure definitions stored as reviewable, versioned configuration that automation can apply.",
+        "example": "Review a network change and its plan before applying it.",
+        "caveat": "Version control does not prevent drift or make a destructive plan safe."
+      },
+      "es": {
+        "term": "Infraestructura como código",
+        "definition": "Definiciones de infraestructura como configuración versionada y revisable que una automatización puede aplicar.",
+        "example": "Revisar un cambio de red y su plan antes de aplicarlo.",
+        "caveat": "El control de versiones no evita toda desviación ni vuelve seguro un plan destructivo."
+      },
+      "source": {
+        "label": "CNCF Glossary",
+        "url": "https://glossary.cncf.io/infrastructure-as-code/"
+      },
+      "related": [
+        "gitops",
+        "devops",
+        "private-cloud"
+      ],
+      "abbr": {
+        "IaC": {
+          "en": "Infrastructure as code",
+          "es": "Infraestructura como código"
+        }
+      }
+    },
+    {
+      "id": "gitops",
+      "category": "platform",
+      "aliases": [
+        "reconciliation",
+        "reconciliacion",
+        "desired state"
+      ],
+      "en": {
+        "term": "GitOps",
+        "definition": "Continuous reconciliation of running systems against a versioned description of their intended state.",
+        "example": "A controller restores a deployment after an unapproved configuration change.",
+        "caveat": "A pipeline that runs scripts from Git is not necessarily a reconciliation loop."
+      },
+      "es": {
+        "term": "GitOps",
+        "definition": "Reconciliación continua de sistemas en ejecución con una descripción versionada de su estado deseado.",
+        "example": "Un controlador restaura un despliegue tras un cambio de configuración no aprobado.",
+        "caveat": "Ejecutar scripts desde Git no implica tener un ciclo de reconciliación."
+      },
+      "source": {
+        "label": "CNCF Glossary",
+        "url": "https://glossary.cncf.io/gitops/"
+      },
+      "related": [
+        "iac",
+        "devops",
+        "devsecops"
+      ]
+    },
+    {
+      "id": "devops",
+      "category": "platform",
+      "aliases": [
+        "development operations",
+        "desarrollo operaciones"
+      ],
+      "en": {
+        "term": "DevOps",
+        "definition": "Shared practices and responsibility across software delivery and operation, supported by automation and feedback.",
+        "example": "The team that ships a service also uses incident feedback to improve its delivery process.",
+        "caveat": "Renaming a team or installing a CI server does not establish shared ownership."
+      },
+      "es": {
+        "term": "DevOps",
+        "definition": "Prácticas y responsabilidad compartidas entre entrega y operación de software, apoyadas en automatización y retroalimentación.",
+        "example": "El equipo que entrega un servicio usa los incidentes para mejorar su proceso de entrega.",
+        "caveat": "Renombrar un equipo o instalar CI no establece responsabilidad compartida."
+      },
+      "source": {
+        "label": "CNCF Glossary",
+        "url": "https://glossary.cncf.io/devops/"
+      },
+      "related": [
+        "gitops",
+        "sre",
+        "devsecops"
+      ]
+    },
+    {
+      "id": "slo",
+      "category": "platform",
+      "aliases": [
+        "sli",
+        "service level objective",
+        "objetivo de nivel de servicio"
+      ],
+      "en": {
+        "term": "SLO",
+        "definition": "A target for a measured service indicator, over a defined population and time window.",
+        "example": "At least 99.9% of valid requests succeed over a rolling 30-day window.",
+        "caveat": "A target is not a measurement or a contractual guarantee; exclusions must be explicit."
+      },
+      "es": {
+        "term": "SLO",
+        "definition": "Objetivo para un indicador medido del servicio, sobre una población y una ventana temporal definidas.",
+        "example": "Al menos el 99,9% de las solicitudes válidas tiene éxito en una ventana móvil de 30 días.",
+        "caveat": "El objetivo no es una medición ni una garantía contractual; las exclusiones deben ser explícitas."
+      },
+      "source": {
+        "label": "Google SRE",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      },
+      "related": [
+        "error-budget",
+        "sre",
+        "observability",
+        "backoff",
+        "circuit-breaker",
+        "tail-latency"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-slo-budget",
+        "en": "Calculate an error budget",
+        "es": "Calcular un presupuesto de error"
+      },
+      "abbr": {
+        "SLO": {
+          "en": "Service level objective",
+          "es": "Objetivo de nivel de servicio"
+        }
+      }
+    },
+    {
+      "id": "idempotency",
+      "category": "platform",
+      "aliases": [
+        "idempotencia",
+        "deduplication",
+        "deduplicación"
+      ],
+      "en": {
+        "term": "Idempotency",
+        "definition": "Repeating the same operation has the same intended effect as performing it once.",
+        "example": "Reuse an operation identifier when retrying an order creation after a timeout.",
+        "caveat": "The key, scope and retention window matter; a timeout does not prove the first attempt failed."
+      },
+      "es": {
+        "term": "Idempotencia",
+        "definition": "Repetir una misma operación produce el mismo efecto previsto que ejecutarla una sola vez.",
+        "example": "Reutilizar un identificador de operación al reintentar la creación de un pedido tras un timeout.",
+        "caveat": "Importan la clave, el alcance y la retención; un timeout no demuestra que el primer intento falló."
+      },
+      "source": {
+        "label": "AWS Builders’ Library",
+        "url": "https://aws.amazon.com/builders-library/making-retries-safe-with-idempotent-APIs/"
+      },
+      "related": [
+        "backoff",
+        "dlq",
+        "durable-execution",
+        "cdc",
+        "backfill"
+      ],
+      "practice": {
+        "path": "projects/tools/#failure-lab",
+        "en": "Compare retry policies",
+        "es": "Comparar políticas de reintentos"
+      }
+    },
+    {
+      "id": "backoff",
+      "category": "platform",
+      "aliases": [
+        "retry",
+        "retries",
+        "reintentos",
+        "jitter"
+      ],
+      "en": {
+        "term": "Backoff",
+        "definition": "Delay successive retries to reduce pressure on a failing dependency; jitter spreads synchronized clients.",
+        "example": "Try again after progressively longer bounded delays, with a total retry budget.",
+        "caveat": "More retries can amplify an outage. Retry only eligible failures and make side effects safe."
+      },
+      "es": {
+        "term": "Backoff",
+        "definition": "Espaciar los reintentos para reducir presión sobre una dependencia; el jitter dispersa clientes sincronizados.",
+        "example": "Reintentar tras esperas crecientes y acotadas, con un presupuesto total de intentos.",
+        "caveat": "Los reintentos pueden amplificar una caída. Selecciona fallos recuperables y protege los efectos secundarios."
+      },
+      "source": {
+        "label": "AWS Builders’ Library",
+        "url": "https://builder.aws.com/content/3EumjoZascWd1oZiEgL8ORlv3qE/timeouts-retries-and-backoff-with-jitter"
+      },
+      "related": [
+        "idempotency",
+        "circuit-breaker",
+        "dlq"
+      ],
+      "practice": {
+        "path": "projects/tools/#failure-lab",
+        "en": "Compare retry policies",
+        "es": "Comparar políticas de reintentos"
+      }
+    },
+    {
+      "id": "circuit-breaker",
+      "category": "platform",
+      "aliases": [
+        "circuit breaker",
+        "cortacircuitos"
+      ],
+      "en": {
+        "term": "Circuit breaker",
+        "definition": "Temporarily stop calls after enough failures, then admit limited probes to check recovery.",
+        "example": "Open a circuit during a persistent dependency outage and test it after a cooldown.",
+        "caveat": "It does not repair the dependency and can delay recovery if thresholds are poorly chosen."
+      },
+      "es": {
+        "term": "Circuit breaker",
+        "definition": "Suspender llamadas tras suficientes fallos y admitir después pruebas limitadas para comprobar la recuperación.",
+        "example": "Abrir el circuito durante una caída persistente y probarlo tras un periodo de espera.",
+        "caveat": "No repara la dependencia y puede retrasar la recuperación si los umbrales están mal elegidos."
+      },
+      "source": {
+        "label": "Azure Architecture Center",
+        "url": "https://learn.microsoft.com/en-us/azure/architecture/patterns/circuit-breaker"
+      },
+      "related": [
+        "backoff",
+        "slo",
+        "sre"
+      ]
+    },
+    {
+      "id": "dlq",
+      "category": "platform",
+      "aliases": [
+        "dead letter queue",
+        "cola de errores",
+        "mensajes fallidos"
+      ],
+      "en": {
+        "term": "Dead-letter queue",
+        "definition": "A separate destination for messages that could not be processed within the configured attempt limit.",
+        "example": "Quarantine an invalid event after repeated failures and inspect it before replay.",
+        "caveat": "Moving a message to a DLQ is not successful processing; retention and replay need an owner."
+      },
+      "es": {
+        "term": "Cola de mensajes fallidos",
+        "definition": "Destino separado para mensajes que no pudieron procesarse dentro del límite de intentos configurado.",
+        "example": "Aislar un evento inválido tras varios fallos e inspeccionarlo antes de reprocesarlo.",
+        "caveat": "Mover un mensaje a una DLQ no es procesarlo con éxito; retención y reproceso necesitan un responsable."
+      },
+      "source": {
+        "label": "AWS SQS",
+        "url": "https://docs.aws.amazon.com/AWSSimpleQueueService/latest/SQSDeveloperGuide/sqs-dead-letter-queues.html"
+      },
+      "related": [
+        "backoff",
+        "idempotency",
+        "kafka"
+      ],
+      "practice": {
+        "path": "projects/tools/#failure-lab",
+        "en": "Compare retry policies",
+        "es": "Comparar políticas de reintentos"
+      }
+    },
+    {
+      "id": "cdc",
+      "category": "data",
+      "aliases": [
+        "change data capture",
+        "captura cambios"
+      ],
+      "en": {
+        "term": "Change data capture",
+        "definition": "Turn database changes into events that downstream consumers can process incrementally.",
+        "example": "Propagate inserts, updates and deletes from an operational database to an analytical system.",
+        "caveat": "Snapshots, replay, deletes and schema changes require explicit consumer behavior."
+      },
+      "es": {
+        "term": "Captura de cambios",
+        "definition": "Convertir cambios de una base de datos en eventos que otros sistemas pueden procesar de forma incremental.",
+        "example": "Propagar inserciones, actualizaciones y eliminaciones a un sistema analítico.",
+        "caveat": "Las cargas iniciales, el reproceso, las eliminaciones y los cambios de esquema requieren reglas explícitas."
+      },
+      "source": {
+        "label": "Debezium",
+        "url": "https://debezium.io/documentation/reference/stable/architecture.html"
+      },
+      "related": [
+        "streaming",
+        "kafka",
+        "schema-evolution",
+        "idempotency"
+      ],
+      "abbr": {
+        "CDC": {
+          "en": "Change data capture",
+          "es": "Captura de cambios de datos"
+        }
+      }
+    },
+    {
+      "id": "watermark",
+      "category": "data",
+      "aliases": [
+        "event time",
+        "tiempo de evento",
+        "marca de agua"
+      ],
+      "en": {
+        "term": "Watermark",
+        "definition": "A stream-processing signal of event-time progress, used to decide when time-based operations can advance.",
+        "example": "Close a window after its watermark passes the window end, with a policy for late events.",
+        "caveat": "A watermark is not a guarantee that no older event will ever arrive."
+      },
+      "es": {
+        "term": "Marca de agua",
+        "definition": "Señal de progreso en tiempo de evento que permite avanzar operaciones temporales de un flujo.",
+        "example": "Cerrar una ventana cuando la marca supera su fin, con una política para eventos tardíos.",
+        "caveat": "Una marca de agua no garantiza que nunca llegue un evento más antiguo."
+      },
+      "source": {
+        "label": "Apache Flink",
+        "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+      },
+      "related": [
+        "streaming",
+        "kafka",
+        "cdc"
+      ]
+    },
+    {
+      "id": "lineage",
+      "category": "data",
+      "aliases": [
+        "data lineage",
+        "linaje",
+        "provenance"
+      ],
+      "en": {
+        "term": "Data lineage",
+        "definition": "Recorded relationships between datasets, jobs and runs that explain where data came from and how it changed.",
+        "example": "Trace a dashboard field back to the job and source dataset that produced it.",
+        "caveat": "Lineage coverage can be incomplete; a dependency graph does not prove data correctness."
+      },
+      "es": {
+        "term": "Linaje de datos",
+        "definition": "Relaciones registradas entre conjuntos de datos, procesos y ejecuciones que explican su origen y transformación.",
+        "example": "Rastrear un campo de un informe hasta el proceso y los datos que lo produjeron.",
+        "caveat": "La cobertura puede ser incompleta; un grafo de dependencias no demuestra la calidad de los datos."
+      },
+      "source": {
+        "label": "OpenLineage",
+        "url": "https://openlineage.io/docs/"
+      },
+      "related": [
+        "dataops",
+        "dbt",
+        "medallion"
+      ]
+    },
+    {
+      "id": "dataops",
+      "category": "data",
+      "aliases": [
+        "data ops",
+        "operacion datos"
+      ],
+      "en": {
+        "term": "DataOps",
+        "definition": "Collaborative practices that improve delivery and operation of analytical data through automation, testing and feedback.",
+        "example": "Validate a pipeline change with representative data before releasing it and observe quality afterwards.",
+        "caveat": "An orchestrator alone cannot replace ownership, quality criteria or communication with consumers."
+      },
+      "es": {
+        "term": "DataOps",
+        "definition": "Prácticas colaborativas para mejorar entrega y operación de datos analíticos mediante automatización, pruebas y retroalimentación.",
+        "example": "Validar un cambio de pipeline con datos representativos y observar su calidad después del despliegue.",
+        "caveat": "Un orquestador no sustituye responsables, criterios de calidad ni comunicación con los consumidores."
+      },
+      "source": {
+        "label": "IBM · DataOps",
+        "url": "https://www.ibm.com/think/topics/dataops"
+      },
+      "related": [
+        "lineage",
+        "airflow",
+        "dbt"
+      ]
+    },
+    {
+      "id": "mlops",
+      "category": "ai",
+      "aliases": [
+        "machine learning operations",
+        "operacion modelos"
+      ],
+      "en": {
+        "term": "MLOps",
+        "definition": "Practices for delivering and operating ML systems across code, data, training, deployment and monitoring.",
+        "example": "Version a model with its training data references, evaluation results and rollback artifact.",
+        "caveat": "Automating deployment does not ensure model quality or detect every change in production data."
+      },
+      "es": {
+        "term": "MLOps",
+        "definition": "Prácticas para entregar y operar sistemas de ML que abarcan código, datos, entrenamiento, despliegue y observación.",
+        "example": "Versionar un modelo junto a referencias de datos, evaluaciones y un artefacto de reversión.",
+        "caveat": "Automatizar el despliegue no asegura calidad ni detecta todo cambio en los datos de producción."
+      },
+      "source": {
+        "label": "Google Cloud Architecture Center",
+        "url": "https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning"
+      },
+      "related": [
+        "llmops",
+        "evaluation",
+        "devops"
+      ]
+    },
+    {
+      "id": "rag",
+      "category": "ai",
+      "aliases": [
+        "retrieval augmented generation",
+        "generación recuperación"
+      ],
+      "en": {
+        "term": "RAG",
+        "definition": "Generation conditioned on information retrieved from an external collection, rather than model parameters alone.",
+        "example": "Retrieve relevant policy passages and provide them as context for an answer.",
+        "caveat": "Retrieval can miss evidence; supplied context does not guarantee a supported answer."
+      },
+      "es": {
+        "term": "RAG",
+        "definition": "Generación condicionada por información recuperada de una colección externa, no solo por los parámetros del modelo.",
+        "example": "Recuperar pasajes relevantes de una política y usarlos como contexto para una respuesta.",
+        "caveat": "La recuperación puede omitir evidencia; aportar contexto no garantiza una respuesta sustentada."
+      },
+      "source": {
+        "label": "Lewis et al., NeurIPS 2020",
+        "url": "https://arxiv.org/abs/2005.11401"
+      },
+      "related": [
+        "vector-search",
+        "agent",
+        "evaluation",
+        "llmops",
+        "embedding"
+      ],
+      "abbr": {
+        "RAG": {
+          "en": "Retrieval-augmented generation",
+          "es": "Generación aumentada por recuperación"
+        }
+      }
+    },
+    {
+      "id": "kv-cache",
+      "category": "ai",
+      "aliases": [
+        "key value cache",
+        "cache kv",
+        "memoria inferencia"
+      ],
+      "en": {
+        "term": "KV cache",
+        "definition": "Stored attention keys and values from prior tokens, reused during autoregressive decoding.",
+        "example": "Reuse the prompt cache while producing each subsequent token.",
+        "caveat": "Memory grows with sequence length and concurrency; hybrid models cache only their full-attention layers, and layout depends on the runtime."
+      },
+      "es": {
+        "term": "Caché KV",
+        "definition": "Claves y valores de atención de tokens anteriores que se reutilizan durante la decodificación autorregresiva.",
+        "example": "Reutilizar la caché del prompt al producir cada token posterior.",
+        "caveat": "La memoria crece con longitud y concurrencia; los modelos híbridos solo guardan caché en sus capas de atención completa, y la disposición depende del motor."
+      },
+      "source": {
+        "label": "Hugging Face Transformers",
+        "url": "https://huggingface.co/docs/transformers/en/cache_explanation"
+      },
+      "related": [
+        "quantization",
+        "hybrid-attention",
+        "prefill-decode",
+        "mixture-of-experts",
+        "finops"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-llm-calculator",
+        "en": "Compare inference memory",
+        "es": "Comparar memoria de inferencia"
+      }
+    },
+    {
+      "id": "quantization",
+      "category": "ai",
+      "aliases": [
+        "cuantización",
+        "int4",
+        "int8",
+        "fp8"
+      ],
+      "en": {
+        "term": "Quantization",
+        "definition": "Represent selected model values with lower precision to reduce storage and potentially computation.",
+        "example": "Evaluate 4-bit weights against the original model using a held-out workload.",
+        "caveat": "Smaller weights do not guarantee faster inference or unchanged quality; hardware support matters, and published checkpoints often keep sensitive layers in BF16."
+      },
+      "es": {
+        "term": "Cuantización",
+        "definition": "Representar determinados valores del modelo con menor precisión para reducir almacenamiento y, potencialmente, cómputo.",
+        "example": "Evaluar pesos de 4 bits frente al modelo original con una carga reservada para pruebas.",
+        "caveat": "Pesos menores no garantizan más velocidad ni igual calidad; importa el soporte del hardware, y los checkpoints publicados suelen mantener en BF16 las capas sensibles."
+      },
+      "source": {
+        "label": "Hugging Face Transformers",
+        "url": "https://huggingface.co/docs/transformers/en/quantization/overview"
+      },
+      "related": [
+        "kv-cache",
+        "mixture-of-experts",
+        "evaluation",
+        "llmops"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-llm-calculator",
+        "en": "Compare inference memory",
+        "es": "Comparar memoria de inferencia"
+      }
+    },
+    {
+      "id": "mcp",
+      "category": "ai",
+      "aliases": [
+        "model context protocol",
+        "protocolo contexto modelo"
+      ],
+      "en": {
+        "term": "MCP",
+        "definition": "A protocol through which AI applications discover and interact with tools, resources and prompts exposed by servers.",
+        "example": "Expose a read-only catalog tool through a server with explicit access controls.",
+        "caveat": "Protocol compatibility does not grant permission or make tool output trustworthy."
+      },
+      "es": {
+        "term": "MCP",
+        "definition": "Protocolo para que aplicaciones de IA descubran e interactúen con herramientas, recursos y prompts de servidores.",
+        "example": "Exponer una herramienta de catálogo de solo lectura con controles de acceso explícitos.",
+        "caveat": "La compatibilidad del protocolo no concede permisos ni vuelve confiable la salida de una herramienta."
+      },
+      "source": {
+        "label": "Model Context Protocol",
+        "url": "https://modelcontextprotocol.io/docs/getting-started/intro"
+      },
+      "related": [
+        "agent",
+        "a2a",
+        "multi-agent",
+        "devsecops"
+      ],
+      "abbr": {
+        "MCP": {
+          "en": "Model Context Protocol",
+          "es": "Model Context Protocol"
+        }
+      }
+    },
+    {
+      "id": "evaluation",
+      "category": "ai",
+      "aliases": [
+        "eval",
+        "evals",
+        "evaluacion",
+        "benchmark"
+      ],
+      "en": {
+        "term": "Evaluation",
+        "definition": "A defined set of tasks and scoring rules used to inspect system behavior, including failures.",
+        "example": "Check task completion and unauthorized actions separately on a held-out test set.",
+        "caveat": "A high aggregate score can hide dangerous failures; model judges also need calibration."
+      },
+      "es": {
+        "term": "Evaluación",
+        "definition": "Conjunto definido de tareas y reglas de puntuación para examinar el comportamiento de un sistema, incluidos sus fallos.",
+        "example": "Comprobar por separado finalización de tareas y acciones no autorizadas en un conjunto reservado.",
+        "caveat": "Una puntuación global alta puede ocultar fallos peligrosos; los jueces basados en modelos necesitan calibración."
+      },
+      "source": {
+        "label": "Anthropic Engineering",
+        "url": "https://www.anthropic.com/engineering/demystifying-evals-for-ai-agents"
+      },
+      "related": [
+        "rag",
+        "agent",
+        "llmops"
+      ]
+    },
+    {
+      "id": "batch",
+      "category": "data",
+      "aliases": [
+        "batch processing",
+        "batches",
+        "lotes"
+      ],
+      "en": {
+        "term": "Batch processing",
+        "definition": "Process a bounded collection of data as a job, rather than treating it as an endless flow.",
+        "example": "Calculate yesterday's sales from a closed set of orders.",
+        "caveat": "Scheduling frequency and job duration determine how long readers wait for new results."
+      },
+      "es": {
+        "term": "Procesamiento por lotes",
+        "definition": "Procesar un conjunto acotado de datos como un trabajo, en vez de tratarlo como un flujo sin fin.",
+        "example": "Calcular las ventas de ayer a partir de un conjunto cerrado de pedidos.",
+        "caveat": "La frecuencia y la duración del trabajo determinan cuánto se tarda en ver resultados nuevos."
+      },
+      "source": {
+        "label": "Apache Flink · execution modes",
+        "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/dev/datastream/execution_mode/"
+      },
+      "related": [
+        "streaming",
+        "airflow",
+        "duckdb",
+        "backfill"
+      ]
+    },
+    {
+      "id": "streaming",
+      "category": "data",
+      "aliases": [
+        "stream processing",
+        "flujo continuo",
+        "tiempo real"
+      ],
+      "en": {
+        "term": "Streaming",
+        "definition": "Process events as a continuing flow, with explicit rules for time, state and late arrivals.",
+        "example": "Update available inventory as order events arrive.",
+        "caveat": "Low latency still requires replay, backpressure and duplicate handling; it does not mean instant or lossless."
+      },
+      "es": {
+        "term": "Streaming",
+        "definition": "Procesar eventos como un flujo continuo, con reglas explícitas para tiempo, estado y llegadas tardías.",
+        "example": "Actualizar las existencias disponibles a medida que llegan eventos de pedidos.",
+        "caveat": "La baja latencia requiere replay, control de presión y manejo de duplicados; no significa instantáneo ni sin pérdidas."
+      },
+      "source": {
+        "label": "Apache Flink · event time",
+        "url": "https://nightlies.apache.org/flink/flink-docs-stable/docs/concepts/time/"
+      },
+      "related": [
+        "batch",
+        "watermark",
+        "kafka",
+        "compaction"
+      ]
+    },
+    {
+      "id": "agent",
+      "category": "ai",
+      "aliases": [
+        "agents",
+        "ai agents",
+        "agentes",
+        "agente"
+      ],
+      "en": {
+        "term": "AI agent",
+        "definition": "A system in which a model chooses tools or steps to pursue a task within configured boundaries.",
+        "example": "Inspect an incident, request a permitted log lookup and propose the next step.",
+        "caveat": "Model output is not authority: software must enforce permissions and approval."
+      },
+      "es": {
+        "term": "Agente de IA",
+        "definition": "Sistema en el que un modelo elige herramientas o pasos para resolver una tarea dentro de límites configurados.",
+        "example": "Examinar un incidente, solicitar una consulta de logs permitida y proponer el siguiente paso.",
+        "caveat": "La salida del modelo no concede autoridad: el software debe exigir permisos y aprobación."
+      },
+      "source": {
+        "label": "Anthropic · building effective agents",
+        "url": "https://www.anthropic.com/engineering/building-effective-agents"
+      },
+      "related": [
+        "mcp",
+        "a2a",
+        "durable-execution",
+        "rag",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "multi-agent",
+      "category": "ai",
+      "aliases": [
+        "multi agents",
+        "multi-agent systems",
+        "multiagentes",
+        "agentes múltiples"
+      ],
+      "en": {
+        "term": "Multi-agent systems",
+        "definition": "Several agents cooperate with distinct responsibilities, context or permissions in one workflow.",
+        "example": "A coordinator requests a report from a data agent and a reviewer checks its sources.",
+        "caveat": "Additional agents increase coordination, latency and failure paths; they do not guarantee better answers."
+      },
+      "es": {
+        "term": "Sistemas multiagente",
+        "definition": "Varios agentes cooperan con responsabilidades, contexto o permisos distintos dentro de un flujo.",
+        "example": "Un coordinador solicita un informe a un agente de datos y otro revisa las fuentes.",
+        "caveat": "Más agentes añaden coordinación, latencia y posibles fallos; no garantizan mejores respuestas."
+      },
+      "source": {
+        "label": "Google ADK · workflows",
+        "url": "https://adk.dev/workflows/"
+      },
+      "related": [
+        "agent",
+        "a2a",
+        "mcp",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "sre",
+      "category": "platform",
+      "aliases": [
+        "site reliability engineering",
+        "reliability",
+        "fiabilidad"
+      ],
+      "en": {
+        "term": "Site reliability engineering (SRE)",
+        "definition": "Apply software engineering to operating services with explicit reliability goals and limited manual toil.",
+        "example": "Use an error budget to decide whether to ship a change or address reliability first.",
+        "caveat": "Reliability targets reflect user needs and cost; a dashboard alone is not an SRE practice."
+      },
+      "es": {
+        "term": "Ingeniería de fiabilidad (SRE)",
+        "definition": "Aplicar ingeniería de software a la operación de servicios, con objetivos de fiabilidad y trabajo manual acotado.",
+        "example": "Usar un presupuesto de error para decidir entre desplegar un cambio o mejorar la fiabilidad.",
+        "caveat": "Los objetivos reflejan necesidades y coste; un dashboard por sí solo no constituye una práctica SRE."
+      },
+      "source": {
+        "label": "Google SRE · introduction",
+        "url": "https://sre.google/sre-book/introduction/"
+      },
+      "related": [
+        "slo",
+        "error-budget",
+        "observability",
+        "devops",
+        "aiops"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-slo-budget",
+        "en": "Calculate an error budget",
+        "es": "Calcular un presupuesto de error"
+      },
+      "abbr": {
+        "SRE": {
+          "en": "Site reliability engineering",
+          "es": "Ingeniería de fiabilidad de sitios"
+        }
+      }
+    },
+    {
+      "id": "kafka",
+      "category": "data",
+      "aliases": [
+        "apache kafka",
+        "event log",
+        "topics"
+      ],
+      "en": {
+        "term": "Apache Kafka",
+        "definition": "A distributed event-streaming platform with partitioned logs that producers write and consumers can replay.",
+        "example": "Publish order events so inventory and analytics can consume them independently.",
+        "caveat": "Ordering is per partition, not global; retention and delivery semantics need deliberate configuration."
+      },
+      "es": {
+        "term": "Apache Kafka",
+        "definition": "Plataforma distribuida de eventos con logs particionados que los productores escriben y los consumidores pueden releer.",
+        "example": "Publicar pedidos para que inventario y analítica los consuman de forma independiente.",
+        "caveat": "El orden se garantiza por partición, no globalmente; retención y entrega necesitan configuración explícita."
+      },
+      "source": {
+        "label": "Apache Kafka · introduction",
+        "url": "https://kafka.apache.org/43/getting-started/introduction/"
+      },
+      "related": [
+        "streaming",
+        "cdc",
+        "dlq"
+      ]
+    },
+    {
+      "id": "dbt",
+      "category": "data",
+      "aliases": [
+        "data build tool",
+        "dbt core",
+        "dbt-oss",
+        "fusion"
+      ],
+      "en": {
+        "term": "dbt",
+        "definition": "Build, test and document data transformations from versioned models and their dependencies.",
+        "example": "Turn raw order tables into tested revenue models with traceable dependencies.",
+        "caveat": "dbt does not replace ingestion; check the v1 or v2 line, the open or product-licensed build and the adapter separately."
+      },
+      "es": {
+        "term": "dbt",
+        "definition": "Construir, probar y documentar transformaciones a partir de modelos versionados y sus dependencias.",
+        "example": "Convertir tablas de pedidos en modelos de ingresos probados y con dependencias trazables.",
+        "caveat": "dbt no sustituye la ingesta; verifica por separado la línea v1 o v2, la compilación abierta o con licencia de producto y el adaptador."
+      },
+      "source": {
+        "label": "dbt · introduction",
+        "url": "https://docs.getdbt.com/docs/introduction"
+      },
+      "related": [
+        "dataops",
+        "lineage",
+        "medallion"
+      ]
+    },
+    {
+      "id": "airflow",
+      "category": "data",
+      "aliases": [
+        "apache airflow",
+        "dag",
+        "dags"
+      ],
+      "en": {
+        "term": "Apache Airflow",
+        "definition": "Coordinate workflows defined as code, including dependencies, schedules, retries and task state.",
+        "example": "Run extraction, validation and reporting in dependency order and inspect failed tasks.",
+        "caveat": "It is an orchestrator, not a per-event streaming engine."
+      },
+      "es": {
+        "term": "Apache Airflow",
+        "definition": "Coordinar flujos definidos como código, con dependencias, horarios, reintentos y estado de tareas.",
+        "example": "Ejecutar extracción, validación e informes según sus dependencias y examinar tareas fallidas.",
+        "caveat": "Es un orquestador, no un motor que procese cada evento de un stream."
+      },
+      "source": {
+        "label": "Apache Airflow · documentation",
+        "url": "https://airflow.apache.org/docs/apache-airflow/stable/"
+      },
+      "related": [
+        "batch",
+        "dataops",
+        "dbt",
+        "durable-execution"
+      ]
+    },
+    {
+      "id": "duckdb",
+      "category": "data",
+      "aliases": [
+        "duck db",
+        "embedded analytics",
+        "analítica embebida"
+      ],
+      "en": {
+        "term": "DuckDB",
+        "definition": "An analytical SQL engine that can run inside an application and query files such as Parquet.",
+        "example": "Explore a local dataset without deploying a separate database server.",
+        "caveat": "Local performance does not establish distributed or multi-user service capacity; preview features have separate limits."
+      },
+      "es": {
+        "term": "DuckDB",
+        "definition": "Motor SQL analítico que puede ejecutarse dentro de una aplicación y consultar archivos como Parquet.",
+        "example": "Explorar un dataset local sin desplegar un servidor de base de datos separado.",
+        "caveat": "El rendimiento local no demuestra capacidad distribuida o multiusuario; las funciones preview tienen límites propios."
+      },
+      "source": {
+        "label": "DuckDB · introduction",
+        "url": "https://duckdb.org/docs/stable/"
+      },
+      "related": [
+        "olap",
+        "batch",
+        "lakehouse",
+        "clickhouse"
+      ]
+    },
+    {
+      "id": "lakehouse",
+      "category": "data",
+      "aliases": [
+        "data lakehouse",
+        "lake house"
+      ],
+      "en": {
+        "term": "Lakehouse",
+        "definition": "An analytical architecture combining lake-style storage with table management and warehouse-style capabilities.",
+        "example": "Keep analytical tables in object storage and query them through a tested catalog and engine.",
+        "caveat": "Open files alone do not establish transactions, permissions or interoperability."
+      },
+      "es": {
+        "term": "Lakehouse",
+        "definition": "Arquitectura analítica que combina almacenamiento de tipo lake con gestión de tablas y capacidades de warehouse.",
+        "example": "Mantener tablas analíticas en objetos y consultarlas con un catálogo y un motor probados.",
+        "caveat": "Los archivos abiertos por sí solos no garantizan transacciones, permisos ni interoperabilidad."
+      },
+      "source": {
+        "label": "Armbrust et al., CIDR 2021",
+        "url": "https://www.cidrdb.org/cidr2021/papers/cidr2021_paper17.pdf"
+      },
+      "related": [
+        "open-table-format",
+        "object-storage",
+        "query-federation",
+        "medallion",
+        "duckdb",
+        "lineage"
+      ]
+    },
+    {
+      "id": "medallion",
+      "category": "data",
+      "aliases": [
+        "medallion architecture",
+        "bronze",
+        "silver",
+        "gold",
+        "arquitectura medallón"
+      ],
+      "en": {
+        "term": "Medallion architecture",
+        "definition": "Organize data by refinement: bronze retains raw input, silver validates it and gold serves a use case.",
+        "example": "Preserve incoming orders, validate identifiers, then publish a revenue summary.",
+        "caveat": "Layer names are a design convention, not proof of data quality or a requirement to copy every dataset three times."
+      },
+      "es": {
+        "term": "Arquitectura medallón",
+        "definition": "Organizar datos por refinamiento: bronze conserva entradas, silver valida y gold sirve un caso de uso.",
+        "example": "Conservar pedidos entrantes, validar identificadores y publicar un resumen de ingresos.",
+        "caveat": "Los nombres son una convención, no prueba de calidad ni obligación de copiar cada dataset tres veces."
+      },
+      "source": {
+        "label": "Databricks · medallion architecture",
+        "url": "https://docs.databricks.com/aws/en/lakehouse/medallion"
+      },
+      "related": [
+        "lakehouse",
+        "dbt",
+        "lineage"
+      ]
+    },
+    {
+      "id": "clickhouse",
+      "category": "data",
+      "aliases": [
+        "click house",
+        "column-oriented"
+      ],
+      "en": {
+        "term": "ClickHouse",
+        "definition": "A column-oriented SQL database designed for analytical queries over large volumes of data.",
+        "example": "Aggregate event histories to power an operational dashboard.",
+        "caveat": "An analytical serving layer needs its own ingestion, retention and recovery design; it does not replace every transactional database."
+      },
+      "es": {
+        "term": "ClickHouse",
+        "definition": "Base de datos SQL orientada a columnas y diseñada para consultas analíticas sobre grandes volúmenes.",
+        "example": "Agregar históricos de eventos para alimentar un dashboard operativo.",
+        "caveat": "La capa analítica necesita diseño de ingesta, retención y recuperación; no sustituye cualquier base transaccional."
+      },
+      "source": {
+        "label": "ClickHouse · introduction",
+        "url": "https://clickhouse.com/docs/get-started/about/intro"
+      },
+      "related": [
+        "olap",
+        "streaming",
+        "kafka",
+        "duckdb"
+      ]
+    },
+    {
+      "id": "aiops",
+      "category": "platform",
+      "aliases": [
+        "ai operations",
+        "ai for operations",
+        "operaciones con ia"
+      ],
+      "en": {
+        "term": "AIOps",
+        "definition": "Use AI to assist operations, such as alert correlation, incident investigation and remediation proposals.",
+        "example": "Connect a latency alert with traces and a recent deployment for an operator to review.",
+        "caveat": "Correlation is not proof of cause; remediation needs scoped authority and validation."
+      },
+      "es": {
+        "term": "AIOps",
+        "definition": "Usar IA para asistir la operación: correlacionar alertas, investigar incidentes y proponer acciones.",
+        "example": "Relacionar una alerta de latencia con trazas y un despliegue reciente para revisión del operador.",
+        "caveat": "Correlación no demuestra causalidad; corregir requiere autoridad acotada y validación."
+      },
+      "source": {
+        "label": "AWS · CloudWatch investigations",
+        "url": "https://docs.aws.amazon.com/AmazonCloudWatch/latest/monitoring/Investigations.html"
+      },
+      "related": [
+        "sre",
+        "observability",
+        "dataops",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "llmops",
+      "category": "ai",
+      "aliases": [
+        "llm operations",
+        "operación de llm"
+      ],
+      "en": {
+        "term": "LLMOps",
+        "definition": "Lifecycle practices for releasing, evaluating and operating applications built around language models.",
+        "example": "Version prompts and retrieval data, evaluate a release and observe its latency, cost and failures.",
+        "caveat": "A model benchmark does not validate the application's tools, permissions or real user tasks."
+      },
+      "es": {
+        "term": "LLMOps",
+        "definition": "Prácticas del ciclo de vida para publicar, evaluar y operar aplicaciones basadas en modelos de lenguaje.",
+        "example": "Versionar prompts y datos de recuperación, evaluar una versión y observar latencia, coste y fallos.",
+        "caveat": "Un benchmark del modelo no valida las herramientas, los permisos ni las tareas reales de la aplicación."
+      },
+      "source": {
+        "label": "AWS · Generative AI Lens",
+        "url": "https://docs.aws.amazon.com/wellarchitected/latest/generative-ai-lens/generative-ai-lens.html"
+      },
+      "related": [
+        "mlops",
+        "evaluation",
+        "kv-cache",
+        "prefill-decode"
+      ]
+    },
+    {
+      "id": "finops",
+      "category": "platform",
+      "aliases": [
+        "financial operations",
+        "cloud cost",
+        "costes"
+      ],
+      "en": {
+        "term": "FinOps",
+        "definition": "Shared practices connecting technology spending, ownership and business value through engineering, finance and product collaboration.",
+        "example": "Attribute a service's cost, review demand and compare cost per successful task.",
+        "caveat": "Reducing a bill without preserving needed quality, reliability or value can be a false saving."
+      },
+      "es": {
+        "term": "FinOps",
+        "definition": "Prácticas compartidas que conectan gasto tecnológico, responsables y valor mediante colaboración entre ingeniería, finanzas y producto.",
+        "example": "Asignar el coste de un servicio, revisar demanda y comparar coste por tarea completada.",
+        "caveat": "Bajar la factura sin preservar calidad, fiabilidad o valor necesarios puede ser un ahorro aparente."
+      },
+      "source": {
+        "label": "FinOps Foundation · framework",
+        "url": "https://www.finops.org/framework/"
+      },
+      "related": [
+        "private-cloud",
+        "kv-cache",
+        "slo"
+      ],
+      "abbr": {
+        "FinOps": {
+          "en": "Cloud financial operations",
+          "es": "Operaciones financieras en la nube"
+        }
+      }
+    },
+    {
+      "id": "devsecops",
+      "category": "platform",
+      "aliases": [
+        "secure delivery",
+        "desarrollo seguro",
+        "ssdf"
+      ],
+      "en": {
+        "term": "DevSecOps",
+        "definition": "Integrate security practices and shared responsibility throughout software development, delivery and operation.",
+        "example": "Review threat assumptions, verify dependencies and test authorization before releasing a change.",
+        "caveat": "A scanner passing does not establish secure design; exceptions, remediation and incident learning still need owners."
+      },
+      "es": {
+        "term": "DevSecOps",
+        "definition": "Integrar prácticas de seguridad y responsabilidad compartida durante desarrollo, entrega y operación de software.",
+        "example": "Revisar amenazas, verificar dependencias y probar autorización antes de publicar un cambio.",
+        "caveat": "Pasar un escáner no demuestra diseño seguro; excepciones, correcciones e incidentes siguen necesitando responsables."
+      },
+      "source": {
+        "label": "NIST · SSDF",
+        "url": "https://csrc.nist.gov/projects/ssdf"
+      },
+      "related": [
+        "devops",
+        "gitops",
+        "zero-trust",
+        "mcp"
+      ]
+    },
+    {
+      "id": "object-storage",
+      "category": "cloud",
+      "aliases": [
+        "s3",
+        "s3 compatible",
+        "blob storage",
+        "bucket",
+        "almacenamiento de objetos"
+      ],
+      "en": {
+        "term": "Object storage",
+        "definition": "Storage that keeps whole objects with metadata in flat buckets, addressed by key through an HTTP API.",
+        "example": "Keep Parquet files and table metadata in an S3-compatible bucket that several engines share.",
+        "caveat": "S3 compatibility varies by feature: conditional writes, versioning, object lock and listing behavior must be tested."
+      },
+      "es": {
+        "term": "Almacenamiento de objetos",
+        "definition": "Almacenamiento que guarda objetos completos con metadatos en buckets planos, direccionados por clave mediante una API HTTP.",
+        "example": "Guardar archivos Parquet y metadatos de tablas en un bucket compatible con S3 que comparten varios motores.",
+        "caveat": "La compatibilidad con S3 varía según la función: las escrituras condicionales, el versionado, el bloqueo de objetos y el listado deben probarse."
+      },
+      "source": {
+        "label": "Amazon S3 · user guide",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/Welcome.html"
+      },
+      "related": [
+        "open-table-format",
+        "lakehouse",
+        "private-cloud",
+        "object-lock"
+      ]
+    },
+    {
+      "id": "landing-zone",
+      "category": "cloud",
+      "aliases": [
+        "lza",
+        "landing zone accelerator",
+        "zona de aterrizaje",
+        "organization baseline"
+      ],
+      "en": {
+        "term": "Landing zone",
+        "definition": "A prepared multi-account or multi-project cloud environment with baseline identity, networking, logging and security guardrails for new workloads.",
+        "example": "A new project inherits central logging, a shared network and organization policies when it is created.",
+        "caveat": "It is a starting baseline, not a finished security posture; its guardrails need owners, exceptions and change control."
+      },
+      "es": {
+        "term": "Landing zone",
+        "definition": "Un entorno cloud preparado con varias cuentas o proyectos, con identidad, red, registro y controles de seguridad de base para las nuevas cargas de trabajo.",
+        "example": "Un proyecto nuevo hereda al crearse el registro central, una red compartida y las políticas de la organización.",
+        "caveat": "Es una base de partida, no una postura de seguridad terminada; sus controles necesitan responsables, excepciones y control de cambios."
+      },
+      "source": {
+        "label": "Google Cloud · landing zone design",
+        "url": "https://docs.cloud.google.com/architecture/landing-zones"
+      },
+      "related": [
+        "vpc",
+        "iac",
+        "zero-trust",
+        "devsecops"
+      ]
+    },
+    {
+      "id": "zero-trust",
+      "category": "cloud",
+      "aliases": [
+        "zero trust",
+        "zta",
+        "zero trust architecture",
+        "confianza cero"
+      ],
+      "en": {
+        "term": "Zero trust",
+        "definition": "A security model that authorizes each request from verified identity, device and context instead of trusting network location.",
+        "example": "A service reaches a database only with a short-lived workload identity, even inside the same VPC.",
+        "caveat": "Zero trust is an architecture adopted incrementally, not a product; legacy paths often keep implicit trust."
+      },
+      "es": {
+        "term": "Confianza cero (zero trust)",
+        "definition": "Un modelo de seguridad que autoriza cada petición según la identidad, el dispositivo y el contexto verificados, en lugar de confiar en la ubicación de red.",
+        "example": "Un servicio accede a una base de datos solo con una identidad de carga de trabajo de corta duración, aunque esté en la misma VPC.",
+        "caveat": "Confianza cero es una arquitectura que se adopta de forma gradual, no un producto; las rutas heredadas suelen mantener confianza implícita."
+      },
+      "source": {
+        "label": "NIST SP 800-207",
+        "url": "https://csrc.nist.gov/pubs/sp/800/207/final"
+      },
+      "related": [
+        "vpc",
+        "devsecops",
+        "landing-zone",
+        "private-cloud"
+      ]
+    },
+    {
+      "id": "error-budget",
+      "category": "platform",
+      "aliases": [
+        "error budget",
+        "burn rate",
+        "presupuesto de error",
+        "tasa de consumo"
+      ],
+      "en": {
+        "term": "Error budget",
+        "definition": "The unreliability an SLO allows over its window: one minus the target, applied to eligible requests or measured time.",
+        "example": "A 99.9% target over 10 million monthly requests allows 10,000 failed requests.",
+        "caveat": "An exhausted budget is a signal to prioritize reliability work, not an automatic penalty; partial windows need care."
+      },
+      "es": {
+        "term": "Presupuesto de error",
+        "definition": "La falta de fiabilidad que un SLO permite en su ventana: uno menos el objetivo, aplicado a las solicitudes elegibles o al tiempo medido.",
+        "example": "Un objetivo del 99,9% sobre 10 millones de solicitudes mensuales permite 10.000 solicitudes fallidas.",
+        "caveat": "Agotar el presupuesto indica que hay que priorizar la fiabilidad, no es una penalización automática; las ventanas parciales requieren cuidado."
+      },
+      "source": {
+        "label": "Google SRE · embracing risk",
+        "url": "https://sre.google/sre-book/embracing-risk/"
+      },
+      "related": [
+        "slo",
+        "sre",
+        "observability",
+        "tail-latency"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-slo-budget",
+        "en": "Compare request and time budgets",
+        "es": "Comparar presupuestos por solicitudes y por tiempo"
+      }
+    },
+    {
+      "id": "observability",
+      "category": "platform",
+      "aliases": [
+        "opentelemetry",
+        "otel",
+        "telemetry",
+        "tracing",
+        "traces",
+        "observabilidad",
+        "telemetría",
+        "trazas"
+      ],
+      "en": {
+        "term": "Observability",
+        "definition": "The ability to understand a system from the outside, through the traces, metrics and logs it emits, including problems nobody anticipated.",
+        "example": "Follow a slow request's trace from the API to the query that caused the delay.",
+        "caveat": "More telemetry is not more understanding; cardinality, sampling and retention decide cost and which questions stay answerable."
+      },
+      "es": {
+        "term": "Observabilidad",
+        "definition": "La capacidad de entender un sistema desde fuera, mediante las trazas, métricas y logs que emite, incluidos problemas que nadie anticipó.",
+        "example": "Seguir la traza de una petición lenta desde la API hasta la consulta que causó el retraso.",
+        "caveat": "Más telemetría no es más comprensión; la cardinalidad, el muestreo y la retención deciden el coste y qué preguntas siguen teniendo respuesta."
+      },
+      "source": {
+        "label": "OpenTelemetry · observability primer",
+        "url": "https://opentelemetry.io/docs/concepts/observability-primer/"
+      },
+      "related": [
+        "slo",
+        "sre",
+        "aiops",
+        "error-budget",
+        "opentelemetry"
+      ]
+    },
+    {
+      "id": "durable-execution",
+      "category": "platform",
+      "aliases": [
+        "durable workflows",
+        "workflow engine",
+        "temporal",
+        "ejecución durable",
+        "flujos durables"
+      ],
+      "en": {
+        "term": "Durable execution",
+        "definition": "Workflow execution whose progress is recorded, so it resumes after crashes, deployments or long waits without repeating completed steps.",
+        "example": "An approval workflow waits three days for a person and, after a restart, continues at the next step.",
+        "caveat": "Steps with external side effects still need idempotency, and code changes must stay compatible with running histories."
+      },
+      "es": {
+        "term": "Ejecución durable",
+        "definition": "Ejecución de flujos cuyo progreso queda registrado, de modo que se reanuda tras caídas, despliegues o esperas largas sin repetir los pasos completados.",
+        "example": "Un flujo de aprobación espera tres días a una persona y, tras un reinicio, continúa en el paso siguiente.",
+        "caveat": "Los pasos con efectos externos siguen necesitando idempotencia, y los cambios de código deben ser compatibles con los historiales en curso."
+      },
+      "source": {
+        "label": "Temporal · understanding Temporal",
+        "url": "https://docs.temporal.io/evaluate/understanding-temporal"
+      },
+      "related": [
+        "idempotency",
+        "agent",
+        "airflow",
+        "backoff"
+      ]
+    },
+    {
+      "id": "open-table-format",
+      "category": "data",
+      "aliases": [
+        "table format",
+        "iceberg",
+        "apache iceberg",
+        "delta lake",
+        "hudi",
+        "paimon",
+        "ducklake",
+        "formato de tabla abierto"
+      ],
+      "en": {
+        "term": "Open table format",
+        "definition": "A specification that turns data files in object storage into tables with snapshots, schema and partition metadata that several engines can share.",
+        "example": "Spark writes an Iceberg table that Trino and DuckDB query through the same catalog.",
+        "caveat": "Engines support different spec versions and features; sharing a format still requires a shared catalog and tested writers."
+      },
+      "es": {
+        "term": "Formato de tabla abierto",
+        "definition": "Una especificación que convierte archivos de datos en almacenamiento de objetos en tablas con snapshots, esquema y metadatos de particiones que varios motores pueden compartir.",
+        "example": "Spark escribe una tabla Iceberg que Trino y DuckDB consultan a través del mismo catálogo.",
+        "caveat": "Cada motor admite distintas versiones y funciones de la especificación; compartir un formato sigue exigiendo un catálogo común y escritores probados."
+      },
+      "source": {
+        "label": "Apache Iceberg · table spec",
+        "url": "https://iceberg.apache.org/spec/"
+      },
+      "related": [
+        "lakehouse",
+        "object-storage",
+        "schema-evolution",
+        "query-federation",
+        "duckdb",
+        "table-catalog"
+      ]
+    },
+    {
+      "id": "olap",
+      "category": "data",
+      "aliases": [
+        "online analytical processing",
+        "analytical database",
+        "columnar",
+        "columnar storage",
+        "base de datos analítica",
+        "almacenamiento columnar"
+      ],
+      "en": {
+        "term": "OLAP",
+        "definition": "Online analytical processing: queries that scan and aggregate many rows over few columns, usually served by columnar storage and vectorized execution.",
+        "example": "Aggregate a year of events by region to refresh a dashboard.",
+        "caveat": "Fast scans do not make an engine good at frequent point updates, transactions or high-concurrency writes."
+      },
+      "es": {
+        "term": "OLAP",
+        "definition": "Procesamiento analítico en línea: consultas que recorren y agregan muchas filas de pocas columnas, normalmente con almacenamiento columnar y ejecución vectorizada.",
+        "example": "Agregar un año de eventos por región para actualizar un panel.",
+        "caveat": "Recorrer datos rápido no hace que un motor sea bueno en actualizaciones puntuales frecuentes, transacciones ni escrituras con mucha concurrencia."
+      },
+      "source": {
+        "label": "ClickHouse · what is OLAP?",
+        "url": "https://clickhouse.com/resources/engineering/what-is-olap"
+      },
+      "related": [
+        "clickhouse",
+        "duckdb",
+        "query-federation",
+        "lakehouse"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-sql-sandbox",
+        "en": "Group and aggregate rows",
+        "es": "Agrupar y agregar filas"
+      },
+      "abbr": {
+        "OLAP": {
+          "en": "Online analytical processing",
+          "es": "Procesamiento analítico en línea"
+        }
+      }
+    },
+    {
+      "id": "query-federation",
+      "category": "data",
+      "aliases": [
+        "federated query",
+        "federation",
+        "trino",
+        "presto",
+        "query engine",
+        "consulta federada",
+        "federación",
+        "motor de consultas"
+      ],
+      "en": {
+        "term": "Query federation",
+        "definition": "Querying several data sources from one SQL engine through connectors, without first copying the data into that engine's storage.",
+        "example": "Trino joins an Iceberg table with a PostgreSQL reference table in one query.",
+        "caveat": "Speed depends on what each connector can push down; federation still loads the sources and does not reconcile their consistency."
+      },
+      "es": {
+        "term": "Consulta federada",
+        "definition": "Consultar varias fuentes de datos desde un solo motor SQL mediante conectores, sin copiar antes los datos a su almacenamiento.",
+        "example": "Trino une una tabla Iceberg con una tabla de referencia de PostgreSQL en una sola consulta.",
+        "caveat": "La velocidad depende de lo que cada conector pueda delegar a la fuente; la federación sigue cargando las fuentes y no concilia su consistencia."
+      },
+      "source": {
+        "label": "Trino · connectors",
+        "url": "https://trino.io/docs/current/connector.html"
+      },
+      "related": [
+        "open-table-format",
+        "olap",
+        "lakehouse",
+        "clickhouse"
+      ]
+    },
+    {
+      "id": "schema-evolution",
+      "category": "data",
+      "aliases": [
+        "schema compatibility",
+        "backward compatible",
+        "forward compatible",
+        "data contract",
+        "evolución de esquema",
+        "compatibilidad de esquema",
+        "contrato de datos"
+      ],
+      "en": {
+        "term": "Schema evolution",
+        "definition": "Changing a table or message schema while stating which existing readers and writers keep working.",
+        "example": "Adding an optional column keeps current readers working; dropping a required one breaks them.",
+        "caveat": "Compatibility in one direction does not imply the other; a rename is a removal plus an addition unless the format tracks column IDs."
+      },
+      "es": {
+        "term": "Evolución de esquema",
+        "definition": "Cambiar el esquema de una tabla o un mensaje indicando qué lectores y escritores existentes siguen funcionando.",
+        "example": "Añadir una columna opcional mantiene a los lectores actuales; eliminar una obligatoria los rompe.",
+        "caveat": "La compatibilidad en un sentido no implica la del otro; renombrar equivale a eliminar y añadir, salvo que el formato identifique las columnas por ID."
+      },
+      "source": {
+        "label": "Apache Iceberg · schema evolution",
+        "url": "https://iceberg.apache.org/docs/latest/evolution/"
+      },
+      "related": [
+        "open-table-format",
+        "cdc",
+        "lineage",
+        "dbt"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-schema-diff",
+        "en": "Compare two column contracts",
+        "es": "Comparar dos contratos de columnas"
+      }
+    },
+    {
+      "id": "mixture-of-experts",
+      "category": "ai",
+      "aliases": [
+        "moe",
+        "experts",
+        "active parameters",
+        "mezcla de expertos",
+        "expertos",
+        "parámetros activos"
+      ],
+      "en": {
+        "term": "Mixture of experts (MoE)",
+        "definition": "A model layer that routes each token to a few expert sub-networks, so only part of the parameters computes each token.",
+        "example": "Qwen3.8-Flash-Next holds 180B parameters but activates about 6B per token.",
+        "caveat": "Every expert stays in memory: the active share lowers compute and bandwidth per token, not resident weight memory."
+      },
+      "es": {
+        "term": "Mezcla de expertos (MoE)",
+        "definition": "Una capa del modelo que dirige cada token a unas pocas subredes expertas, de modo que solo una parte de los parámetros calcula cada token.",
+        "example": "Qwen3.8-Flash-Next tiene 180B parámetros, pero activa unos 6B por token.",
+        "caveat": "Todos los expertos siguen en memoria: la parte activa reduce el cómputo y el ancho de banda por token, no la memoria de pesos residentes."
+      },
+      "source": {
+        "label": "Shazeer et al., ICLR 2017",
+        "url": "https://arxiv.org/abs/1701.06538"
+      },
+      "related": [
+        "quantization",
+        "kv-cache",
+        "hybrid-attention",
+        "prefill-decode"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-llm-calculator",
+        "en": "Compare resident and active weights",
+        "es": "Comparar pesos residentes y activos"
+      },
+      "abbr": {
+        "MoE": {
+          "en": "Mixture of experts",
+          "es": "Mezcla de expertos"
+        }
+      }
+    },
+    {
+      "id": "hybrid-attention",
+      "category": "ai",
+      "aliases": [
+        "linear attention",
+        "gated deltanet",
+        "deltanet",
+        "atención lineal",
+        "atención híbrida"
+      ],
+      "en": {
+        "term": "Hybrid attention",
+        "definition": "A model design that interleaves full-attention layers with linear-attention layers whose recurrent state does not grow with context.",
+        "example": "Qwen3.8 keeps a KV cache in one layer of every four; the other three hold a fixed state per request.",
+        "caveat": "The saving applies to the cache, not the weights; long-context recall and runtime support vary by model and engine."
+      },
+      "es": {
+        "term": "Atención híbrida",
+        "definition": "Un diseño de modelo que intercala capas de atención completa con capas de atención lineal, cuyo estado recurrente no crece con el contexto.",
+        "example": "Qwen3.8 guarda caché KV en una de cada cuatro capas; las otras tres mantienen un estado fijo por petición.",
+        "caveat": "El ahorro afecta a la caché, no a los pesos; la recuperación en contextos largos y el soporte del motor varían según el modelo."
+      },
+      "source": {
+        "label": "Yang et al., Gated DeltaNet, ICLR 2025",
+        "url": "https://arxiv.org/abs/2412.06464"
+      },
+      "related": [
+        "kv-cache",
+        "mixture-of-experts",
+        "quantization"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-llm-calculator",
+        "en": "See which layers keep a cache",
+        "es": "Ver qué capas guardan caché"
+      }
+    },
+    {
+      "id": "prefill-decode",
+      "category": "ai",
+      "aliases": [
+        "prefill",
+        "decode",
+        "disaggregated serving",
+        "inference serving",
+        "servicio desagregado",
+        "decodificación"
+      ],
+      "en": {
+        "term": "Prefill and decode",
+        "definition": "The two phases of LLM inference: prefill processes the prompt in parallel and is compute-bound; decode generates one token at a time and is memory-bound.",
+        "example": "Serve long prompts on prefill workers and hand their KV cache to decode workers over a fast interconnect.",
+        "caveat": "Disaggregation adds KV transfer and scheduling cost; it pays off only for some prompt lengths, output lengths and latency targets."
+      },
+      "es": {
+        "term": "Prefill y decodificación",
+        "definition": "Las dos fases de la inferencia de un LLM: el prefill procesa el prompt en paralelo y lo limita el cómputo; la decodificación genera un token cada vez y la limita la memoria.",
+        "example": "Atender prompts largos en workers de prefill y pasar su caché KV a workers de decodificación mediante una interconexión rápida.",
+        "caveat": "Desagregar añade transferencia de caché KV y coste de planificación; compensa solo con ciertas longitudes de prompt y de salida y ciertos objetivos de latencia."
+      },
+      "source": {
+        "label": "Zhong et al., DistServe, OSDI 2024",
+        "url": "https://arxiv.org/abs/2401.09670"
+      },
+      "related": [
+        "kv-cache",
+        "slo",
+        "mixture-of-experts",
+        "llmops"
+      ]
+    },
+    {
+      "id": "vector-search",
+      "category": "ai",
+      "aliases": [
+        "embedding",
+        "embeddings",
+        "vector database",
+        "semantic search",
+        "ann",
+        "hnsw",
+        "búsqueda vectorial",
+        "búsqueda semántica",
+        "base de datos vectorial"
+      ],
+      "en": {
+        "term": "Vector search",
+        "definition": "Retrieval that ranks items by the similarity of their embeddings, numeric vectors a model produces from text, images or other data.",
+        "example": "Find policy passages close in meaning to a question even when they share no keywords.",
+        "caveat": "Approximate indexes trade recall for speed; exact identifiers, filters and freshness often need hybrid keyword search."
+      },
+      "es": {
+        "term": "Búsqueda vectorial",
+        "definition": "Recuperación que ordena elementos por la similitud de sus embeddings, vectores numéricos que un modelo genera a partir de texto, imágenes u otros datos.",
+        "example": "Encontrar pasajes de una política cercanos en significado a una pregunta, aunque no compartan palabras clave.",
+        "caveat": "Los índices aproximados cambian exhaustividad por velocidad; los identificadores exactos, los filtros y la actualidad suelen requerir búsqueda híbrida por palabras clave."
+      },
+      "source": {
+        "label": "Malkov and Yashunin, HNSW",
+        "url": "https://arxiv.org/abs/1603.09320"
+      },
+      "related": [
+        "rag",
+        "evaluation",
+        "agent",
+        "embedding"
+      ]
+    },
+    {
+      "id": "a2a",
+      "category": "ai",
+      "aliases": [
+        "agent2agent",
+        "agent to agent",
+        "agent card",
+        "agente a agente"
+      ],
+      "en": {
+        "term": "A2A (Agent2Agent)",
+        "definition": "An open protocol through which agents built on different frameworks discover each other's capabilities and exchange tasks and messages.",
+        "example": "A planning agent reads a data agent's Agent Card and delegates a report as a tracked task.",
+        "caveat": "Interoperability does not establish trust: authentication, authorization and task limits remain the deployer's responsibility."
+      },
+      "es": {
+        "term": "A2A (Agent2Agent)",
+        "definition": "Un protocolo abierto con el que agentes creados con distintos frameworks descubren las capacidades de los demás e intercambian tareas y mensajes.",
+        "example": "Un agente planificador lee la Agent Card de un agente de datos y le delega un informe como tarea con seguimiento.",
+        "caveat": "La interoperabilidad no establece confianza: la autenticación, la autorización y los límites de las tareas siguen siendo responsabilidad de quien despliega."
+      },
+      "source": {
+        "label": "A2A Protocol · specification",
+        "url": "https://a2a-protocol.org/latest/specification/"
+      },
+      "related": [
+        "mcp",
+        "multi-agent",
+        "agent"
+      ],
+      "abbr": {
+        "A2A": {
+          "en": "Agent2Agent protocol",
+          "es": "Protocolo Agent2Agent"
+        }
+      }
+    },
+    {
+      "id": "table-catalog",
+      "category": "data",
+      "aliases": [
+        "catalog",
+        "REST catalog",
+        "Iceberg REST catalog",
+        "metastore",
+        "catálogo",
+        "catálogo de tablas"
+      ],
+      "en": {
+        "term": "Table catalog",
+        "definition": "The service that maps a table name to its current metadata and makes each commit atomic, so every engine sees the same table state.",
+        "example": "Spark writes analytics.orders and Trino reads it through the same REST catalog, so the new snapshot is visible to both.",
+        "caveat": "A shared bucket without a shared catalog is not a shared table: engines must speak the same catalog protocol and honor its permissions."
+      },
+      "es": {
+        "term": "Catálogo de tablas",
+        "definition": "El servicio que asocia el nombre de una tabla con sus metadatos actuales y hace atómico cada commit, para que todos los motores vean el mismo estado.",
+        "example": "Spark escribe analytics.orders y Trino la lee mediante el mismo catálogo REST, así que el nuevo snapshot es visible para ambos.",
+        "caveat": "Un bucket compartido sin un catálogo compartido no es una tabla compartida: los motores deben usar el mismo protocolo de catálogo y respetar sus permisos."
+      },
+      "source": {
+        "label": "Apache Iceberg · REST catalog specification",
+        "url": "https://iceberg.apache.org/rest-catalog-spec/"
+      },
+      "related": [
+        "open-table-format",
+        "lakehouse",
+        "query-federation",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "opentelemetry",
+      "category": "platform",
+      "aliases": [
+        "OTel",
+        "OTLP",
+        "tracing",
+        "trazas",
+        "trazabilidad distribuida"
+      ],
+      "en": {
+        "term": "OpenTelemetry",
+        "definition": "An open standard, with SDKs and a collector, for producing traces, metrics and logs that share context and naming conventions, exported over OTLP.",
+        "example": "A request's trace ID follows it from the API through the queue to the worker, so the one slow step shows up end to end.",
+        "caveat": "It standardizes how signals are collected, not where they are stored or alerted on; sampling and label cardinality still decide the cost."
+      },
+      "es": {
+        "term": "OpenTelemetry",
+        "definition": "Un estándar abierto, con SDK y un colector, para producir trazas, métricas y logs que comparten contexto y convenciones de nombres, exportados mediante OTLP.",
+        "example": "El ID de traza de una petición la sigue desde la API por la cola hasta el worker, así que el paso lento aparece de extremo a extremo.",
+        "caveat": "Estandariza cómo se recogen las señales, no dónde se almacenan ni cómo se alerta; el muestreo y la cardinalidad de etiquetas siguen decidiendo el coste."
+      },
+      "source": {
+        "label": "OpenTelemetry · What is OpenTelemetry?",
+        "url": "https://opentelemetry.io/docs/what-is-opentelemetry/"
+      },
+      "related": [
+        "observability",
+        "sre",
+        "tail-latency",
+        "llmops"
+      ],
+      "abbr": {
+        "OTLP": {
+          "en": "OpenTelemetry Protocol",
+          "es": "Protocolo de OpenTelemetry"
+        }
+      }
+    },
+    {
+      "id": "embedding",
+      "category": "ai",
+      "aliases": [
+        "embeddings",
+        "vector embedding",
+        "incrustación",
+        "vector semántico"
+      ],
+      "en": {
+        "term": "Embedding",
+        "definition": "A fixed-length vector that a model assigns to text, images or other data, so that similar meaning ends up close together.",
+        "example": "Two support tickets about a failed payment get nearby vectors even when they share no words.",
+        "caveat": "Vectors from different models, versions or dimensions are not comparable; changing the model means re-embedding the corpus."
+      },
+      "es": {
+        "term": "Embedding",
+        "definition": "Un vector de longitud fija que un modelo asigna a un texto, una imagen u otros datos, de modo que los significados parecidos quedan cerca.",
+        "example": "Dos tickets de soporte sobre un pago fallido reciben vectores cercanos aunque no compartan palabras.",
+        "caveat": "Los vectores de modelos, versiones o dimensiones distintos no son comparables; cambiar de modelo obliga a recalcular los embeddings del corpus."
+      },
+      "source": {
+        "label": "Google · Machine Learning Crash Course: embeddings",
+        "url": "https://developers.google.com/machine-learning/crash-course/embeddings"
+      },
+      "related": [
+        "vector-search",
+        "rag",
+        "evaluation"
+      ]
+    },
+    {
+      "id": "snapshot",
+      "category": "data",
+      "aliases": [
+        "time travel",
+        "table snapshot",
+        "table version",
+        "snapshot de tabla",
+        "versión de tabla",
+        "viaje en el tiempo"
+      ],
+      "en": {
+        "term": "Table snapshot and time travel",
+        "definition": "An immutable version of a table's state after a commit; a query can read an older snapshot by its ID or timestamp.",
+        "example": "Compare today's revenue with the table as it was before last night's backfill.",
+        "caveat": "Old snapshots keep their files on storage until they expire, so retention is a cost and compliance decision."
+      },
+      "es": {
+        "term": "Snapshot de tabla y time travel",
+        "definition": "Una versión inmutable del estado de una tabla tras un commit; una consulta puede leer un snapshot anterior por su ID o su marca de tiempo.",
+        "example": "Comparar los ingresos de hoy con la tabla tal como estaba antes del backfill de anoche.",
+        "caveat": "Los snapshots antiguos mantienen sus archivos en el almacenamiento hasta que expiran, así que la retención es una decisión de coste y cumplimiento."
+      },
+      "source": {
+        "label": "Apache Iceberg · time travel queries",
+        "url": "https://iceberg.apache.org/docs/latest/spark-queries/#time-travel"
+      },
+      "related": [
+        "open-table-format",
+        "compaction",
+        "backfill",
+        "table-catalog"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-table-planner",
+        "en": "Plan the files a table keeps",
+        "es": "Planificar los archivos que conserva una tabla"
+      }
+    },
+    {
+      "id": "compaction",
+      "category": "data",
+      "aliases": [
+        "small files",
+        "file compaction",
+        "rewrite data files",
+        "OPTIMIZE",
+        "compactación",
+        "archivos pequeños"
+      ],
+      "en": {
+        "term": "Compaction",
+        "definition": "Rewriting many small data files into fewer files near a target size, without changing the table's rows.",
+        "example": "Five-minute streaming commits leave 11 MiB files; a nightly rewrite merges each hourly partition into one 512 MiB file.",
+        "caveat": "Compaction commits a new snapshot; the small files stay on storage until older snapshots expire."
+      },
+      "es": {
+        "term": "Compactación",
+        "definition": "Reescribir muchos archivos de datos pequeños en menos archivos cercanos a un tamaño objetivo, sin cambiar las filas de la tabla.",
+        "example": "Los commits de streaming cada cinco minutos dejan archivos de 11 MiB; una reescritura nocturna une cada partición horaria en un archivo de 512 MiB.",
+        "caveat": "La compactación confirma un nuevo snapshot; los archivos pequeños siguen en el almacenamiento hasta que expiran los snapshots anteriores."
+      },
+      "source": {
+        "label": "Apache Iceberg · compact data files",
+        "url": "https://iceberg.apache.org/docs/latest/maintenance/#compact-data-files"
+      },
+      "related": [
+        "open-table-format",
+        "snapshot",
+        "streaming",
+        "object-storage"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-table-planner",
+        "en": "Plan table files and compaction",
+        "es": "Planificar archivos de tabla y compactación"
+      }
+    },
+    {
+      "id": "tail-latency",
+      "category": "platform",
+      "aliases": [
+        "p95",
+        "p99",
+        "percentile latency",
+        "latencia de cola",
+        "percentil"
+      ],
+      "en": {
+        "term": "Tail latency (p95/p99)",
+        "definition": "The response time that only the slowest few percent of requests exceed, such as the 99th percentile.",
+        "example": "An API averages 80 ms, but its p99 is 1.2 s: one request in a hundred waits more than a second.",
+        "caveat": "Percentiles cannot be averaged across servers or time windows; aggregate the underlying histograms instead."
+      },
+      "es": {
+        "term": "Latencia de cola (p95/p99)",
+        "definition": "El tiempo de respuesta que solo supera el pequeño porcentaje de peticiones más lentas, por ejemplo el percentil 99.",
+        "example": "Una API responde de media en 80 ms, pero su p99 es 1,2 s: una petición de cada cien espera más de un segundo.",
+        "caveat": "Los percentiles no se pueden promediar entre servidores ni ventanas de tiempo; agrega los histogramas de origen."
+      },
+      "source": {
+        "label": "Google SRE · Service level objectives",
+        "url": "https://sre.google/sre-book/service-level-objectives/"
+      },
+      "related": [
+        "slo",
+        "error-budget",
+        "observability",
+        "prefill-decode"
+      ],
+      "practice": {
+        "path": "projects/tools/#interactive-sql-sandbox",
+        "en": "Query p99 latency in sample runs",
+        "es": "Consultar la latencia p99 de ejecuciones de ejemplo"
+      },
+      "abbr": {
+        "p95": {
+          "en": "95th-percentile latency",
+          "es": "Latencia del percentil 95"
+        },
+        "p99": {
+          "en": "99th-percentile latency",
+          "es": "Latencia del percentil 99"
+        }
+      }
+    },
+    {
+      "id": "backfill",
+      "category": "data",
+      "aliases": [
+        "reprocessing",
+        "historical load",
+        "reproceso",
+        "recarga histórica"
+      ],
+      "en": {
+        "term": "Backfill",
+        "definition": "Recomputing or loading data for a past period, for example after fixing a transformation or adding a column.",
+        "example": "After correcting a currency bug, rerun the daily revenue model for the last 90 partitions.",
+        "caveat": "A backfill must be idempotent and bounded: overwrite whole partitions and limit its load on shared engines."
+      },
+      "es": {
+        "term": "Backfill",
+        "definition": "Recalcular o cargar datos de un periodo pasado, por ejemplo tras corregir una transformación o añadir una columna.",
+        "example": "Tras corregir un error de conversión de moneda, volver a ejecutar el modelo de ingresos diarios de las últimas 90 particiones.",
+        "caveat": "Un backfill debe ser idempotente y acotado: sobrescribir particiones completas y limitar su carga sobre motores compartidos."
+      },
+      "source": {
+        "label": "Apache Airflow · backfill",
+        "url": "https://airflow.apache.org/docs/apache-airflow/stable/core-concepts/backfill.html"
+      },
+      "related": [
+        "idempotency",
+        "batch",
+        "airflow",
+        "dbt",
+        "snapshot"
+      ]
+    },
+    {
+      "id": "object-lock",
+      "category": "cloud",
+      "aliases": [
+        "WORM",
+        "immutable storage",
+        "retention lock",
+        "almacenamiento inmutable",
+        "bloqueo de objetos"
+      ],
+      "en": {
+        "term": "Object Lock (WORM)",
+        "definition": "A storage setting that makes an object version immutable for a retention period: write once, read many.",
+        "example": "Backups are written with a 30-day lock, so neither ransomware nor an operator mistake can delete them.",
+        "caveat": "A compliance-mode lock cannot be shortened, even by administrators; test retention on a non-production bucket first."
+      },
+      "es": {
+        "term": "Object Lock (WORM)",
+        "definition": "Una configuración de almacenamiento que hace inmutable la versión de un objeto durante un periodo de retención: se escribe una vez y se lee muchas.",
+        "example": "Los respaldos se escriben con un bloqueo de 30 días, así que ni un ransomware ni un error de operación pueden borrarlos.",
+        "caveat": "Un bloqueo en modo compliance no se puede acortar, ni siquiera por administradores; prueba la retención en un bucket que no sea de producción."
+      },
+      "source": {
+        "label": "Amazon S3 · Object Lock",
+        "url": "https://docs.aws.amazon.com/AmazonS3/latest/userguide/object-lock.html"
+      },
+      "related": [
+        "object-storage",
+        "zero-trust",
+        "private-cloud"
+      ]
+    }
+  ]
+}
