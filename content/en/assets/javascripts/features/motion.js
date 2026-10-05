@@ -8,13 +8,12 @@ import { setAmbientStill } from "./ambient.js";
 const MOTION_KEY = "__motion";
 const LABELS = { en: "Pause animations", es: "Pausar animaciones" };
 
-function readPaused() {
-  try {
-    return window.__md_get?.(MOTION_KEY) === "paused";
-  } catch {
-    return false;
-  }
-}
+// This visit's choice. boot() re-runs on every instant navigation, and with
+// storage unavailable the stored value reads back as null.
+let choice = null;
+
+// The storage helpers in overrides/main.html never throw.
+const readPaused = () => window.__md_get?.(MOTION_KEY) === "paused";
 
 function applyMotion(paused) {
   if (paused) html.dataset.motion = "paused";
@@ -36,13 +35,9 @@ function createOption(placement) {
   icon.setAttribute("aria-hidden", "true");
   button.append(icon);
   button.addEventListener("click", () => {
-    const paused = html.dataset.motion !== "paused";
-    try {
-      window.__md_set?.(MOTION_KEY, paused ? "paused" : "running");
-    } catch {
-      // Storage unavailable: the choice lasts for this document only.
-    }
-    applyMotion(paused);
+    choice = html.dataset.motion !== "paused";
+    window.__md_set?.(MOTION_KEY, choice ? "paused" : "running");
+    applyMotion(choice);
   });
   const option = document.createElement("div");
   option.className = `md-header__option motion-option motion-option--${placement}`;
@@ -61,5 +56,5 @@ export function setupMotionToggle() {
   const footer = document.querySelector(".md-footer-meta__inner");
   if (footer && !footer.querySelector(".motion-option--footer"))
     footer.append(createOption("footer"));
-  applyMotion(readPaused());
+  applyMotion(choice ?? readPaused());
 }

@@ -308,6 +308,11 @@ test("table planner splits large commits and compacts whole partitions", () => {
   // A daily batch into hourly partitions touches all 24 hours.
   assert.equal(planTableFiles({ ...lake, commitsPerDay: 1, buckets: 1 }).touched, 24);
   assert.equal(planTableFiles({ ...lake, commitsPerDay: 5, buckets: 1 }).touched, 5);
+  // Commit counts below 24 that do not divide it: compaction never adds files.
+  for (const commitsPerDay of [5, 7, 10, 23]) {
+    const plan = planTableFiles({ ...lake, commitsPerDay, buckets: 1 });
+    assert.ok(plan.compactedFiles <= plan.retainedFiles, `${commitsPerDay} commits`);
+  }
   // Unpartitioned: compaction works on the whole retained table per bucket.
   const flat = planTableFiles({ ...lake, partitioning: "none", buckets: 1 });
   assert.equal(flat.partitions, 1);

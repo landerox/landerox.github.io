@@ -493,9 +493,16 @@ export function setupFailureLab(locale) {
       }),
     );
     const finished = state.tick >= FAILURE_LIMITS.ticks;
-    step.disabled = finished || timer !== null;
-    play.disabled = finished;
-    restore.disabled = fault === "none";
+    const disabled = new Map([
+      [step, finished || timer !== null],
+      [play, finished],
+      [restore, fault === "none"],
+    ]);
+    // Disabling the focused button would drop focus to <body>; hand it to the
+    // next useful control first.
+    const active = document.activeElement;
+    if (disabled.get(active)) (active === restore ? condition : reset).focus();
+    for (const [control, off] of disabled) control.disabled = off;
     play.textContent = timer === null ? t.play : t.pause;
   }
 

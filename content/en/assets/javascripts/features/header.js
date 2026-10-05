@@ -1,4 +1,6 @@
-/** Header behaviors: repository link target, logo turn and button semantics. */
+/** Header behaviors: repository link target, logo turn, button semantics and
+ * the skip-link target.
+ */
 import { reducedMotion } from "./env.js";
 
 export function setupRepoLinkTarget() {
@@ -52,7 +54,9 @@ export function setupHeaderButtons() {
       control = document.createElement("button");
       control.type = "button";
       control.className = "theme-toggle-button";
-      control.setAttribute("aria-label", label.getAttribute("aria-label"));
+      // Never name the button "null" if a theme release drops the label.
+      const name = label.getAttribute("aria-label") || label.title;
+      if (name) control.setAttribute("aria-label", name);
       control.append(...label.childNodes);
       label.replaceChildren(control);
       label.removeAttribute("aria-label");
@@ -87,7 +91,24 @@ export function setupHeaderButtons() {
       );
     }
   }
-  const overlay = document.querySelector(".md-overlay");
-  overlay?.removeAttribute("aria-label");
-  overlay?.setAttribute("aria-hidden", "true");
+}
+
+/**
+ * Zensical 0.0.68's skip target is an href-less `<a id="__skip">`. The theme's
+ * instant prefetch runs `new URL(anchor.href)` on every focusin, so using the
+ * skip link threw and ended prefetching for the session. Keep that one event
+ * from the theme; removal check in docs/runbook.md.
+ */
+export function initSkipTarget() {
+  document.addEventListener(
+    "focusin",
+    (event) => {
+      if (
+        event.target instanceof window.Element &&
+        event.target.id === "__skip"
+      )
+        event.stopPropagation();
+    },
+    true,
+  );
 }

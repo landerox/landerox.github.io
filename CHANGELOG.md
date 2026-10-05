@@ -86,7 +86,7 @@ tag and release establish this baseline after review.
 
 ### Stack and repository organization
 
-The site runs on Python 3.13 and Zensical 0.0.67. `uv` installs Python
+The site runs on Python 3.13 and Zensical 0.0.68. `uv` installs Python
 dependencies from `uv.lock`; `just` exposes development, validation,
 maintenance and release commands. Node.js 24.21.0 LTS runs the glossary
 generator, built-in Node tests and isolated Node hooks.

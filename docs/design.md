@@ -73,11 +73,21 @@ and reduced motion. Only animation timing may differ.
 - `--ink-1|2|3` — text, 1 = headings, 2 = body, 3 = secondary/meta.
 - `--hairline*` — decorative separators, no contrast obligation.
 - `--border-interactive` — the boundary of a *control*; held to 3:1.
+- `--border-brand` — the same obligation, drawn in the accent; only the
+  secondary button uses it.
 - `--target-min` — the 44px minimum touch target every control uses.
 - `--scrim`, `--tooltip-*` — overlays that stay dark in both schemes.
 - `--edge-highlight` / `--sheen` — elevation cues rather than colors of
   their own: a 1px top highlight folded into `--shadow-raised` and
   `--shadow-lifted`, and the top-light gradient on filled controls.
+  `--control-highlight` (`-hover`) is the 1px white inset on the primary
+  button, scheme-agnostic.
+- `--z-ambient`, `--z-dock`, `--z-hud` — stacking layers that cross
+  component boundaries (canvas, sticky tools dock, hero HUD). Layers inside
+  one component's stacking context stay local integers.
+- `--edge-beam` / `--edge-beam-lit` — the same top edge tinted with the
+  accent, on interactive surfaces only (cards and the Technical desk); see
+  [Edge beam](#edge-beam).
 - `--md-*` — the bridge into Zensical's own variables. Set these rather
   than overriding the theme's selectors, so components the site does not
   style explicitly still land on-palette.
@@ -126,8 +136,11 @@ that directly aligns with the site logo (`#0070f3`).
 | `--brand-ink`          | `rgb(0 80 196)`     | Prose links              |    6.65 | AA   |
 | `--brand-hover`        | `rgb(0 96 215)`     | Link/button hover        |    5.36 | AA   |
 | `--hairline`           | `hsl(220 14% 89%)`  | Dividers, card borders   |    1.21 | n/a  |
-| `--border-interactive` | `hsl(215 16% 54%)`  | Secondary button border  |    3.43 | 1.4.11 |
+| `--border-interactive` | `hsl(215 16% 54%)`  | Inputs, filters, tool controls |  3.43 | 1.4.11 |
+| `--border-brand`       | `rgb(0 112 243 / 85%)` | Secondary button border |   3.39 | 1.4.11 |
 | `--edge-highlight`     | `hsl(0 0% 100% / 80%)` | Top edge of raised surfaces |  — | n/a  |
+| `--edge-beam`          | `rgb(0 112 243 / 45%)` | Resting card edge beam |      — | n/a  |
+| `--edge-beam-lit`      | `rgb(0 112 243 / 80%)` | Hovered card, dialog edge beam | — | n/a |
 | `--ambient-rgb`        | `rgb(0 114 245)`    | Background canvas only   |       — | n/a  |
 
 `--brand` draws the focus ring and tints decorative indicators, which answer to
@@ -164,8 +177,11 @@ use a vivid azure blue (`#60a5fa`) matching the dark logo.
 | `--brand`              | `rgb(96 165 250)`      | Links, fills, ring     |    7.61 | AAA  |
 | `--brand-hover`        | `rgb(147 197 253)`     | Hover                  |   10.74 | AAA  |
 | `--hairline`           | `hsl(217 24% 24% / 75%)` | Dividers, borders    |    1.43 | n/a  |
-| `--border-interactive` | `hsl(215 20% 65% / 65%)` | Secondary button border |   3.78 | 1.4.11 |
+| `--border-interactive` | `hsl(215 20% 65% / 65%)` | Inputs, filters, tool controls | 3.78 | 1.4.11 |
+| `--border-brand`       | `rgb(96 165 250 / 62%)` | Secondary button border |  3.76 | 1.4.11 |
 | `--edge-highlight`     | `hsl(210 40% 98% / 8.5%)` | Top edge of raised surfaces |  — | n/a  |
+| `--edge-beam`          | `rgb(96 165 250 / 45%)` | Resting card edge beam |     — | n/a  |
+| `--edge-beam-lit`      | `rgb(96 165 250 / 90%)` | Hovered card, dialog edge beam | — | n/a |
 | `--ambient-rgb`        | `rgb(59 130 246)`      | Background canvas only  |      — | n/a  |
 
 ### Hairlines are a step lighter than a straight inversion
@@ -319,25 +335,31 @@ border. Both variants now declare `border: 1px solid` explicitly.
 | Variant   | Fill               | Border                 | Text              |
 | :-------- | :----------------- | :--------------------- | :---------------- |
 | Primary   | `--control-fill`   | `--control-fill`       | `--brand-contrast` |
-| Secondary | `--surface-raised` | `--border-interactive` | `--ink-2`         |
+| Secondary | `--surface-raised` | `--border-brand`       | `--ink-2`         |
 
-The secondary border is the reason `--border-interactive` exists. WCAG
-1.4.11 asks 3:1 against *each* adjacent background, so the figure that
-counts is the worse of the two: 3.43:1 in light (against the page; 3.68:1
-against the button's own fill) and 3.67:1 in dark (against the fill;
-3.78:1 against the page). The decorative `--hairline` deliberately does
-not attempt this.
+The secondary is an outline in the primary's hue (2026-10): fill against
+outline separates the pair, and one hue ties them together. The label stays
+`--ink-2`, so blue text remains the mark of the primary and of links, and
+hover still has a color change to make. WCAG 1.4.11 asks 3:1 against
+*each* adjacent background, so the figure that counts is the worse of the
+two: 3.39:1 in light (against the page; 3.63:1 against the button's own
+fill) and 3.48:1 in dark (against the fill; 3.76:1 against the page). The
+decorative `--hairline` deliberately does not attempt this.
 
-The dark token is `hsl(215 20% 65% / 65%)`, and the alpha is load-bearing:
-at 40% the composited boundary measures 2.16:1 and fails the criterion in
-both directions. Recompute after any change to it or to the dark
-surfaces — the value is not eyeballable through the alpha.
+Both alphas are load-bearing. Light `--border-brand` drops under 3:1
+against the page below 78%, dark under 3:1 against the fill below 55%.
+`--border-interactive` keeps the same obligation for inputs, filters and
+tool controls; its dark value `hsl(215 20% 65% / 65%)` measured 2.16:1 at
+40%. Recompute after any change to these tokens or to the surfaces —
+the values are not eyeballable through the alpha. The border composites over
+the pill's own fill (`background-clip: border-box`), and the browser gate
+measures the secondary at rest against both its fill and the page, in both
+schemes.
 
 State model (2026-09 polish):
 
-- **Rest.** The secondary carries `--shadow-raised` at rest — the border
-  is calibrated for 1.4.11 contrast, not for presence, and without an
-  elevation cue the white pill still sank into the light page. The
+- **Rest.** The secondary carries `--shadow-raised` at rest; without an
+  elevation cue the white pill sank into the light page. The
   primary carries `--sheen` (a top-light gradient, 22% white to nothing
   in light, 15% in dark) over `--control-fill` plus a brand-tinted contact
   shadow, so it reads as a solid control rather than a flat swatch.
@@ -348,7 +370,9 @@ State model (2026-09 polish):
 - **Hover / keyboard focus.** Both variants lift `-2px` and swap the
   generic gray shadow for a **brand glow** derived from `--brand-rgb`
   (35% primary, 16% secondary), matching the glow language of the
-  active tab, the HUD rings and the status dot. The trigger is
+  active tab, the HUD rings and the status dot. The secondary's border
+  goes from `--border-brand` to full `--brand`, its fill takes
+  `--brand-tint-weak` and its label `--brand-ink`. The trigger is
   `:focus-visible`, not `:focus` — the old `:focus` selector left a
   mouse-clicked button stuck in its hover treatment until blur.
 - **Active.** The pill settles back to `translateY(0)` with a subtle
@@ -410,8 +434,8 @@ the bottom even when summaries wrap differently. The 3D tilt comes from
 fallback, so cards render correctly with JavaScript disabled. The
 cursor-tracked radial glare that used to accompany the tilt was removed
 by owner decision (2026-09): a haze following the pointer read as a
-smear rather than a light source, and the top-edge glow on hover
-already answers the cursor.
+smear rather than a light source, and the [edge beam](#edge-beam)
+brightening on hover already answers the cursor.
 
 Every home block is visible on first render. A view-timeline reveal on
 below-the-fold blocks left large empty gaps in full-page and mobile
@@ -437,6 +461,35 @@ frame-cost budget, these are the regions to measure first.
 The homepage contact actions deliberately stay in normal document flow:
 the hero pair and the closing pair already supply enough hierarchy, and a
 full-width decorated wrapper made a small action look oversized.
+
+### Edge beam
+
+A 1px line along the top edge, `transparent → accent → transparent`, so it
+fades out before the corner radius and reads as light catching an edge
+rather than as a stroke. It is `--edge-highlight` tinted with the accent,
+which is why it sits on the top edge only: the elevation model lights
+surfaces from above, and a matching bottom line read as an underline in
+the light scheme. Adopted in 2026-10 after an external reference that
+framed every panel, top and bottom, about a dozen times on one page.
+
+| Surface | Rest | Hover / focus |
+| :------ | :--- | :------------ |
+| `grid cards` (Home 4, Projects 5) | `::before`, `--edge-beam`, 8% inset per side | `::after` cross-fades in, `--edge-beam-lit`, full width, 1.5px |
+| Technical desk dialog | `::before`, `--edge-beam-lit`, 6% inset | — |
+
+Cards carry a resting beam *and* a lit one so that hover still has a state
+to change to; the brand border and the lift come with it. Both are
+pseudo-elements because the inset `--edge-highlight` in `--shadow-raised`
+paints over background layers and washed a background-image beam out to
+a fifth of its strength in the light scheme. Forced colors and print hide
+them.
+
+The beam stays off reading panels, callouts, the page lead, tables, code,
+tool widgets, the HUD and the availability pill. The accent marks
+interactive surfaces; callouts and the lead already share one hairline frame
+with no brand edge; and a beam on every box stops signaling anything. If
+a panel ever needs the shape, draw it with `--hairline-strong`, not the
+accent.
 
 ### Home landing
 
@@ -478,9 +531,11 @@ block. There is no "Selected Work" block (owner decision, 2026-09-24): with
 Projects and Blog in the top tabs it repeated the navigation, and the expertise
 cards already link to concrete work. ZDX leads the Projects overview. The
 contact labels (`Send an email` / `Escribir un email`, `Book a call` / `Agendar
-una llamada`) are the same on Home, About and Collaboration. They name the
-action rather than the address; the `mailto:` link reveals the address when it
-opens.
+una llamada`) are the same on Home, About and Collaboration, and so is their
+weight: "Send an email" is the primary button, "Book a call" the secondary
+(2026-10; About and Collaboration had the call first). One contact action
+keeps the same rank on every page. They name the action rather than the
+address; the `mailto:` link reveals the address when it opens.
 
 A brand-tinted `.project-status` panel was tried on the projects
 publishing-model callout and removed again: a distinct surface made one
@@ -1200,6 +1255,7 @@ and the grid layout no longer lets another block extend under the HUD.
 | `--ease-standard`  | `cubic-bezier(0.4, 0, 0.2, 1)`   | State changes                |
 | `--ease-emphasized`| `cubic-bezier(0.16, 1, 0.3, 1)`  | Anything that should feel physical |
 | `--ease-spring`    | `cubic-bezier(0.175, 0.885, 0.32, 1.275)` | Tactile overshoot and spring pops |
+| `--ease-decelerate`| `cubic-bezier(0, 0, 0.2, 1)`     | Looping pings that fade out (status dot) |
 
 `transition: all` is not used anywhere — it forces the browser to watch
 every animatable property, including ones that trigger layout.
@@ -1285,10 +1341,16 @@ shows that still frame.
 ### Focus
 
 There was no `:focus-visible` styling at all. One ring now covers every
-interactive surface via a zero-specificity `:where()` list, at
+interactive surface via a `:where()` list, at
 `2px` solid `--brand` with a `3px` offset — 4.24:1 (light) and 7.61:1
 (dark) against the page, comfortably past the 3:1 required for focus
-indicators. A `:has(a:focus-visible)` rule lifts the ring onto the card
+indicators. The list lands at (0,1,0) through `:focus-visible`, so where the
+theme's polyfill class rules outrank it (`.md-typeset a`, `.md-typeset
+summary`, `.md-nav__link`, `.md-pagination__link` with `.focus-visible`) a
+matching selector restates the ring. The ring's `4px` corner sits in a
+separate rule at zero specificity (`:where(…):where(:focus-visible)`): it
+rounds the ring on bare links, while pills and rounded controls keep their
+own radius. A `:has(a:focus-visible)` rule lifts the ring onto the card
 so it is not clipped by the card's own `overflow: hidden`. Keyboard-scrollable
 regions (terminal, glossary results, SQL and simulation tables, the memory
 table and scroll-wrapped Markdown tables) share one ring drawn inside their
@@ -1298,8 +1360,9 @@ availability pill's guidance, which otherwise lived only in a `title`.
 
 ### Other modes
 
-- `forced-colors: active` — decorative layers dropped, borders handed
-  back to `CanvasText` so Windows High Contrast works. Masked icons (the
+- `forced-colors: active` — decorative layers (including the edge beams)
+  dropped, borders handed back to `CanvasText` so Windows High Contrast
+  works. Masked icons (the
   motion toggle, the external-link mark) paint with `ButtonText` /
   `LinkText`, because forced colors turn their `background-color` into
   Canvas. Pressed glossary filters get a `Highlight` outline, and the checked
@@ -1307,8 +1370,8 @@ availability pill's guidance, which otherwise lived only in a `title`.
 - `print` — canvas, rings, social icons, the dock and scenario-link
   controls removed; external-link marks hidden with the screen rule's own
   selector, which a shorter one lost to on specificity; reading panels,
-  reference lists and the public glossary print fully open; cards flattened
-  and `break-inside: avoid`.
+  reference lists and the public glossary print fully open; cards flattened,
+  without their edge beam, and `break-inside: avoid`.
 
 All forced-colors and print rules of `extra.css` live in section 13;
 `decision-tools.css` keeps its own small forced-colors block.
@@ -1498,6 +1561,17 @@ not inferred.
 | 40 | Home, Projects and Blog shared one `<title>` per locale ("Overview - landerox.com") | Modern builds the title from the page title, which the explicit TOML nav label supplied for all three `index.md` pages. A front-matter `title:` now names each; the nav labels are unchanged. |
 | 41 | Every line of a code block was an empty link in the tab order (Lighthouse `link-name`, accessibility 0.96 on Open Source) | `pymdownx.highlight` with `anchor_linenums = true` wraps each line in `<a id="__codelineno-…" href="#__codelineno-…">` with no text when line numbers are hidden. Both configs set `anchor_linenums = false`; `line_spans` stays for line highlighting. The first code block on the site exposed it. |
 | 42 | Both public glossaries scored 0.89 performance with a 0.12 layout shift | The controls host ships empty and `glossary-page.js` fills it after the lazy import, pushing every definition down. `@media (scripting: enabled)` now reserves the filled height on the empty host: CLS 0.000, performance 0.94. A blocking `cumulative-layout-shift` ≤ 0.1 assertion keeps it from returning. |
+| 43 | Failure Lab's "Copy link to this scenario" button touched the pipeline (0px), and every node sat 21px right of the controls | The flow reset Modern's `ol` margin but not `[dir] .md-typeset ol li { margin-left: 1.25em }` (0,2,2), which outranked `.md-typeset .failure-node`. `.md-typeset ol.failure-flow > li` matches that specificity later in the cascade, and the flow takes a 1rem top margin like the other tools' first block after the link. |
+| 44 | Using the skip link threw `Failed to construct 'URL'` and stopped instant prefetching for the session (Zensical 0.0.68) | The new skip target `<a id="__skip">` has no `href`, and the theme's prefetch runs `new URL(anchor.href)` on `focusin`. `initSkipTarget()` keeps that focus event from the theme. A browser test covers the path, and the [runbook](runbook.md#site-renders-wrong-after-a-zensical-bump) says when to remove the guard. |
+| 45 | Keyboard focus squared the pill controls (dock buttons, glossary filters) and turned 8px controls into 4px | The ring's `border-radius: var(--radius-xs)` rode in the (0,1,0) `:where(…):focus-visible` rule, later than every single-class radius. It now sits in its own zero-specificity rule, so authored radii win. |
+| 46 | Disclosure summaries, navigation and pagination links drew `--brand-ink` rings offset by about 4px | The theme's `.md-typeset summary.focus-visible`, `.md-nav__link.focus-visible` and `.md-pagination__link.focus-visible` outranked the shared ring. Matching selectors now restate it, which retired a duplicate ring with raw `2px`/`3px` on reference filters. |
+| 47 | Glossary filters on the public glossary page had no hover state | The hover rule was scoped to `.console-window`; the page mounts the same controls in `.glossary-page-controls`. |
+| 48 | Hidden navigation tabs snapped back instead of sliding in | `.md-tabs__link { transition }` listed only color and background, replacing the theme's transform and opacity reveal. Both are listed again, on motion tokens. |
+| 49 | With storage unavailable, the motion pause reset on every instant navigation | `boot()` re-read the stored choice, which reads back as null. The choice is kept in module state for the visit. |
+| 50 | In forced-colors mode the hidden ambient canvas kept a frame loop running | The loop now stops while the canvas has no size and restarts on resize or when forced colors turns off. |
+| 51 | Failure Lab dropped keyboard focus to `<body>` after Restore, or when Step or Play reached the end | Each button disabled itself while focused. Focus now moves to the condition picker (Restore) or Reset (end of run) first. |
+| 52 | The table-file planner could report more files after compaction than before (hourly partitions, commit counts below 24 that do not divide it) | An even split over `ceil(24 / commits)` hours made each write smaller than an hour's data. Writes now carry about an hour of data; a unit test covers 5, 7, 10 and 23 commits. |
+| 53 | The memory planner's baseline showed raw values (`27.78`, `32768`, `16`) in both locales | It printed `String(value)`. Numbers now use the page locale, and selects show their option label. |
 
 Defects 15–19 were found by reading the `Quality · Lighthouse` reports
 rather than the rendered page: accessibility sat at 0.83 on all eight

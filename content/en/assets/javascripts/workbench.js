@@ -622,7 +622,7 @@ function createConsole(root, locale, t) {
   inputWrap.append(ghost, termInput);
   const completionHint = element(
     "span",
-    { class: "console-sr-only", id: "term-completion-hint" },
+    { class: "visually-hidden", id: "term-completion-hint" },
     t.acceptSuggestion,
   );
   termForm.append(
@@ -1195,7 +1195,7 @@ function createConsole(root, locale, t) {
     termInput.addEventListener(event, refreshGhost);
   refreshGhost();
   const copyStatus = element("span", {
-    class: "console-sr-only",
+    class: "visually-hidden",
     role: "status",
   });
   bar.append(copyStatus);
@@ -1546,10 +1546,18 @@ function setupCalculator(t) {
       );
     }
     baselineDescription.append(element("dt", {}, t.preset), model);
+    // Selects show their option label; numbers use the page locale.
+    const shown = (key) => {
+      const value = baseline[key];
+      const option = [...(controls[key].options || [])].find(
+        (item) => item.value === String(value),
+      );
+      return option ? option.text : whole.format(value);
+    };
     for (const [key, label] of definitions)
       baselineDescription.append(
         element("dt", {}, label),
-        element("dd", {}, String(baseline[key])),
+        element("dd", {}, shown(key)),
       );
   };
   const explain = (input, metrics) => {
@@ -1617,7 +1625,7 @@ function setupCalculator(t) {
       for (const key of ["total", ...components.map(([name]) => name)])
         values[key].textContent = `${formatter.format(metrics[key])} GiB`;
       // The total is already on screen; announce it without repeating it.
-      status.classList.add("console-sr-only");
+      status.classList.add("visually-hidden");
       status.textContent = `${t.total}: ${formatter.format(metrics.total)} GiB`;
       explain(input, metrics);
       tableBody.replaceChildren();
@@ -1646,7 +1654,7 @@ function setupCalculator(t) {
         (Object.hasOwn(controls, error.field) ? error.field : undefined);
       if (invalidKey) controls[invalidKey].setAttribute("aria-invalid", "true");
       const invalidLabel = definitions.find(([key]) => key === invalidKey)?.[1];
-      status.classList.remove("console-sr-only");
+      status.classList.remove("visually-hidden");
       status.textContent = invalidLabel
         ? `${invalidLabel}: ${t.invalidMemory}`
         : t.invalidMemory;
@@ -1675,7 +1683,7 @@ function setupCalculator(t) {
     baselinePreset = selectedPreset();
     renderBaseline();
     update();
-    status.classList.remove("console-sr-only");
+    status.classList.remove("visually-hidden");
     status.textContent = t.baselineSaved;
   });
   form.addEventListener("submit", (event) => {

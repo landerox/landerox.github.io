@@ -56,6 +56,6 @@ Caracas time**; the availability pill on the home page shows a typical day.
 ## Let's connect
 
 <!-- markdownlint-disable MD013 -->
-[:material-calendar-clock: Book a call](https://calendly.com/landerox/30min){ .md-button .md-button--primary target="_blank" }
-[:material-email: Send an email](mailto:contacto@landerox.com){ .md-button }
+[:material-email: Send an email](mailto:contacto@landerox.com){ .md-button .md-button--primary }
+[:material-calendar-clock: Book a call](https://calendly.com/landerox/30min){ .md-button target="_blank" }
 <!-- markdownlint-enable MD013 -->

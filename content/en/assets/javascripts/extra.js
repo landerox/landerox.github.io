@@ -12,6 +12,7 @@ import {
   setupRepoLinkTarget,
   setupLogoTurn,
   setupHeaderButtons,
+  initSkipTarget,
 } from "./features/header.js";
 import { setupHudDataNodes } from "./features/hud.js";
 import { setupStatusPill } from "./features/status.js";
@@ -27,6 +28,7 @@ import {
 initThemeTransition();
 initThemeColor();
 initDeepLinks();
+initSkipTarget();
 
 function boot() {
   // Before the canvas mounts, so a paused visit never paints a moving frame.

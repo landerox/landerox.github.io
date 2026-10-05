@@ -237,6 +237,18 @@ broken, the styling just no longer lands where it was aimed.
    frame in the new scheme, and both choices must survive the locale switch
    (`extra.scope = "/"`). `just test-browser` covers the persistence path.
 
+8. Use the skip link with the keyboard (Tab, Enter) and watch the console.
+   Since 0.0.68 the theme's skip target is `<a id="__skip" tabindex="-1">`,
+   an anchor without `href`. Its instant prefetch (`handle()` in zensical/ui
+   `integrations/instant/index.ts`) runs `new URL(anchor.href)` on every
+   `focusin`. That call threw, and prefetching stopped for the rest of the
+   session. `initSkipTarget()` in `features/header.js` keeps that one focus
+   event away from the theme. After each bump, comment out the
+   `initSkipTarget()` call in `extra.js` and run `just build` and
+   `just test-browser`. If `test_skip_link_reaches_content_without_errors`
+   passes without the guard, the theme now handles href-less anchors: delete
+   the guard and this step.
+
 **Actions**:
 
 - **A variable changed owner**: update the bridge block in `extra.css`

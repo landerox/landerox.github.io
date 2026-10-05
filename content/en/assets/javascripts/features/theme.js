@@ -13,11 +13,13 @@ export function initThemeTransition() {
     if (!input) return;
     event.preventDefault();
 
-    // Start the wipe at the click and size it to the furthest corner.
+    // Start the wipe at the click and size it to the furthest corner. A
+    // synthetic click (assistive technology, script) has detail 0 and no
+    // pointer position, so it starts from the label's center.
     const bounds = label.getBoundingClientRect();
-    const keyboard = event.detail === 0;
-    const x = keyboard ? bounds.left + bounds.width / 2 : event.clientX;
-    const y = keyboard ? bounds.top + bounds.height / 2 : event.clientY;
+    const synthetic = event.detail === 0;
+    const x = synthetic ? bounds.left + bounds.width / 2 : event.clientX;
+    const y = synthetic ? bounds.top + bounds.height / 2 : event.clientY;
     const radius = Math.hypot(
       Math.max(x, window.innerWidth - x),
       Math.max(y, window.innerHeight - y),

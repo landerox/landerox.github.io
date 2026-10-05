@@ -4,7 +4,13 @@
  * Reduced motion and the pause control show the same network as one still
  * frame: no animation loop and no pointer tethers.
  */
-import { html, reducedMotion, paletteHost, isDark } from "./env.js";
+import {
+  html,
+  reducedMotion,
+  forcedColors,
+  paletteHost,
+  isDark,
+} from "./env.js";
 
 const CONNECT_DIST = 220;
 const POINTER_RADIUS = 200;
@@ -122,8 +128,9 @@ function onResize() {
     resizePending = false;
     if (!canvas) return;
     resize();
-    // A resize clears the backing store; a still canvas needs a repaint.
-    if (still) play();
+    // A resize clears the backing store; a still canvas needs a repaint, and
+    // a loop stopped while the canvas had no size resumes.
+    play();
   });
 }
 
@@ -231,7 +238,8 @@ function drawPointer() {
 }
 
 function draw(timestamp) {
-  if (document.visibilityState === "hidden") {
+  // A hidden tab, or a canvas CSS hides (forced colors), stops the loop.
+  if (document.visibilityState === "hidden" || !width || !height) {
     frame = null;
     return;
   }
@@ -270,6 +278,8 @@ function pause() {
 
 function listen() {
   window.addEventListener("resize", onResize);
+  // Forced colors hide the canvas; leaving that mode must size it again.
+  forcedColors.addEventListener("change", onResize);
   window.addEventListener(
     "pointermove",
     (event) => {

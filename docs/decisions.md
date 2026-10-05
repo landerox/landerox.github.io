@@ -658,7 +658,7 @@ the tool must reference the same version, never a divergent one.
 | :-------------------- | :----------------------------------- | :---------------------------------------------- | :------------------------------------------- |
 | Python deps (runtime) | `pyproject.toml` + `uv.lock`         | Local (`uv sync`), CI (`uv sync --frozen`)      | `uv lock --upgrade` then `uv sync`           |
 | Python interpreter    | `.python-version`                    | Local `uv` and CI                               | Move to the latest supported 3.13 patch and verify every gate |
-| Zensical (display)    | `pyproject.toml` + `uv.lock`         | `README.md` Zensical badge (display-only, manual)     | When bumping `zensical` in `pyproject.toml`, edit the version in the badge URL in `README.md` |
+| Zensical (display)    | `pyproject.toml` + `uv.lock`         | `README.md` Zensical badge and the `CHANGELOG.md` stack paragraph (display-only, manual) | When bumping `zensical` in `pyproject.toml`, edit the version in the badge URL in `README.md` and in the stack paragraph of `CHANGELOG.md` |
 | Pre-commit hooks      | `.pre-commit-config.yaml` (`rev:`)   | Local + CI (both via `pre-commit`)              | `just hooks-update` (or manual rev bump)     |
 | npm hook release age | `scripts/install_precommit_hooks.py` (one day) | CI preparation steps and the same local preparation command | Review the default; use the documented environment override for an urgent exception |
 | `uv` itself           | `setup-uv` `version:` in `deploy.yml`, `lint.yml`, `quality.yml`, `uv-report.yml` | Those four workflows, plus the local install | Edit all four in the same PR |

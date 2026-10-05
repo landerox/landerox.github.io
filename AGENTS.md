@@ -102,9 +102,10 @@ just pin-actions  # pin Actions to SHA via pinact
   [`docs/runbook.md`](docs/runbook.md) → "Site renders wrong after a
   Zensical bump" — the build stays green when they break.
 - **When bumping `zensical`** in `pyproject.toml` / `uv.lock`, also
-  edit the version in the Zensical badge URL in `README.md`
-  (display-only consumer; see [Development
-  environment](docs/decisions.md#14-development-environment) SoT table).
+  edit the version in the Zensical badge URL in `README.md` and in the
+  stack paragraph of `CHANGELOG.md` (display-only consumers; see
+  [Development environment](docs/decisions.md#14-development-environment)
+  SoT table).
 - **`CHANGELOG.md` describes the current state, not a change history.**
   It is a single baseline section saying what the platform *is*. When a
   change lands, **edit the affected description in place** so it stays

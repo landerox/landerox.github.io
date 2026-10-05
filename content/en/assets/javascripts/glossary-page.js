@@ -26,11 +26,13 @@ export function mountGlossaryPage(root, locale) {
 
   function render() {
     if (!terms) return;
-    const matches = searchGlossary(terms, controls.search.value, controls.category, locale);
+    // A cached page and a newer catalog can disagree; only built entries count.
+    const matches = searchGlossary(terms, controls.search.value, controls.category, locale)
+      .filter(({ term }) => byId.has(term.id));
     const visible = new Set(matches.map(({ term }) => term.id));
     for (const entry of entries) entry.hidden = !visible.has(entry.dataset.termId);
     for (const { term } of matches) results.append(byId.get(term.id));
-    controls.count(matches, terms.length);
+    controls.count(matches, entries.length);
     empty.hidden = matches.length > 0;
   }
   function reveal(focus = false) {

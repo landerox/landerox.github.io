@@ -10,7 +10,7 @@
   <a href="https://github.com/landerox/landerox.github.io/actions/workflows/lint.yml"><img src="https://github.com/landerox/landerox.github.io/actions/workflows/lint.yml/badge.svg" alt="Lint" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.13%2B-blue?logo=python&logoColor=white" alt="Python" /></a>
   <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv" /></a>
-  <a href="https://github.com/zensical/zensical"><img src="https://img.shields.io/badge/Zensical-0.0.67-FF9100" alt="Zensical" /></a>
+  <a href="https://github.com/zensical/zensical"><img src="https://img.shields.io/badge/Zensical-0.0.68-FF9100" alt="Zensical" /></a>
   <br />
   <a href="https://scorecard.dev/viewer/?uri=github.com/landerox/landerox.github.io"><img src="https://api.securityscorecards.dev/projects/github.com/landerox/landerox.github.io/badge" alt="OpenSSF Scorecard" /></a>
   <a href="https://www.bestpractices.dev/projects/12835"><img src="https://www.bestpractices.dev/projects/12835/badge" alt="OpenSSF Best Practices" /></a>

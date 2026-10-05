@@ -118,9 +118,11 @@
   --md-code-font: "MesloLGM Nerd Font Propo";
 
   /* Motion. `--ease-emphasized` decelerates hard — for entrances and
-     anything that should feel physical. `--ease-standard` for state flips. */
+     anything that should feel physical. `--ease-standard` for state flips,
+     `--ease-decelerate` for looping pings that fade out. */
   --ease-emphasized: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-decelerate: cubic-bezier(0, 0, 0.2, 1);
   --dur-instant: 120ms;
   --dur-quick: 220ms;
   --dur-settled: 400ms;
@@ -145,12 +147,19 @@
   --tooltip-border: hsl(210 40% 98% / 15%);
   --tooltip-ink: hsl(210 40% 98%);
   --tooltip-shadow: 0 4px 15px hsl(0 0% 0% / 45%);
+  /* Top-edge highlight of filled controls, over any fill in either scheme. */
+  --control-highlight: hsl(0 0% 100% / 22%);
+  --control-highlight-hover: hsl(0 0% 100% / 28%);
   --ease-spring: cubic-bezier(0.175, 0.885, 0.32, 1.275);
 
   /* Global stacking layers. Only layers that cross component boundaries
      get a token; z-indexes inside a component's own stacking context
      (card ::before/::after, HUD rings) stay local integers on purpose. */
   --z-ambient: -1;
+  /* The sticky tools dock, level with the theme's sticky header (4). */
+  --z-dock: 4;
+  /* The hero HUD's own stacking context, under the header. */
+  --z-hud: 1;
 }
 
 /* The theme declares `--md-text-font-family` / `--md-code-font-family` on
@@ -194,6 +203,9 @@ body {
   --hairline: hsl(220 14% 89%);
   --hairline-strong: hsl(220 14% 80%);
   --border-interactive: hsl(215 16% 54%);
+  /* Secondary button boundary in the accent: 3.39:1 against the page at
+     85%; below 78% it drops under 3:1. */
+  --border-brand: rgb(var(--brand-rgb) / 85%);
 
   /* Ink: 1 = headings, 2 = body, 3 = secondary/meta. */
   --ink-1: hsl(222 47% 11%);
@@ -210,6 +222,9 @@ body {
     hsl(0 0% 100% / 22%) 0%,
     hsl(0 0% 100% / 0%) 100%
   );
+  /* Brand-tinted top edge of interactive surfaces: resting, then lit. */
+  --edge-beam: rgb(var(--brand-rgb) / 45%);
+  --edge-beam-lit: rgb(var(--brand-rgb) / 80%);
   --shadow-raised:
     0 1px 2px 0 rgb(15 23 42 / 4%), 0 4px 12px -2px rgb(15 23 42 / 4%),
     inset 0 1px 0 var(--edge-highlight);
@@ -310,9 +325,11 @@ body {
      ratios (1.45:1, 2.21:1) are recorded in docs/design.md. */
   --hairline: hsl(217 24% 24% / 75%);
   --hairline-strong: hsl(217 24% 34% / 85%);
-  /* 65%, not 40%: composited over `--surface-raised` the secondary button
+  /* 65%, not 40%: composited over `--surface-raised` the control
      boundary lands at 3.55:1 (WCAG 1.4.11). At 40% it measured 2.15:1. */
   --border-interactive: hsl(215 20% 65% / 65%);
+  /* 62%: 3.48:1 against the button fill; below 55% it drops under 3:1. */
+  --border-brand: rgb(var(--brand-rgb) / 62%);
 
   --ink-1: hsl(210 40% 98%);
   --ink-2: hsl(215 20% 86%);
@@ -326,6 +343,8 @@ body {
     hsl(0 0% 100% / 15%),
     hsl(0 0% 100% / 0%) 60%
   );
+  --edge-beam: rgb(var(--brand-rgb) / 45%);
+  --edge-beam-lit: rgb(var(--brand-rgb) / 90%);
   --shadow-raised:
     0 1px 3px 0 rgb(0 0 0 / 40%), 0 4px 14px -2px rgb(0 0 0 / 35%),
     inset 0 1px 0 var(--edge-highlight);
@@ -739,9 +758,13 @@ html[data-motion="paused"] .hud-status-dot::before {
   margin-top: 0;
   opacity: 1;
   padding: 0.45rem 0.75rem;
+  /* Keeps the theme's reveal when hidden tabs return; listing only color and
+     background made them snap back. */
   transition:
     color var(--dur-quick) var(--ease-standard),
-    background-color var(--dur-quick) var(--ease-standard);
+    background-color var(--dur-quick) var(--ease-standard),
+    transform var(--dur-settled) var(--ease-emphasized),
+    opacity var(--dur-quick) var(--ease-standard);
 }
 
 .md-tabs__link:hover {
@@ -1002,7 +1025,7 @@ html[data-motion="paused"] .hud-status-dot::before {
   border-color: var(--control-fill);
   box-shadow:
     0 1px 3px rgb(var(--brand-rgb) / 30%),
-    inset 0 1px 0 hsl(0 0% 100% / 22%);
+    inset 0 1px 0 var(--control-highlight);
   color: var(--brand-contrast);
 }
 
@@ -1014,7 +1037,7 @@ html[data-motion="paused"] .hud-status-dot::before {
   border-color: var(--control-hover);
   box-shadow:
     0 6px 20px rgb(var(--brand-rgb) / 35%),
-    inset 0 1px 0 hsl(0 0% 100% / 28%);
+    inset 0 1px 0 var(--control-highlight-hover);
   color: var(--brand-contrast);
   opacity: 1;
 }
@@ -1023,11 +1046,11 @@ html[data-motion="paused"] .hud-status-dot::before {
   box-shadow: 0 2px 8px rgb(var(--brand-rgb) / 25%);
 }
 
-/* The rest shadow is what keeps the secondary readable as a raised control;
-   its border is calibrated for WCAG 1.4.11, not for presence. */
+/* Outline to the primary's fill, in the same hue. `--border-brand` holds
+   WCAG 1.4.11's 3:1; the rest shadow keeps the pill raised. */
 .md-typeset .md-button:not(.md-button--primary) {
   background-color: var(--surface-raised);
-  border-color: var(--border-interactive);
+  border-color: var(--border-brand);
   box-shadow: var(--shadow-raised);
   color: var(--ink-2);
 }
@@ -1510,23 +1533,48 @@ html .md-typeset details.faq-item > :not(summary) {
   box-shadow: var(--shadow-lifted);
 }
 
-/* Micro top-edge gradient glow on card hover */
+/* Edge beam: a resting top edge (::before) marks the card as a link and
+   cross-fades to a full-width lit edge (::after) on hover. Top only, like
+   `--edge-highlight`. Pseudo-elements, because the inset highlight would
+   paint over a background layer. */
+.md-typeset .grid.cards > ul > li::before,
+.md-typeset .grid.cards > ul > li::after {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  top: 0;
+  transition: opacity var(--dur-quick) var(--ease-standard);
+  z-index: 2;
+}
+
+.md-typeset .grid.cards > ul > li::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--edge-beam),
+    transparent
+  );
+  height: 1px;
+  left: 8%;
+  right: 8%;
+}
+
 .md-typeset .grid.cards > ul > li::after {
   background: linear-gradient(
     90deg,
     transparent,
-    rgb(var(--brand-rgb) / 55%),
+    var(--edge-beam-lit),
     transparent
   );
-  content: "";
   height: 1.5px;
   left: 0;
   opacity: 0;
-  position: absolute;
   right: 0;
-  top: 0;
-  transition: opacity var(--dur-quick) var(--ease-standard);
-  z-index: 2;
+}
+
+.md-typeset .grid.cards > ul > li:hover::before,
+.md-typeset .grid.cards > ul > li:focus-within::before {
+  opacity: 0;
 }
 
 .md-typeset .grid.cards > ul > li:hover::after,
@@ -1776,12 +1824,6 @@ html .md-typeset details.faq-item > :not(summary) {
   color: var(--brand-ink);
   font-weight: 650;
 }
-.reference-filters button:focus-visible,
-.reference-details > summary:focus-visible {
-  outline: 2px solid var(--brand);
-  outline-offset: 3px;
-}
-
 .md-typeset .reference-count {
   margin-block: 0.7rem 1rem;
   color: var(--ink-2);
@@ -2066,7 +2108,7 @@ html .md-typeset details.faq-item > :not(summary) {
 
   /* Own stacking context with local integers (rings 2, coin 3, nodes and
      pill 4), kept under the sticky header (4). */
-  z-index: 1;
+  z-index: var(--z-hud);
 }
 
 /* Coin: photo on the front, one icon disc per data node on the back. No
@@ -2383,7 +2425,7 @@ html .md-typeset details.faq-item > :not(summary) {
 }
 
 .hud-status-dot::before {
-  animation: status-ping 2.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+  animation: status-ping 2.2s var(--ease-decelerate) infinite;
   background-color: var(--status-color, var(--status-available));
   border-radius: 50%;
   content: "";
@@ -2549,7 +2591,7 @@ body.console-open .landerox-dock-launcher {
   padding-right: max(1rem, env(safe-area-inset-right));
   padding-bottom: max(1rem, env(safe-area-inset-bottom));
   position: sticky;
-  z-index: 4;
+  z-index: var(--z-dock);
 }
 
 /* A very short viewport cannot fit the header, tools and a wrapped footer.
@@ -2595,8 +2637,8 @@ body.console-open .landerox-dock-launcher {
   min-height: var(--target-min);
   padding: 0.35rem 0.7rem;
   transition:
-    background-color var(--dur-instant),
-    color var(--dur-instant);
+    background-color var(--dur-instant) var(--ease-standard),
+    color var(--dur-instant) var(--ease-standard);
 }
 
 .dock-pill-btn--glossary {
@@ -2648,6 +2690,24 @@ body.console-open .landerox-dock-launcher {
 .console-window[open] {
   display: grid;
   grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+/* The only surface in the top layer carries the lit edge beam. */
+.console-window::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    var(--edge-beam-lit),
+    transparent
+  );
+  content: "";
+  height: 1px;
+  left: 6%;
+  pointer-events: none;
+  position: absolute;
+  right: 6%;
+  top: 0;
+  z-index: 1;
 }
 
 .console-window::backdrop {
@@ -2740,7 +2800,8 @@ body.console-open .landerox-dock-launcher {
   font-size: 0.64rem;
   padding: 0.25rem 0.4rem;
 }
-.console-window button:hover {
+/* The public glossary mounts the same controls outside the dialog. */
+:is(.console-window, .glossary-page-controls) button:hover {
   background-color: var(--brand-tint);
   color: var(--brand-ink);
 }
@@ -2754,15 +2815,6 @@ body.console-open .landerox-dock-launcher {
   flex-direction: column;
   min-height: 0;
   min-width: 0;
-}
-
-.console-sr-only {
-  clip-path: inset(50%);
-  height: 1px;
-  overflow: hidden;
-  position: absolute;
-  white-space: nowrap;
-  width: 1px;
 }
 
 .console-eyebrow {
@@ -3687,14 +3739,19 @@ body.console-open .landerox-dock-launcher {
   margin-block: 0.8rem 1.1rem;
 }
 /* Modern gives ol:not([hidden]) flow-root; match its specificity before
-   applying the grid, and also beat its directional list margins. */
+   applying the grid, and also beat its directional list margins. The top
+   margin clears the scenario-link control above it, as in the other tools. */
 .md-typeset ol.failure-flow {
   display: grid;
   gap: 1rem;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   list-style: none;
-  margin: 0;
+  margin: 1rem 0 0;
   padding: 0;
+}
+/* Same specificity as Modern's `[dir] .md-typeset ol li` indent, later. */
+.md-typeset ol.failure-flow > li {
+  margin: 0;
 }
 .md-typeset .failure-node {
   background: var(--surface-sunken);
@@ -3709,8 +3766,8 @@ body.console-open .landerox-dock-launcher {
   position: relative;
   text-align: center;
   transition:
-    background-color var(--dur-quick),
-    border-color var(--dur-quick);
+    background-color var(--dur-quick) var(--ease-standard),
+    border-color var(--dur-quick) var(--ease-standard);
 }
 .failure-node:not(:last-child)::after {
   color: var(--ink-3);
@@ -3924,9 +3981,26 @@ body.console-open .landerox-dock-launcher {
   .md-social__link,
   .tabbed-labels > label
 ):focus-visible {
-  border-radius: var(--radius-xs);
   outline: var(--ring-width) solid var(--brand);
   outline-offset: var(--ring-offset);
+}
+
+/* Zero specificity: rounds the ring on bare links without reshaping pills
+   and rounded controls, whose own radius wins (it used to square them). */
+:where(
+  a,
+  button,
+  label,
+  summary,
+  input,
+  select,
+  textarea,
+  .md-nav__link,
+  .md-tabs__link,
+  .md-social__link,
+  .tabbed-labels > label
+):where(:focus-visible) {
+  border-radius: var(--radius-xs);
 }
 
 /* Keyboard-scrollable regions draw the ring inside their own edge, so a
@@ -3953,11 +4027,16 @@ body.console-open .landerox-dock-launcher {
   width: 1px;
 }
 
-/* `:where()` lands the rule above at (0,1,0), so the theme's
-   `.md-typeset a.focus-visible` (0,2,1) won on prose and card links. Match
-   it where it is contested rather than raising the whole block. */
+/* `:where()` lands the focus-ring rule at (0,1,0), so the theme's
+   `.focus-visible` class rules won: `.md-typeset a` (0,2,1) on prose and card
+   links, `.md-typeset summary` on disclosures, `.md-nav__link` and
+   `.md-pagination__link`. Match them where they are contested rather than
+   raising the whole block. */
 .md-typeset a:focus-visible,
-.md-typeset .md-button:focus-visible {
+.md-typeset .md-button:focus-visible,
+.md-typeset summary:focus-visible,
+.md-nav__link:focus-visible,
+.md-pagination__link:focus-visible {
   outline: var(--ring-width) solid var(--brand);
   outline-offset: var(--ring-offset);
 }
@@ -4052,7 +4131,10 @@ body.console-open .landerox-dock-launcher {
 @media (forced-colors: active) {
   #neural-background,
   .hud-ring-inner,
-  .hud-ring-outer {
+  .hud-ring-outer,
+  .md-typeset .grid.cards > ul > li::before,
+  .md-typeset .grid.cards > ul > li::after,
+  .console-window::before {
     display: none;
   }
 
@@ -4141,6 +4223,11 @@ body.console-open .landerox-dock-launcher {
     box-shadow: none;
     break-inside: avoid;
     transform: none;
+  }
+
+  .md-typeset .grid.cards > ul > li::before,
+  .md-typeset .grid.cards > ul > li::after {
+    display: none;
   }
 
   /* Reading panels and reference lists print as plain, fully open text. */

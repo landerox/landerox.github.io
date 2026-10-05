@@ -120,7 +120,7 @@ repos:
   # fails with `Could not find "stylelint-config-standard"`. The ruleset is
   # inlined in .config/.stylelintrc.yaml instead — see the header there.
   - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: d6d653746a0a510b098377a8919bea816eea3c09  # frozen: v17.15.0
+    rev: a43d64a23287d2dc2e02289bd3b2cb0da5eddfb1  # frozen: v17.16.0
     hooks:
       - id: stylelint
         args: ["--config", ".config/.stylelintrc.yaml", "--allow-empty-input"]

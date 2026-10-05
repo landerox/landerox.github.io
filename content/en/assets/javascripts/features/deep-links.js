@@ -60,6 +60,10 @@ export function onScenario(id, host, apply) {
 }
 
 export function revealHashTarget() {
+  // Runs on every page and hash change: drop tools an instant navigation
+  // detached, so their closures can be collected.
+  for (const [key, listener] of scenarioListeners)
+    if (!listener.host.isConnected) scenarioListeners.delete(key);
   const { id, params, query } = parseToolHash(window.location.hash);
   scenario = { path: window.location.pathname, id, params };
   if (redirectMovedWorksheet(id)) return;
@@ -79,9 +83,7 @@ export function revealHashTarget() {
       target.scrollIntoView({ block: "start", behavior: "instant" }),
     );
   const listener = scenarioListeners.get(id);
-  if (!listener || !params.size) return;
-  if (listener.host.isConnected) listener.apply(params);
-  else scenarioListeners.delete(id);
+  if (listener && params.size) listener.apply(params);
 }
 
 export function initDeepLinks() {

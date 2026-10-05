@@ -19,6 +19,17 @@ CATALOG = Path(__file__).resolve().parents[1] / "content/en/assets/glossary.json
 TERMS = len(json.loads(CATALOG.read_text(encoding="utf-8"))["terms"])
 
 
+def luminance(rgb):
+    channels = [c / 255 for c in rgb]
+    linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
+    return sum(c * weight for c, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
+
+
+def contrast(a, b):
+    light, dark = sorted((luminance(a), luminance(b)), reverse=True)
+    return (light + 0.05) / (dark + 0.05)
+
+
 class QuietHandler(SimpleHTTPRequestHandler):
     def log_message(self, *_args):
         pass
@@ -449,10 +460,6 @@ class BrowserContracts(unittest.TestCase):
         expect(self.page.locator('[data-slo-metric="total"]')).to_contain_text("21.6")
 
     def test_primary_text_contrast_including_sheen(self):
-        def luminance(rgb):
-            channels = [c / 255 for c in rgb]
-            linear = [c / 12.92 if c <= 0.04045 else ((c + 0.055) / 1.055) ** 2.4 for c in channels]
-            return sum(c * weight for c, weight in zip(linear, (0.2126, 0.7152, 0.0722)))
         self.page.set_viewport_size({"width": 1440, "height": 1000})
         for scheme in ("default", "slate"):
             self.goto("/", scheme)
@@ -473,9 +480,92 @@ class BrowserContracts(unittest.TestCase):
                     for stop in colors["stops"] or [[0, 0, 0, 0]]:
                         alpha = stop[3] if len(stop) > 3 else 1
                         background = [c * alpha + b * (1 - alpha) for c, b in zip(stop[:3], colors["fill"])]
-                        light, dark = sorted((luminance(background), luminance(colors["text"])), reverse=True)
-                        ratio = (light + 0.05) / (dark + 0.05)
+                        ratio = contrast(background, colors["text"])
                         self.assertGreaterEqual(ratio, 4.8, (scheme, state, ratio, colors))
+
+    def test_secondary_border_non_text_contrast(self):
+        # The translucent border paints over the pill's own fill (border-box
+        # clip); WCAG 1.4.11 asks 3:1 against the fill and against the page.
+        self.page.set_viewport_size({"width": 1440, "height": 1000})
+        for scheme in ("default", "slate"):
+            with self.subTest(scheme=scheme):
+                self.goto("/", scheme)
+                self.page.mouse.move(0, 0)
+                colors = self.page.locator(".md-typeset .md-button:not(.md-button--primary)").first.evaluate("""el => {
+                  const s = getComputedStyle(el);
+                  const rgb = value => (value.match(/[\\d.]+/g) || []).map(Number);
+                  return {border: rgb(s.borderTopColor), fill: rgb(s.backgroundColor),
+                          page: rgb(getComputedStyle(document.body).backgroundColor), clip: s.backgroundClip};
+                }""")
+                self.assertEqual(colors["clip"], "border-box", colors)
+                alpha = colors["border"][3] if len(colors["border"]) > 3 else 1
+                edge = [c * alpha + f * (1 - alpha) for c, f in zip(colors["border"][:3], colors["fill"])]
+                for neighbor in ("fill", "page"):
+                    ratio = contrast(edge, colors[neighbor][:3])
+                    self.assertGreaterEqual(ratio, 3, (scheme, neighbor, ratio, colors))
+
+    def test_focus_ring_keeps_shape_and_brand_color(self):
+        self.page.set_viewport_size({"width": 1440, "height": 900})
+        self.goto("/projects/tools/")
+        self.page.locator(".md-content .tabbed-labels").first.locator("label").nth(0).click()
+        expect(self.page.locator("#failure-step")).to_be_visible()
+        brand = self.page.evaluate("getComputedStyle(document.body).getPropertyValue('--brand').trim()")
+        # Keyboard modality first, so programmatic focus matches :focus-visible.
+        self.page.keyboard.press("Tab")
+        for selector in (".dock-pill-btn", "details.lab-widget-details > summary:visible", ".md-tabs__link"):
+            with self.subTest(selector=selector):
+                control = self.page.locator(selector).first
+                rest = control.evaluate("el => getComputedStyle(el).borderRadius")
+                control.focus()
+                ring = control.evaluate("""el => {
+                  const s = getComputedStyle(el);
+                  return {radius: s.borderRadius, color: s.outlineColor, offset: s.outlineOffset};
+                }""")
+                self.assertEqual(ring["offset"], "3px", ring)
+                self.assertEqual(ring["color"].replace(",", ""), brand.replace(",", ""), ring)
+                if selector == ".dock-pill-btn":
+                    self.assertEqual(ring["radius"], rest, ring)
+
+    def test_motion_pause_survives_navigation_without_storage(self):
+        with self.browser.new_context(viewport={"width": 1440, "height": 900}) as context:
+            context.route("**/*", self.route)
+            # A blocked or full storage: every access throws.
+            context.add_init_script("""for (const name of ["getItem", "setItem"])
+              Storage.prototype[name] = () => { throw new DOMException("blocked", "SecurityError"); };""")
+            page = context.new_page()
+            page.on("pageerror", lambda error: self.errors.append(str(error)))
+            page.goto(self.base + "/", wait_until="networkidle")
+            page.locator(".motion-option--header .motion-toggle").click()
+            expect(page.locator("html")).to_have_attribute("data-motion", "paused")
+            page.locator(".md-tabs__link[href$='projects/']").first.click()
+            expect(page).to_have_url(self.base + "/projects/")
+            expect(page.locator("html")).to_have_attribute("data-motion", "paused")
+            expect(page.locator(".motion-option--header .motion-toggle")).to_have_attribute("aria-pressed", "true")
+
+    def test_failure_lab_keeps_keyboard_focus_when_a_button_disables(self):
+        self.page.set_viewport_size({"width": 1440, "height": 900})
+        self.goto("/projects/tools/")
+        self.page.locator(".md-content .tabbed-labels").first.locator("label").nth(0).click()
+        self.page.locator("#failure-condition").select_option("workers")
+        restore = self.page.locator("#failure-restore")
+        expect(restore).to_be_enabled()
+        restore.focus()
+        self.page.keyboard.press("Enter")
+        expect(restore).to_be_disabled()
+        expect(self.page.locator("#failure-condition")).to_be_focused()
+
+    def test_skip_link_reaches_content_without_errors(self):
+        # Zensical 0.0.68's href-less skip target threw in the theme's instant
+        # prefetch (features/header.js); tearDown asserts no page errors.
+        for locale in ("", "/es"):
+            with self.subTest(locale=locale):
+                self.goto(f"{locale}/")
+                self.page.keyboard.press("Tab")
+                expect(self.page.locator(".md-skip")).to_be_focused()
+                self.page.keyboard.press("Enter")
+                expect(self.page.locator("#__skip")).to_be_focused()
+                self.page.keyboard.press("Tab")
+                self.assertTrue(self.page.evaluate("document.activeElement.closest('.md-content') !== null"))
 
 
 if __name__ == "__main__":

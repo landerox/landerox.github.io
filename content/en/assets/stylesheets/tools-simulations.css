@@ -17,11 +17,6 @@
   margin: 0.65rem 0;
 }
 
-.simulation-table-wrapper:focus-visible {
-  outline: 2px solid var(--brand-ink);
-  outline-offset: 3px;
-}
-
 .simulation-table {
   min-width: 25rem;
 }

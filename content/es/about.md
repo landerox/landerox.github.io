@@ -146,6 +146,6 @@ Cómo trabajo con equipos y cuándo estoy disponible está en
 [Colaboración](collaboration.md).
 
 <!-- markdownlint-disable MD013 -->
-[:material-calendar-clock: Agendar una llamada](https://calendly.com/landerox/30min){ .md-button .md-button--primary target="_blank" }
-[:material-email: Escribir un email](mailto:contacto@landerox.com){ .md-button }
+[:material-email: Escribir un email](mailto:contacto@landerox.com){ .md-button .md-button--primary }
+[:material-calendar-clock: Agendar una llamada](https://calendly.com/landerox/30min){ .md-button target="_blank" }
 <!-- markdownlint-enable MD013 -->

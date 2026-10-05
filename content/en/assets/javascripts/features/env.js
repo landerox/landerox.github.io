@@ -7,6 +7,7 @@ export const reducedMotion = window.matchMedia(
 export const finePointer = window.matchMedia(
   "(hover: hover) and (pointer: fine)",
 );
+export const forcedColors = window.matchMedia("(forced-colors: active)");
 
 // This file lives at <locale root>/assets/javascripts/features/env.js.
 export const localeRoot = new window.URL("../../../", import.meta.url).href;

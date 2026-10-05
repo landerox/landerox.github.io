@@ -263,8 +263,16 @@ export function planTableFiles({
     partitioning === "hour" ? Math.ceil(24 / commitsPerDay) : 1;
   const touched = timePerCommit * buckets;
   const commitMiB = dailyMiB / commitsPerDay;
+  // Fewer commits than hours: each write carries about one hour of data. An
+  // even split over ceil(24 / commits) hours made writes smaller than a
+  // partition, and compaction then "added" files. Same result when the
+  // commit count divides 24.
+  const writeMiB =
+    partitioning === "hour" && commitsPerDay < 24
+      ? dailyMiB / 24 / buckets
+      : commitMiB / touched;
   const filesPerCommit =
-    touched * Math.max(1, Math.ceil(commitMiB / touched / targetMiB));
+    touched * Math.max(1, Math.ceil(writeMiB / targetMiB));
   const filesPerDay = filesPerCommit * commitsPerDay;
   const retainedMiB = dailyMiB * retentionDays;
   const partitions =
