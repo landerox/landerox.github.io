@@ -47,7 +47,9 @@ tag and release establish this baseline after review.
   catalog generates both public glossary pages and acronym tooltips.
 - **Discovery and navigation**: equivalent-page language switching,
   reciprocal sitemap language alternates, robots.txt, canonical URLs,
-  Open Graph and Twitter metadata, a social card, manifest and `llms.txt`.
+  Open Graph and Twitter metadata with a social card per page (drawn at
+  build time; the home pages keep the hand-made card), manifest and
+  `llms.txt`.
   Each locale publishes a Blog Atom feed and article `TechArticle` JSON-LD
   from the reviewed front matter.
 - **404 handling**: one Pages entry point routes missing Spanish paths to
@@ -86,10 +88,11 @@ tag and release establish this baseline after review.
 
 ### Stack and repository organization
 
-The site runs on Python 3.13 and Zensical 0.0.68. `uv` installs Python
-dependencies from `uv.lock`; `just` exposes development, validation,
-maintenance and release commands. Node.js 24.21.0 LTS runs the glossary
-generator, built-in Node tests and isolated Node hooks.
+The site runs on Python 3.13 and Zensical 0.0.68; Pillow draws the social
+cards during the build. `uv` installs Python dependencies from `uv.lock`;
+`just` exposes development, validation, maintenance and release commands.
+Node.js 24.21.0 LTS runs the glossary generator, built-in Node tests and
+isolated Node hooks.
 
 | Path | Responsibility |
 | :--- | :------------- |

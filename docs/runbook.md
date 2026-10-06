@@ -247,7 +247,15 @@ broken, the styling just no longer lands where it was aimed.
    `initSkipTarget()` call in `extra.js` and run `just build` and
    `just test-browser`. If `test_skip_link_reaches_content_without_errors`
    passes without the guard, the theme now handles href-less anchors: delete
-   the guard and this step.
+   the guard and this step. Reported upstream as
+   [zensical/ui#256](https://github.com/zensical/ui/issues/256).
+
+9. `post_build.py` adds `defer` to the theme's bundle `<script>` on every
+   page and stops the build ("Theme bundle <script> not found") when no
+   deferred bundle exists, which means a release changed the tag. Update
+   `THEME_BUNDLE` in `scripts/post_build.py` to the new shape, rebuild, and
+   confirm `bundle.<hash>.min.js" defer` appears in `site/index.html` and
+   that `just test-browser` passes.
 
 **Actions**:
 

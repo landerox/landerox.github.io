@@ -16,7 +16,10 @@ Files here are copied verbatim to content/es/assets/fonts/ by
 1. Inter
 --------
 Files      Inter-Variable-latin.woff2, Inter-Variable-latin-ext.woff2
-Version    Google Fonts v20, variable (wght 100-900), latin + latin-ext subsets
+Version    Google Fonts v20, variable, latin + latin-ext subsets; weight axis
+           limited from 100-900 to 400-700 (scripts/limit_font_weights.py),
+           coverage and names unchanged. Modified as the OFL permits; Inter
+           declares no Reserved Font Name.
 Upstream   https://github.com/rsms/inter
 Licence    SIL Open Font License 1.1 (OFL-1.1)
 Copyright  Copyright 2020 The Inter Project Authors

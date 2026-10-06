@@ -1202,10 +1202,12 @@ them:
   principles](#24-secure-design-principles)): with no third-party origin
   left, a strict policy has nothing to allow-list.
 
-**Costs accepted:** ~209 KB of `woff2` in the repository, and the
+**Costs accepted:** ~171 KB of `woff2` in the repository, and the
 families must be refreshed by hand — nothing tracks upstream font
-releases. `unicode-range` keeps `latin-ext` out of the critical path, so
-a typical EN or ES page still fetches only ~109 KB.
+releases. `unicode-range` keeps `latin-ext` out of the critical path, and
+Inter's weight axis is limited to the 400–700 in use
+(`scripts/limit_font_weights.py`), so a typical EN or ES page fetches
+~97 KB.
 
 Provenance, licenses (Inter/Outfit under OFL-1.1, MesloLGM under Apache-2.0)
 and the subset split are tabulated
@@ -1522,6 +1524,31 @@ decision; do not pre-populate the index with unpublished work.
 
 ---
 
+## 31. Per-page social cards
+
+| Option                              | Build cost | Output | Notes |
+| :---------------------------------- | :--------- | :----- | :---- |
+| **Pillow in `post_build.py`**       | ~6 s, one wheel | Generated, not committed | Draws with the site's own `woff2` fonts |
+| Zensical native cards               | —          | —      | Not shipped: 0.0.68 still drops `use_material_social_cards` "until native social metadata is available" |
+| Playwright screenshots of a template | Chromium in the deploy job | Generated | Heavy for a build step |
+| Committed PNGs                      | Manual step | ~3 MB of binaries in git | Stale whenever a title changes |
+| Hosted image service                | 0          | Remote | Breaks the zero-third-party rule |
+
+**Decision:** ✅ **Pillow at build time** — `scripts/social_cards.py`, called
+by `post_build.py`, renders one card per indexable page; Pillow is a
+runtime dependency next to `zensical`, since the deploy build needs it.
+**Status:** In use (2026-10).
+
+**Rationale:** the PyPI wheel reads WOFF2 and variable-font axes directly,
+so the cards use Outfit, Inter and Meslo without converting or vendoring
+fonts, and rendering is deterministic. Design rules live in
+[Social cards](design.md#social-cards).
+
+**Re-evaluate when:** Zensical ships native social cards that can use
+custom fonts and palettes.
+
+---
+
 ## Summary table
 
 | #  | Category                      | Chosen               | Status                              |
@@ -1557,6 +1584,7 @@ decision; do not pre-populate the index with unpublished work.
 | 28 | Design system                 | Tokenized `extra.css` | ✅ In use (see `design.md`)        |
 | 29 | Technical glossary and local Tools | Native ES modules + built-in tests | ✅ In use (glossary, local simulation, no remote execution) |
 | 30 | Blog comparison articles        | Concise explanation + results + sources | ✅ In use (nine articles, rated) |
+| 31 | Per-page social cards           | Pillow in `post_build.py` | ✅ In use (generated, not committed) |
 
 ---
 

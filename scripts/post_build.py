@@ -7,6 +7,8 @@ import gzip
 import tomllib
 import xml.etree.ElementTree as ET
 
+from social_cards import publish_social_cards
+
 SITE_DIR = pathlib.Path("site")
 
 # <meta name="generator" content="zensical-..."> in every page head.
@@ -16,6 +18,17 @@ GENERATOR_TAG = re.compile(r'<meta\s+name="generator"\s+content="zensical-[^"]*"
 # (`<div class="lab-entry" markdown>`) survives into the output as a
 # non-standard HTML attribute. It carries no runtime meaning.
 MARKDOWN_ATTRIBUTE = re.compile(r'(<[a-zA-Z][^>]*?)\s+markdown(?:="[^"]*")?(?=[\s>/])')
+
+# The theme's bundle is a classic script at the end of <body>. Parser-blocking,
+# it could hold the first paint until it had downloaded and run, so
+# Lighthouse's simulated LCP swung between about 2.6 s and 4 s on long pages.
+# `defer` keeps document order: the bundle still runs before extra.js (a
+# module, deferred too), which reads `document$`.
+THEME_BUNDLE = re.compile(
+    r'<script src="([^"]*assets/javascripts/bundle\.[0-9a-f]+\.min\.js)"></script>'
+)
+THEME_BUNDLE_DEFERRED = r'<script src="\1" defer></script>'
+DEFERRED_BUNDLE = re.compile(r'assets/javascripts/bundle\.[0-9a-f]+\.min\.js" defer></script>')
 
 SITEMAP_NS = "http://www.sitemaps.org/schemas/sitemap/0.9"
 XHTML_NS = "http://www.w3.org/1999/xhtml"
@@ -163,8 +176,8 @@ def publish_blog_metadata(site_dir, locale_dir, base_url, lang, website_id):
     return len(articles)
 
 
-def rewrite_html(label, pattern, replacement):
-    """Apply one substitution to every built page and report the count."""
+def rewrite_html(label, pattern, replacement, action="removed"):
+    """Apply one substitution to every built page and return the count."""
     count = 0
     for file_path in SITE_DIR.rglob("*.html"):
         content = file_path.read_text(encoding="utf-8")
@@ -172,7 +185,8 @@ def rewrite_html(label, pattern, replacement):
         if replacements > 0:
             file_path.write_text(rewritten, encoding="utf-8")
             count += replacements
-    print(f"{label}: {count} removed.")
+    print(f"{label}: {count} {action}.")
+    return count
 
 
 if __name__ == "__main__":
@@ -180,6 +194,12 @@ if __name__ == "__main__":
         print("Sanitizing build output...")
         rewrite_html("Generator tags", GENERATOR_TAG, "")
         rewrite_html("Leftover markdown attributes", MARKDOWN_ATTRIBUTE, r"\1")
+        rewrite_html("Theme bundle", THEME_BUNDLE, THEME_BUNDLE_DEFERRED, "deferred")
+        # A theme release that renames or reshapes the tag must fail loudly;
+        # pages an incremental build left untouched are already deferred.
+        if not any(DEFERRED_BUNDLE.search(page.read_text(encoding="utf-8"))
+                   for page in SITE_DIR.rglob("*.html")):
+            raise SystemExit("Theme bundle <script> not found: re-check THEME_BUNDLE after a Zensical bump.")
         with pathlib.Path("zensical.toml").open("rb") as config_file:
             config = tomllib.load(config_file)
         locale_roots = {alt["lang"]: alt["link"] for alt in config["project"]["extra"]["alternate"]}
@@ -194,5 +214,6 @@ if __name__ == "__main__":
         for locale_dir, base_url, lang, website_id in BLOG_LOCALES:
             count = publish_blog_metadata(SITE_DIR, locale_dir, base_url, lang, website_id)
             print(f"Blog feed and article metadata ({lang}): {count} articles.")
+        print(f"Social cards: {publish_social_cards(SITE_DIR)} pages.")
     else:
         print("Site directory does not exist. Run build first.")

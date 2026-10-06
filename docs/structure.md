@@ -93,7 +93,9 @@
 │   ├── check_report_only_automation.py # Blocks dependency write automation
 │   ├── install_precommit_hooks.py # Hook preparation and bounded npm retries
 │   ├── test_install_precommit_hooks.py # Recovery, failure and age-policy tests
-│   ├── post_build.py             # Sanitizes HTML, sitemaps, Blog Atom feeds + article JSON-LD
+│   ├── post_build.py             # Sanitizes HTML, defers the theme bundle, sitemaps, Blog feeds + JSON-LD
+│   ├── social_cards.py           # Per-page Open Graph cards (Pillow), called by post_build
+│   ├── limit_font_weights.py     # One-off: limits Inter's weight axis to 400–700
 │   ├── sort_ratings.py           # Orders Blog rating tables highest first
 │   ├── workbench.test.mjs        # Node built-in logic tests
 │   ├── comparison.test.mjs       # Reference topic selection and counts

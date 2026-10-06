@@ -7,6 +7,7 @@ requires-python = ">=3.13"
 license = "MIT"
 license-files = ["LICENSE"]
 dependencies = [
+    "pillow>=12.3.0",
     "zensical>=0.0.68",
 ]
 

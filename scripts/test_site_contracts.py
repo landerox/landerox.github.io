@@ -8,7 +8,8 @@ from pathlib import Path
 
 from check_i18n import configuration_errors, parse_markdown_file
 from sort_ratings import sort_tables
-from post_build import localize_sitemaps, SITEMAP_NS, XHTML_NS
+from post_build import localize_sitemaps, SITEMAP_NS, THEME_BUNDLE, THEME_BUNDLE_DEFERRED, XHTML_NS
+from social_cards import publish_social_cards
 
 
 class SiteContracts(unittest.TestCase):
@@ -66,6 +67,42 @@ class SiteContracts(unittest.TestCase):
             (site / "es/sitemap.xml").write_text(f'<urlset xmlns="{SITEMAP_NS}"><url><loc>{roots["es"]}missing/</loc></url></urlset>')
             with self.assertRaisesRegex(ValueError, "missing language counterparts"):
                 localize_sitemaps(site, roots)
+
+    def test_theme_bundle_is_deferred_and_keeps_its_place_before_extra_js(self):
+        page = ('<script id="__config" type="application/json">{}</script>'
+                '<script src="../../assets/javascripts/bundle.3c842f4c.min.js"></script>'
+                '<script src="../../assets/javascripts/extra.js" type="module"></script>')
+        deferred, count = THEME_BUNDLE.subn(THEME_BUNDLE_DEFERRED, page)
+        self.assertEqual(count, 1)
+        self.assertIn('bundle.3c842f4c.min.js" defer></script>'
+                      '<script src="../../assets/javascripts/extra.js" type="module">', deferred)
+        # Already deferred output is left alone, so a re-run is a no-op.
+        self.assertEqual(THEME_BUNDLE.subn(THEME_BUNDLE_DEFERRED, deferred)[1], 0)
+
+    def test_social_cards_skip_home_and_noindex_pages_and_guard_glyphs(self):
+        head = ('<meta property="og:title" content="{title} - landerox.com">'
+                '<meta property="og:description" content="{description}">'
+                '<meta property="og:image" content="https://landerox.com/assets/images/social-card.png">')
+        tab = '<li class="md-tabs__item md-tabs__item--active">\n<a href="../">\n Blog\n</a>'
+        pages = {
+            "index.html": head.format(title="Home", description="Home"),
+            "blog/x/index.html": head.format(title="Rating", description="Six engines.") + tab,
+            "404/index.html": head.format(title="404", description="Missing") + '<meta name="robots" content="noindex">',
+        }
+        with tempfile.TemporaryDirectory() as directory:
+            site = Path(directory)
+            for name, text in pages.items():
+                (site / name).parent.mkdir(parents=True, exist_ok=True)
+                (site / name).write_text(text, encoding="utf-8")
+            self.assertEqual(publish_social_cards(site), 1)
+            self.assertTrue((site / "assets/images/social/blog/x.png").is_file())
+            self.assertIn("/assets/images/social/blog/x.png", (site / "blog/x/index.html").read_text())
+            for unchanged in ("index.html", "404/index.html"):
+                self.assertIn("/social-card.png", (site / unchanged).read_text())
+            # A glyph the font subset lacks fails the build instead of drawing tofu.
+            (site / "blog/x/index.html").write_text(head.format(title="Ratings →", description="x"))
+            with self.assertRaises(SystemExit):
+                publish_social_cards(site)
 
     def test_rating_tables_sort_descending_and_keep_ties_in_order(self):
         table = "\n".join([

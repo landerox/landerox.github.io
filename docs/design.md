@@ -269,15 +269,26 @@ All families are self-hosted. No third-party font request is made.
 
 | Family      | Axes        | Subsets         | Source              | License   | Latin bytes |
 | :---------- | :---------- | :-------------- | :------------------ | :-------- | ----------: |
-| Inter       | `wght` 100–900 | latin, latin-ext | Google Fonts v20 | OFL 1.1   |     48.3 KB |
+| Inter       | `wght` 400–700 | latin, latin-ext | Google Fonts v20, axis limited | OFL 1.1 | 36.2 KB |
 | Outfit      | `wght` 400–700 | latin, latin-ext | Google Fonts v15 | OFL 1.1   |     32.3 KB |
 | MesloLGM NF | static 400 + 700 | full          | Nerd Fonts        | Apache 2.0 | 28.3 KB |
 
 `unicode-range` keeps `latin-ext` off the critical path. No page under
 `content/` currently uses a character outside the `latin` subset, so a
-typical EN or ES page downloads **108.8 KB** of font data — the four
+typical EN or ES page downloads **96.8 KB** of font data — the four
 latin files, Meslo Bold included, since the header wordmark and the
 mono chips render at weight 700 — and never touches the extended files.
+
+Inter's weight axis is limited to 400–700, the range every rule and every
+theme style uses (no visible Inter or Outfit text renders outside it,
+checked on fifteen pages in both locales). `scripts/limit_font_weights.py`
+instances the upstream files with the coverage (cmap) and names unchanged,
+so no glyph can go missing: the latin file went from 48.3 KB to 36.2 KB
+and latin-ext from 85.1 KB to 59.3 KB. Glyph subsetting against the real
+character inventory was measured and rejected: with a safe margin it
+saved 2–9 KB more and would need a coverage guard. Instancing Outfit grew
+its file, so Outfit stays as shipped. Re-run the script after replacing
+the Inter files with a new upstream release.
 
 Licensing note — these are third-party assets and fall under neither of
 the repo's own licenses. They keep their upstream terms; the dual-license
@@ -1048,6 +1059,24 @@ text retains the 4.5:1 contrast requirement on its actual background; check
 both palettes and forced colors instead of carrying a ratio from an obsolete
 chip surface into the new reading layout.
 
+### Social cards
+
+`scripts/social_cards.py`, called from `post_build.py`, draws a 1200×630
+PNG for every indexable page and points its `og:image` and `twitter:image`
+at it (`/assets/images/social/<path>.png`). The home pages keep the
+hand-made `social-card.png`, and `noindex` pages (the 404s) keep the
+default. Each card uses the dark palette tokens and the site's own fonts
+(Outfit for the title, Inter for the section and description, Meslo for
+`</>` and `landerox.com`), the [edge beam](#edge-beam) along the top and a
+faint network seeded by the page path, so cards differ but stay
+reproducible. The section label is the active tab, so the Spanish cards
+come out localized; pages under Home carry no label. Titles take the
+largest size that fits two lines, or three at a smaller size, and wrap
+balanced; descriptions keep two lines. A title or description character
+outside Inter's `latin` range stops the build instead of drawing a missing
+glyph. Forty cards take about 6 s of the build and 2.8 MB of output; nothing
+is committed.
+
 ### Profile HUD
 
 210px square, a grid item of `.landing-hero`, with a 160px coin in the middle, two
@@ -1403,8 +1432,8 @@ All forced-colors and print rules of `extra.css` live in section 13;
 | `decision-tools.js` + `decision-tools-core.js` (Tools only) | 57.7 KB | 18.0 KB |
 | `comparison.js` + `comparison-core.js` (reference pages) | 8.2 KB | 2.9 KB |
 | `glossary.json` (first use, bilingual) | 83.3 KB | 22.4 KB |
-| Fonts on a typical page | 108.8 KB | (already compressed) |
-| Social card (`og:image`, fetched by scrapers only) | 49.0 KB | (PNG) |
+| Fonts on a typical page | 96.8 KB | (already compressed) |
+| Social cards (`og:image`, fetched by scrapers only) | 49 KB home, 51–78 KB per page | (PNG) |
 | Third-party requests   | **0**   | —      |
 
 Sizes are approximate decimal KB, measured from authored assets with Node's
@@ -1418,6 +1447,20 @@ SQL, Failure Lab and decision modules wait for their visible host; the CLI
 and glossary do not import them. The catalog loads for either glossary UI.
 Reference modules load only when the page has annotated reference content.
 No model weights, browser database or third-party runtime are downloaded.
+
+### Theme script deferred
+
+Zensical ends `<body>` with its bundle as a classic, parser-blocking
+script. Depending on a race, the first paint waited for it to download and
+run, and Lighthouse's simulated LCP on the home page swung between about
+2.6 s and 3.9 s. `post_build.py` adds `defer` to that tag on every page:
+document order still runs the bundle before `extra.js` (a module, deferred
+too), which reads `document$`. The home page then held 0.96 performance
+and a 2.5 s LCP in all five runs; long pages (glossary, Blueprints, Blog)
+kept their medians and an occasional slow run, a separate effect of the
+simulation, since the observed first paint stays near 0.2 s. A theme
+release that changes the tag's shape fails the build rather than silently
+shipping it blocking ([runbook](runbook.md#site-renders-wrong-after-a-zensical-bump)).
 
 ### Ambient canvas
 
@@ -1620,11 +1663,12 @@ current state to be correct.
 
 | # | Recommendation                                                                                                                                                                                 | Impact | Effort |
 | - | :--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----- | :----- |
-| 1 | **Drop Outfit.** Inter at 700 with tight tracking is a credible display face, and removing Outfit saves 32.3 KB on the critical path and one family from the system. This is an identity decision, not a technical one — hence a recommendation, not a change. | Low    | Low    |
-| 2 | **Subset the fonts.** `pyftsubset` on the actual glyph inventory would cut Inter's latin file well below its current 48.3 KB. It adds a build step and a drift risk (new glyph, missing character) for a one-time saving. | Low    | Medium |
-| 3 | **Retina-grade portrait.** `profile.webp` is 200×200 (4.3 KB) shown at 160px, so it is soft on 2× and 3× screens, and it is the face of the landing hero. A ≥480×480 source from the owner fixes it; the fixed 160px crop and `fetchpriority` stay. | Medium | Low |
+| 1 | **Drop Outfit.** Inter at 700 with tight tracking is a credible display face, and removing Outfit saves 32.3 KB on the critical path and one family from the system. This is an identity decision, not a technical one — hence a recommendation, not a change. A side-by-side render (2026-10) favoured keeping it: Inter 700 reads as the generic option. | Low    | Low    |
+| 2 | **Retina-grade portrait.** `profile.webp` is 200×200 (4.3 KB) shown at 160px, so it is soft on 2× and 3× screens, and it is the face of the landing hero. A ≥480×480 source from the owner fixes it; the fixed 160px crop and `fetchpriority` stay. | Medium | Low |
 
-Closed since first written (2026-08): the float-based HUD became a grid
+Closed since first written (2026-08): the font recommendation became an
+axis limit rather than a glyph subset ([Font provenance](#font-provenance));
+the float-based HUD became a grid
 item of the home hero (2026-09), so the side nodes survive down to `30em`;
 the CSP claim was reconciled — a
 baseline `<meta>` CSP now ships from `overrides/main.html`, with the
