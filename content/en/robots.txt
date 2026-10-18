@@ -1,0 +1,8 @@
+# https://landerox.com/robots.txt
+# Allow crawling of all public pages.
+
+User-agent: *
+Allow: /
+
+Sitemap: https://landerox.com/sitemap.xml
+Sitemap: https://landerox.com/es/sitemap.xml

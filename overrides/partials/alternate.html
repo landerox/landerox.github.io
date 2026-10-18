@@ -1,0 +1,36 @@
+{#- The language selector preserves the page, matching sitemap alternates.
+    Structure follows the installed Modern partial; no script is required. -#}
+<div class="md-header__option">
+  <div class="md-select">
+    {% set icon = config.theme.icon.alternate or "material/translate" %}
+    <button class="md-header__button md-icon" aria-label="{{ lang.t('select.language') }}">
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </button>
+    <div class="md-select__inner">
+      <ul class="md-select__list">
+        {% for alt in config.extra.alternate %}
+          <li class="md-select__item">
+            <a href="{{ alt.link ~ (page.url | default('', true)) }}" hreflang="{{ alt.lang }}" class="md-select__link" target="_self">
+              {{ alt.name }}
+            </a>
+          </li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</div>
+{#- The Toolbox control sits in the header, between the language
+    selector and search. The theme includes this partial exactly there, so it
+    is server-rendered without overriding partials/header.html: the header
+    does not shift on boot, and without JavaScript the link still reaches the
+    public glossary. features/lazy-features.js turns it into the button that
+    opens the dialog, where the visitor picks Glossary or CLI. Re-check the
+    position against the installed header.html after a Zensical bump; see
+    docs/runbook.md. -#}
+{% set es = config.theme.language == "es" %}
+<div class="md-header__option site-tools">
+  <a class="md-header__button md-icon site-tool" href="{{ 'glossary/' | url }}" data-site-tool="desk" title="{{ 'Glosario técnico' if es else 'Technical glossary' }}">
+    {% include ".icons/lucide/square-terminal.svg" %}
+    <span class="site-tool__label">{{ 'Glosario y CLI' if es else 'Glossary and CLI' }}</span>
+  </a>
+</div>

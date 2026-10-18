@@ -1,0 +1,48 @@
+timeout = 8
+max_concurrency = 4
+no_progress = true
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+accept = [200, 301, 302]
+
+# A throttling host needs a real pause before the retry.
+max_retries = 4
+retry_wait_time = 10
+
+# GitHub renders a file page on demand and answers a scripted client with
+# 503 or 429 when that takes too long: Ceph's COPYING failed twice in a row
+# on 2026-10-13 while the raw file answered 200. Check the file itself; the
+# published link stays the readable page.
+remap = [
+    "^https://github\\.com/([^/]+)/([^/]+)/blob/([^#?]+) https://raw.githubusercontent.com/$1/$2/$3",
+]
+
+# Skip 404 pages: they contain only root-relative site links (/, /projects/,
+# /collaboration/ and their /es/ twins) that resolve on the web server, not
+# as local file paths.
+exclude_path = ["404\\.md$"]
+
+# Exclude domains that block automated crawlers.
+# LinkedIn answers non-browser clients with HTTP 999 — a non-standard code
+# meaning "bot detected", not a broken link. It is served regardless of
+# user_agent, so the profile URL in both about.md files fails every run and
+# would fail the weekly report for a link that resolves fine in a browser.
+exclude = [
+    "https://www.linkedin.com/.*",
+    "https://openai.com/.*",
+    "https://leetcode.com/.*",
+    "https://www.terraform.io/.*",
+    "https://www.vaultproject.io/.*",
+    "https://opencv.org/.*",
+    "https://hazelcast.com/.*",
+    "https://www.llama.com/.*"
+]
+
+# A third of the links point at github.com. Unauthenticated bursts make it
+# answer 503 for links that resolve fine: 38 of them on 2026-10-12, in a run
+# with no broken link. One request at a time with a pause avoids that
+# without a token; maintenance workflows stay credential-free
+# (scripts/check_report_only_automation.py). A full uncached run takes about
+# five minutes.
+[hosts."github.com"]
+concurrency = 1
+request_interval = "500ms"

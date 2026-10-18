@@ -1,0 +1,522 @@
+/* Local decision worksheets. Consume the shared palette; no new theme. */
+.md-typeset .decision-tool {
+  min-width: 0;
+  color: var(--ink-2);
+}
+
+.md-typeset .decision-tool .decision-local {
+  margin-block: 0.3rem 0.8rem;
+  color: var(--ink-3);
+  font-size: 0.7rem;
+}
+
+.decision-form {
+  margin-block: 1.25rem;
+}
+
+.decision-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-block: 1rem;
+}
+
+.decision-field {
+  min-width: 0;
+}
+
+.decision-field > label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--ink-1);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+.decision-tool :is(input, select) {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  min-height: var(--target-min);
+  padding: 0.5rem 0.6rem;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-1);
+  background: var(--surface-raised);
+  font: inherit;
+  font-size: max(16px, 0.78rem);
+}
+
+.decision-tool input[aria-invalid="true"] {
+  border: 2px dashed var(--state-warn-ink);
+}
+
+.md-typeset .decision-tool .decision-hint {
+  margin-block: 0.35rem 0.7rem;
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  line-height: 1.6;
+}
+
+.decision-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.8rem;
+}
+
+.decision-tool button {
+  max-width: 100%;
+  min-height: var(--target-min);
+  padding: 0.45rem 0.8rem;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-md);
+  color: var(--ink-1);
+  background: var(--surface-raised);
+  font: inherit;
+  font-size: 0.75rem;
+  font-weight: 600;
+  white-space: normal;
+  cursor: pointer;
+  transition: background-color var(--dur-instant) var(--ease-standard);
+}
+
+.decision-tool button:hover:not(:disabled) {
+  background: var(--brand-tint);
+}
+
+.decision-tool button:disabled {
+  color: var(--ink-3);
+  border-style: dashed;
+  cursor: not-allowed;
+}
+
+.decision-tool :is(button, input, select, summary):focus-visible {
+  outline: var(--ring-width) solid var(--brand);
+  outline-offset: var(--ring-offset);
+}
+
+.md-typeset .decision-tool .decision-status {
+  margin-block: 0.8rem;
+  font-size: 0.78rem;
+}
+
+.decision-status:empty {
+  display: none;
+}
+
+.decision-status[data-state="error"] {
+  padding-inline-start: 0.7rem;
+  border-inline-start: 2px dashed var(--state-warn-ink);
+}
+
+.md-typeset .decision-tool .decision-metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: 0.8rem 1rem;
+  margin: 1rem 0;
+  padding-block: 1rem;
+  border-block: 1px solid var(--hairline);
+}
+
+.decision-metrics > div {
+  min-width: 0;
+}
+
+.decision-metrics dt {
+  color: var(--ink-3);
+  font-size: 0.7rem;
+  font-weight: 400;
+}
+
+.md-typeset .decision-metrics dd {
+  margin: 0.25rem 0 0;
+  color: var(--ink-1);
+  font-size: 0.95rem;
+  font-weight: 650;
+  font-variant-numeric: tabular-nums;
+  overflow-wrap: anywhere;
+}
+
+.md-typeset .decision-tool details.decision-help {
+  margin-top: 1rem;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+  font-size: 0.75rem;
+}
+
+.md-typeset .decision-tool details.decision-help > summary {
+  min-height: var(--target-min);
+  margin: 0;
+  padding: 0.6rem 1.5rem 0.6rem 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--brand-ink);
+  background: transparent;
+  transition: color var(--dur-instant) var(--ease-standard);
+}
+
+.md-typeset .decision-tool details.decision-help > summary:hover {
+  color: var(--brand-hover);
+}
+
+.md-typeset .decision-tool details.decision-help > summary::before {
+  display: none;
+}
+
+.decision-tool [hidden] {
+  display: none !important;
+}
+
+/* Scenario presets shared across all four interactive tools. */
+.tool-presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  margin-block: 0.85rem 1rem;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+.tool-presets-label {
+  width: 100%;
+  margin-bottom: 0.1rem;
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 600;
+}
+
+.md-typeset .tool-presets button.tool-preset {
+  min-height: var(--target-min);
+  padding: 0.4rem 0.75rem;
+  border: 1px solid var(--border-interactive);
+  border-radius: var(--radius-full);
+  color: var(--ink-1);
+  background: var(--surface-raised);
+  font: inherit;
+  font-size: 0.7rem;
+  font-weight: 600;
+  line-height: 1.3;
+  text-align: start;
+  cursor: pointer;
+  transition:
+    background-color var(--dur-instant) var(--ease-standard),
+    border-color var(--dur-instant) var(--ease-standard),
+    color var(--dur-instant) var(--ease-standard);
+}
+
+.md-typeset .tool-presets button.tool-preset:hover:not(:disabled) {
+  border-color: var(--brand);
+  color: var(--brand-ink);
+  background: var(--brand-tint-weak);
+}
+
+/* Pressed adds weight and an inner ring, so the state does not rest on color
+   alone, as with the Radar and glossary filters. */
+.md-typeset .tool-presets button.tool-preset[aria-pressed="true"] {
+  border-color: var(--brand-ink);
+  color: var(--brand-ink);
+  background: var(--brand-tint);
+  box-shadow: inset 0 0 0 1px var(--brand-ink);
+  font-weight: 650;
+}
+
+/* Diagnosis box of Table Files, Agent Replay and Eval Statistics: labelled
+   proportion bars, the Wilson band and the takeaway. Text carries every value. */
+.decision-diagnosis {
+  margin-block: 0.9rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-md);
+  background: var(--surface-sunken);
+}
+
+.decision-bars {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.decision-bar-row {
+  display: grid;
+  gap: 0.25rem;
+  min-width: 0;
+}
+
+.decision-bar-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 0.25rem 0.75rem;
+  font-size: 0.68rem;
+  line-height: 1.4;
+}
+
+.decision-bar-label {
+  color: var(--ink-2);
+  font-weight: 600;
+}
+
+.decision-bar-value {
+  color: var(--ink-3);
+  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+.decision-bar-track {
+  width: 100%;
+  height: 0.45rem;
+  overflow: hidden;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-full);
+  background: var(--surface-page);
+}
+
+.decision-bar-fill {
+  height: 100%;
+  border-radius: var(--radius-full);
+  background: var(--brand);
+  transition: width var(--dur-quick) var(--ease-standard);
+}
+
+.decision-bar-row[data-state="warn"] .decision-bar-fill {
+  background: var(--state-warn-ink);
+}
+
+.decision-bar-row[data-state="warn"] .decision-bar-value {
+  color: var(--state-warn-ink);
+  font-weight: 600;
+}
+
+/* The pin overhangs the track, and a pin at 0% or 100% stays whole. */
+.eval-interval-track {
+  position: relative;
+  overflow: visible;
+  width: 100%;
+  height: 0.6rem;
+  margin-block: 0.35rem 0.75rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-full);
+  background: var(--surface-page);
+}
+
+.eval-interval-band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-inline: 2px solid var(--brand);
+  border-radius: var(--radius-full);
+  background: var(--brand-tint-strong);
+}
+
+.eval-interval-pin {
+  position: absolute;
+  top: -2px;
+  bottom: -2px;
+  width: 3px;
+  border-radius: var(--radius-xs);
+  background: var(--ink-1);
+  transform: translateX(-50%);
+}
+
+.md-typeset .decision-tool .decision-takeaway {
+  margin: 0.85rem 0 0;
+  padding: 0.7rem 0.85rem;
+  border-inline-start: 2px solid var(--brand-ink);
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--ink-1);
+  background: var(--brand-tint);
+  font-size: 0.72rem;
+  line-height: 1.65;
+}
+
+/* In a diagnosis box the takeaway follows the bars, or opens the box. */
+.md-typeset .decision-tool .decision-diagnosis > .decision-takeaway {
+  margin-top: 0.75rem;
+}
+
+.md-typeset .decision-tool .decision-diagnosis > .decision-takeaway:first-child {
+  margin-top: 0;
+}
+
+/* AI worksheets (ai-tools.js). Row headers read as text, not as column
+   headings; every state below also carries its own words. */
+.decision-tool .tool-table tbody th {
+  background: transparent;
+  color: var(--ink-1);
+  font-family: var(--md-text-font-family);
+  font-weight: 600;
+  white-space: normal;
+}
+
+/* Cells wrap, so these short tables fit a phone instead of scrolling. */
+.decision-tool .agent-table :is(th, td) {
+  white-space: normal;
+}
+
+.decision-tool .agent-table td[data-safe="true"] {
+  color: var(--state-success-ink);
+  font-weight: 600;
+}
+
+.decision-tool .agent-table td[data-safe="false"] {
+  color: var(--state-warn-ink);
+  font-weight: 600;
+}
+
+.md-typeset .decision-tool .agent-traces > h3 {
+  margin: 0.8rem 0 0.35rem;
+  color: var(--ink-2);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.md-typeset .decision-tool .agent-trace {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.md-typeset .decision-tool .agent-trace > li {
+  margin: 0;
+  padding: 0.2rem 0.5rem;
+  border: 1px solid var(--hairline-strong);
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  background: var(--surface-page);
+  font-size: 0.68rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.5;
+}
+
+.md-typeset .decision-tool .agent-trace > li[data-kind="write"] {
+  border-color: var(--border-interactive);
+  color: var(--ink-1);
+  background: var(--surface-raised);
+  font-weight: 600;
+}
+
+.md-typeset .decision-tool .agent-trace > li[data-replay] {
+  border-style: dashed;
+}
+
+.md-typeset .decision-tool .agent-trace > li[data-outcome="duplicate"] {
+  border: 2px dashed var(--state-warn-ink);
+  color: var(--state-warn-ink);
+}
+
+.md-typeset .decision-tool .agent-trace > li[data-kind="crash"] {
+  border-color: transparent;
+  padding-inline: 0.2rem;
+  color: var(--state-warn-ink);
+  background: transparent;
+  font-weight: 600;
+}
+
+@media screen and (width <= 40em) {
+  .decision-fields {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  /* Result tables stack (workbench-dom.js stackRows): one block per row,
+     each value beside its column label, so no column hides behind a scroll. */
+  .decision-tool table[data-stackable],
+  .decision-tool table[data-stackable] :is(caption, tbody, tr) {
+    display: block;
+  }
+
+  .decision-tool table[data-stackable] thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+  }
+
+  .decision-tool table[data-stackable] tbody tr {
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .decision-tool table[data-stackable] tbody :is(th, td) {
+    display: flex;
+    gap: 1rem;
+    justify-content: space-between;
+    padding: 0.15rem 0;
+    border: 0;
+    text-align: start;
+  }
+
+  .decision-tool table[data-stackable] tbody th {
+    font-size: 0.75rem;
+  }
+
+  .decision-tool table[data-stackable] td::before {
+    color: var(--ink-3);
+    font-family: var(--md-text-font-family);
+    content: attr(data-label);
+  }
+}
+
+@media (forced-colors: active) {
+  .decision-tool :is(button, input, select),
+  .md-typeset .tool-presets button.tool-preset {
+    color: CanvasText;
+    border-color: ButtonText;
+    background: Canvas;
+  }
+
+  /* A thicker border marks the pressed preset; the outline stays free for
+     the focus ring. */
+  .md-typeset .tool-presets button.tool-preset[aria-pressed="true"] {
+    border: 3px double ButtonText;
+  }
+
+  .decision-tool
+    :is(
+      .decision-metrics,
+      .decision-diagnosis,
+      .decision-bar-track,
+      .eval-interval-track,
+      .decision-status[data-state="error"],
+      .agent-trace > li
+    ) {
+    border-color: CanvasText;
+  }
+
+  .decision-bar-fill,
+  .eval-interval-band {
+    background: Highlight;
+    forced-color-adjust: none;
+  }
+
+  /* The pin sits inside the band, so it takes the text color. */
+  .eval-interval-pin {
+    background: CanvasText;
+    forced-color-adjust: none;
+  }
+}
+
+@media print {
+  .decision-tool .decision-actions,
+  .tool-presets {
+    display: none;
+  }
+
+  .decision-tool :is(input, select) {
+    background: transparent;
+    box-shadow: none;
+  }
+}

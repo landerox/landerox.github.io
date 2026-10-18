@@ -1,0 +1,67 @@
+name: Maintenance · Blog Version Report
+run-name: >-
+  Blog version report · ${{
+    github.event_name == 'schedule' && 'weekly'
+    || github.event_name == 'workflow_dispatch' && 'manual dispatch'
+    || github.ref_name
+  }}
+
+on:
+  schedule:
+    # Wednesdays 06:30 UTC.
+    - cron: "30 6 * * 3"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  report:
+    name: Compare pinned versions with upstream tags
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository
+        id: checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      # Standard library only, so the runner's interpreter needs no install
+      # step. Tags are read from the public Git endpoints without
+      # credentials. Pins that trail upstream are reported, never a failure:
+      # they decay daily, and a red schedule would only teach us to ignore
+      # it. See docs/decisions.md § 30.
+      - name: Compare pins with upstream tags
+        id: report
+        run: python3 scripts/blog_versions.py --report > "$RUNNER_TEMP/blog-versions.md"
+
+      - name: Publish version report
+        if: always()
+        env:
+          CHECKOUT_OUTCOME: ${{ steps.checkout.outcome }}
+          REPORT_OUTCOME: ${{ steps.report.outcome }}
+        run: |
+          set -euo pipefail
+          {
+            if [ -s "$RUNNER_TEMP/blog-versions.md" ]; then
+              cat "$RUNNER_TEMP/blog-versions.md"
+            else
+              echo '## Blog version report'
+              echo
+              echo '> Read-only report: no file, issue or pull request was changed.'
+              echo
+              echo 'The comparison produced no report; inspect the failed step logs.'
+            fi
+            echo
+            echo '### Pipeline outcomes'
+            echo
+            echo '| Step | Outcome |'
+            echo '| :--- | :------ |'
+            printf '| repository checkout | %s |\n' "$CHECKOUT_OUTCOME"
+            printf '| version comparison | %s |\n' "$REPORT_OUTCOME"
+          } >> "$GITHUB_STEP_SUMMARY"

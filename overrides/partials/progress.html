@@ -1,0 +1,9 @@
+{#-
+  Modern names its progressbar through lang.t('progress'), but UI 0.0.37
+  still falls back to English for Spanish. Keep an explicit bilingual
+  name until both locales provide that translation upstream.
+
+  Re-check this small override after a Zensical bump; see docs/runbook.md.
+-#}
+<div class="md-progress" data-md-component="progress" role="progressbar"
+  aria-label="{% if config.theme.language == 'es' %}Progreso de carga de la página{% else %}Page loading progress{% endif %}"></div>

@@ -1,0 +1,209 @@
+# Zensical Configuration (Spanish)
+# Documentation: https://zensical.org/docs/setup/basics/
+
+[project]
+site_name = "landerox.com"
+site_url = "https://landerox.com/es/"
+site_description = "Fernando Landero, Consultor Senior e Ingeniero en Plataformas de Cloud, Datos e IA sobre Google Cloud, AWS y nube privada."
+site_author = "Fernando Landero"
+copyright = "© Fernando Landero — Plataformas de Cloud, Datos e IA"
+strict = true
+
+docs_dir = "content/es"
+site_dir = "site/es"
+
+repo_url = "https://github.com/landerox/landerox.github.io"
+repo_name = "landerox.github.io"
+
+extra_css = ["assets/stylesheets/extra.css", "assets/stylesheets/tools-simulations.css", "assets/stylesheets/decision-tools.css"]
+extra_javascript = [{ path = "assets/javascripts/extra.js", type = "module" }]
+
+# Navigation structure.
+# Blog articles lead with a short explanation and practical results.
+# Keep both locales in sync.
+nav = [
+  { "Inicio" = "index.md" },
+  { "Sobre mí" = [ { "Sobre mí" = "about.md" },
+                   { "Stack tecnológico" = "stack.md" },
+                   { "Colaboración y contacto" = "collaboration.md" } ] },
+  { "Proyectos" = [ { "Resumen" = "projects/index.md" },
+                    { "Código abierto" = "projects/open-source.md" },
+                    { "Blueprints de Producción" = "projects/blueprints.md" },
+                    { "Laboratorios de investigación" = "projects/labs.md" },
+                    { "Radar tecnológico" = "projects/explorations.md" },
+                    { "Herramientas interactivas" = "projects/tools.md" } ] },
+  { "Blog" = [ { "Resumen" = "blog/index.md" },
+                { "Almacenamiento y lakehouse" = [
+                  { "Almacenamiento de objetos" = "blog/object-storage.md" },
+                  { "Formatos de tabla y catálogos" = "blog/lakehouse-table-formats.md" } ] },
+                { "Pipelines de datos" = [
+                  { "Orquestadores de workflows" = "blog/workflow-orchestrators.md" },
+                  { "Transformación y modelado" = "blog/data-transformation.md" } ] },
+                { "Bases de datos" = [
+                  { "OLAP" = "blog/olap-databases.md" },
+                  { "Vectoriales" = "blog/vector-databases.md" },
+                  { "Grafos" = "blog/graph-databases.md" } ] },
+                { "Inteligencia de negocio" = [
+                  { "BI y visualización" = "blog/business-intelligence.md" } ] },
+                { "Observabilidad" = [
+                  { "Señales y herramientas" = "blog/observability.md" } ] } ] },
+]
+
+# Theme configuration
+[project.theme]
+language = "es"
+variant = "modern"
+favicon = "assets/images/favicon.svg"
+logo = "assets/images/logo.svg"
+
+# Template overrides (shared by both locales). overrides/main.html extends
+# the theme's base.html and fills the extrahead block with social/meta tags,
+# the manifest link and font preloads. Keep in sync with zensical.toml.
+custom_dir = "overrides"
+
+# The copy-as-Markdown action uses the same icon family as the header.
+icon = { copy = "lucide/copy" }
+
+# Disables Zensical's Google Fonts <link>, which was a render-blocking
+# stylesheet on a cold third-party origin in <head>. Inter, Outfit and
+# MesloLGM are self-hosted from assets/fonts/ instead — see the @font-face
+# block at the top of assets/stylesheets/extra.css and the provenance table
+# in docs/design.md. Keep in sync with zensical.toml.
+font = false
+
+features = [
+  "navigation.instant",
+  "navigation.instant.prefetch",
+  "navigation.instant.progress",
+  "navigation.tracking",
+  "navigation.tabs",
+  "navigation.sections",
+  "navigation.path",
+  "navigation.top",
+  "search.highlight",
+  "navigation.footer",
+  "content.code.copy",
+  "content.code.annotate",
+  "content.tabs.link",
+  "content.tooltips",
+  "content.action.copy",
+]
+
+# Palette: explicit light ↔ dark. A new visit starts in light mode;
+# the selected mode persists independently of the OS preference.
+[[project.theme.palette]]
+media = ""
+scheme = "default"
+primary = "indigo"
+accent = "indigo"
+toggle = { icon = "lucide/sun", name = "Cambiar a modo oscuro" }
+
+[[project.theme.palette]]
+media = ""
+scheme = "slate"
+primary = "indigo"
+accent = "indigo"
+toggle = { icon = "lucide/moon-star", name = "Cambiar a modo claro" }
+
+[project.extra]
+# One storage scope for both locales: without it the theme keys stored
+# state by base URL, so a palette chosen on / was lost on /es/.
+scope = "/"
+alternate = [
+  { name = "English", link = "https://landerox.com/", lang = "en" },
+  { name = "Español", link = "https://landerox.com/es/", lang = "es" },
+]
+
+# Social links (footer)
+[[project.extra.social]]
+icon = "material/github"
+link = "https://github.com/landerox"
+name = "GitHub"
+
+[[project.extra.social]]
+icon = "material/linkedin"
+link = "https://www.linkedin.com/in/landerox/"
+name = "LinkedIn"
+
+[[project.extra.social]]
+icon = "simple/dailydotdev"
+link = "https://app.daily.dev/landerox"
+name = "daily.dev"
+
+# Markdown extensions
+[project.markdown_extensions.toc]
+permalink = false
+
+# Highlight & Code Blocks
+[project.markdown_extensions.pymdownx.highlight]
+anchor_linenums = false
+line_spans = "__span"
+pygments_lang_class = true
+
+[project.markdown_extensions.pymdownx.superfences]
+[project.markdown_extensions.pymdownx.inlinehilite]
+[project.markdown_extensions.pymdownx.snippets]
+# Acronym tooltips generated from the glossary; the only locale-specific
+# extension setting (check_i18n.py allows exactly this path).
+auto_append = ["includes/es/abbreviations.md"]
+check_paths = true
+
+# Tabs
+[project.markdown_extensions.pymdownx.tabbed]
+alternate_style = true
+
+# Emojis
+[project.markdown_extensions.pymdownx.emoji]
+emoji_index = "zensical.extensions.emoji.twemoji"
+emoji_generator = "zensical.extensions.emoji.to_svg"
+
+# Other Utilities
+[project.markdown_extensions.admonition]
+[project.markdown_extensions.pymdownx.details]
+[project.markdown_extensions.abbr]
+[project.markdown_extensions.attr_list]
+[project.markdown_extensions.md_in_html]
+
+# Markdown for agents: an `index.md` beside every listed page and one
+# `llms.txt` per locale. Titles and descriptions are translated;
+# check_i18n.py requires both files to list the same pages in the same
+# order, and every navigation page to be listed.
+[project.plugins.llmstxt]
+markdown_description = """
+Fernando Landero es Consultor Senior e Ingeniero independiente en Plataformas de Cloud, Datos e IA, con más de 15 años en tecnología (los últimos 7 en plataformas cloud y de datos). Diseña arquitecturas, escribe código de producción y automatiza plataformas en Google Cloud (GCP), AWS y nube privada: Terraform e infraestructura validada por políticas, GKE/Kubernetes, pipelines por lotes y en streaming con Apache Spark, BigQuery, dbt y Airflow, y flujos de IA con recuperación RAG, orquestación de agentes y observabilidad (OpenTelemetry, Langfuse). Trabajo reciente: banca y finanzas, retail y energía.
+
+Sitio bilingüe: inglés en https://landerox.com/ y español en https://landerox.com/es/. Cada página listada abajo se publica también en Markdown, en la dirección enlazada.
+
+Contacto: contacto@landerox.com, reuniones en https://calendly.com/landerox/30min, https://github.com/landerox y https://www.linkedin.com/in/landerox/.
+"""
+
+[project.plugins.llmstxt.sections]
+"Perfil" = [
+  { "index.md" = "Presentación, credenciales, especialidades y contacto" },
+  { "about.md" = "Perfil, áreas de enfoque y experiencia" },
+  { "stack.md" = "Herramientas en producción y candidatas en investigación" },
+  { "collaboration.md" = "Solicitudes habituales, modalidades, zonas horarias y agenda" },
+]
+"Proyectos" = [
+  { "projects/index.md" = "Software de código abierto, blueprints de producción, laboratorios, radar tecnológico y herramientas interactivas" },
+  { "projects/open-source.md" = "ZDX, un conjunto de herramientas para Zsh con licencia MIT para flujos de desarrollo con cambios revisables (https://github.com/landerox/zdx-suite), y el pipeline y las premisas UX/UI de este sitio" },
+  { "projects/blueprints.md" = "Bases upstream, encaje por carga de trabajo, responsabilidades operativas compartidas y criterios de paso a producción" },
+  { "projects/labs.md" = "Estado de proyectos internos, contratos de evaluación y líneas base de investigación" },
+  { "projects/explorations.md" = "Investigación upstream fechada y condiciones de adopción; no son resultados de benchmarks internos" },
+  { "projects/tools.md" = "Cuatro hojas locales: reintentos durante una caída, archivos de tabla y compactación, recuperación de agentes y estadística de evaluación; sin modelo ni ejecución remota" },
+]
+"Blog" = [
+  { "blog/index.md" = "Comparativas tecnológicas con notas editoriales fechadas de 1 a 5, el método de puntuación y fuentes primarias" },
+  { "blog/object-storage.md" = "Servidores y gateways de código abierto por carga de trabajo, estado de versiones, límites de S3 y recuperación" },
+  { "blog/lakehouse-table-formats.md" = "Iceberg, Delta, Hudi y DuckLake; límites entre tabla, catálogo y motor" },
+  { "blog/workflow-orchestrators.md" = "Airflow, Dagster y alternativas por modelo de ejecución, licencia y recuperación" },
+  { "blog/data-transformation.md" = "dbt Core, SQLMesh, Dataform y Bruin por ciclo de vida de modelos y responsabilidad de despliegue" },
+  { "blog/olap-databases.md" = "Opciones distribuidas, embebidas y sobre PostgreSQL, incluidas candidatas AGPL" },
+  { "blog/vector-databases.md" = "Qdrant y alternativas por recuperación con filtros, licencia, despliegue y evaluación" },
+  { "blog/graph-databases.md" = "Neo4j Community, AGE y alternativas por modelo de grafo, edición, despliegue y recuperación" },
+  { "blog/business-intelligence.md" = "Superset, Metabase y alternativas por flujo de lectura y permisos" },
+  { "blog/observability.md" = "Métricas, logs, trazas, perfiles, colectores y paneles comparados por rol arquitectónico" },
+]
+"Referencia" = [
+  { "glossary.md" = "Definiciones bilingües con anclas estables, ejemplos, advertencias, términos relacionados y fuentes primarias" },
+]

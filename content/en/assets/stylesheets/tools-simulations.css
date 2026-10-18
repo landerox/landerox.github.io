@@ -1,0 +1,109 @@
+/* Failure Lab: the two-policy comparison, its timeline and the event
+   conservation line. */
+.failure-comparison {
+  border-top: 1px solid var(--hairline-strong);
+  margin-top: 1.4rem;
+  padding-top: 0.3rem;
+}
+
+.failure-comparison-controls {
+  align-items: end;
+  display: grid;
+  gap: 0.7rem;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) auto;
+  margin-top: 0.8rem;
+}
+
+.simulation-table-wrapper {
+  margin: 0.65rem 0;
+}
+
+.simulation-table {
+  min-width: 25rem;
+}
+
+.simulation-table th {
+  font-family: var(--md-text-font-family);
+  line-height: 1.55;
+  vertical-align: top;
+  white-space: normal;
+}
+
+.simulation-table th[scope="row"] {
+  background: transparent;
+  max-width: 12rem;
+}
+
+/* Keep both outcomes visible on mobile; only the five-column timeline scrolls. */
+.simulation-summary {
+  min-width: 0;
+  table-layout: fixed;
+}
+
+.simulation-summary th {
+  overflow-wrap: anywhere;
+  width: 30%;
+}
+
+.simulation-summary th:first-child {
+  width: 40%;
+}
+
+.simulation-summary th,
+.simulation-summary td {
+  padding-inline: 0.25rem;
+}
+
+.simulation-phase {
+  color: var(--ink-3);
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 400;
+  margin-top: 0.15rem;
+}
+
+/* The comparison's conclusion is a quiet rule, not the tinted callout. */
+.failure-comparison .failure-insight {
+  background: none;
+  border-left: 2px solid var(--border-interactive);
+  border-radius: 0;
+  margin: 0.9rem 0;
+  padding: 0 0 0 0.75rem;
+}
+
+.md-typeset .failure-conservation {
+  background: var(--surface-sunken);
+  border: 1px solid var(--hairline);
+  border-radius: var(--radius-sm);
+  color: var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.55;
+  margin: 0.65rem 0 0;
+  padding: 0.5rem 0.75rem;
+}
+
+@media screen and (width <= 40em) {
+  .failure-comparison-controls {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .failure-comparison-controls > button {
+    justify-self: start;
+  }
+}
+
+@media print {
+  .failure-comparison-controls {
+    display: none;
+  }
+
+  .simulation-table-wrapper {
+    overflow: visible;
+  }
+
+  .simulation-table {
+    min-width: 0;
+  }
+}

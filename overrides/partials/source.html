@@ -1,0 +1,16 @@
+{#-
+  Shadows the theme's partials/source.html without
+  `data-md-component="source"`, which would fetch repository facts from
+  api.github.com on every page; the baseline CSP blocks that origin
+  (docs/decisions.md § 24). The link itself is unchanged. Re-check after a
+  Zensical bump: the upstream file is generated.
+-#}
+<a href="{{ config.repo_url }}" title="{{ lang.t('source') }}" class="md-source">
+  <div class="md-source__icon md-icon">
+    {% set icon = config.theme.icon.repo or "fontawesome/brands/git-alt" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </div>
+  <div class="md-source__repository">
+    {{ config.repo_name }}
+  </div>
+</a>

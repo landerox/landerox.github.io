@@ -1,0 +1,39 @@
+{#-
+  Copy of the Modern partial with one change: UI 0.0.37 has no Spanish
+  string for 'action.copy', so the copy-as-Markdown button would be named in
+  English on Spanish pages. The edit and view actions are kept as upstream
+  ships them, so enabling those features later still renders them.
+
+  A second change: the copy button shows only on reading pages worth pasting
+  into a model (Blog, the glossary and the research pages). Every page keeps
+  its Markdown twin and the llms.txt entry for agents.
+
+  Re-check this override after a Zensical bump; see docs/runbook.md.
+-#}
+{% set copyable = page.url[:5] == "blog/" or page.url in ["glossary/", "projects/explorations/", "projects/blueprints/", "projects/labs/"] %}
+{% if "content.action.copy" in features and page.markdown_url and copyable %}
+  {% set copy_label = "Copiar como Markdown" if config.theme.language == "es" else lang.t("action.copy") %}
+  <button type="button" title="{{ copy_label }}" aria-label="{{ copy_label }}" class="md-content__button md-icon" data-md-copy-url="{{ page.markdown_url | url }}">
+    {% set icon = config.theme.icon.copy or "material/content-copy" %}
+    {% include ".icons/" ~ icon ~ ".svg" %}
+  </button>
+{% endif %}
+{% if page.edit_url %}
+  {% if "content.action.edit" in features %}
+    <a href="{{ page.edit_url }}" title="{{ lang.t('action.edit') }}" class="md-content__button md-icon" rel="edit">
+      {% set icon = config.theme.icon.edit or "material/file-edit-outline" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </a>
+  {% endif %}
+  {% if "content.action.view" in features %}
+    {% if "/blob/" in page.edit_url %}
+      {% set part = "/blob/" %}
+    {% else %}
+      {% set part = "/edit/" %}
+    {% endif %}
+    <a href="{{ page.edit_url | replace(part, '/raw/') }}" title="{{ lang.t('action.view') }}" class="md-content__button md-icon">
+      {% set icon = config.theme.icon.view or "material/file-eye-outline" %}
+      {% include ".icons/" ~ icon ~ ".svg" %}
+    </a>
+  {% endif %}
+{% endif %}
