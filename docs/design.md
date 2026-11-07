@@ -1781,12 +1781,15 @@ properties (`--click-x`, `--click-y`, `--clip-radius`) — the transition
 pseudo-elements inherit from the document root — and for `html.lang`.
 
 Zensical owns the lifecycle of `meta[name="theme-color"]`: its palette
-controller creates one meta at runtime. Since 0.0.57, and still in 0.0.71
-(bundle checked 2026-10-17), it serializes the translucent computed header
+controller creates one meta at runtime. The bundle checked on 2026-10-17
+(Zensical 0.0.71) serialized the translucent computed header
 color into an invalid ten-digit hex value, so `syncThemeColor()` owns only the
 content and corrects the theme's deferred writes to the active
 `--surface-page` color. Static duplicate metas are
-deliberately absent. Custom scheme-aware code observes `<body>` through
+deliberately absent. The Zensical 0.1.0 / UI 0.0.41 upgrade keeps the
+runbook's single-meta and computed-background checks as its acceptance
+contract; remove the bridge only when the upstream value passes those checks.
+Custom scheme-aware code observes `<body>` through
 `paletteHost()`. Touch devices get their own contract too: `@media (hover:
 none)` neutralizes hover *transforms* (sticky-hover would freeze cards and
 buttons mid-levitation after a tap), and the card tilt handler binds only when
@@ -1996,8 +1999,8 @@ budget](#8-performance-budget)).
 
 ## 11. Re-evaluation triggers
 
-- **Any Zensical bump** (every 0.0.x release can change templates and the
-  bundle) — re-check [Component rules](#6-component-rules) against the compiled
+- **Any Zensical or `zensical-ui` bump** (the beta line can change templates
+  and the bundle) — re-check [Component rules](#6-component-rules) against the compiled
   theme CSS in `site/assets/stylesheets/modern/`. Every override in this
   system is calibrated against specific theme rules, and most entries in
   [Defects found and fixed](#9-defects-found-and-fixed) were the theme and

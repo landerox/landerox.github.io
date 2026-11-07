@@ -824,9 +824,19 @@ class BrowserContracts(unittest.TestCase):
                 expect(copy).to_have_accessible_name("Copiar como Markdown" if locale else "Copy as Markdown")
                 box = copy.bounding_box()
                 self.assertGreaterEqual(min(box["width"], box["height"]), 44, box)
+                self.page.evaluate("navigator.clipboard.writeText('https://example.test/previous#scenario')")
                 copy.click()
-                self.page.wait_for_function("navigator.clipboard.readText().then(text => text.includes('# '))")
-                copied = self.page.evaluate("navigator.clipboard.readText()")
+                # A Promise is truthy to wait_for_function before it settles.
+                # Poll the exact heading and retain the successful read.
+                copied = self.page.evaluate("""async heading => {
+                  const deadline = performance.now() + 6000;
+                  while (performance.now() < deadline) {
+                    const text = await navigator.clipboard.readText();
+                    if (text.includes(heading)) return text;
+                    await new Promise(resolve => requestAnimationFrame(resolve));
+                  }
+                  throw new Error(`Clipboard did not contain ${heading}`);
+                }""", heading)
                 self.assertIn(heading, copied)
                 self.assertNotIn("&amp;", copied)
                 self.no_overflow()

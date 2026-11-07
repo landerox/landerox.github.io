@@ -8,8 +8,8 @@
 set ignore-comments
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
-# @lhci/cli release bundled by treosh/lighthouse-ci-action in quality.yml.
-lhci := "@lhci/cli@0.15.1"
+# One Lighthouse CI release for local audits and quality.yml.
+lhci := "@lhci/cli@0.16.0"
 
 # List every recipe by group
 default:
@@ -210,20 +210,38 @@ test-browser:
 # Run Lighthouse CI with the CI configuration; reports in lhci-reports/ (set CHROME_PATH)
 [group('test')]
 lighthouse: build
+    just lighthouse-audit
+
+# Audit the current build with Lighthouse CI without rebuilding it
+[group('test')]
+lighthouse-audit:
     #!/usr/bin/env bash
     set -euo pipefail
     repo="$PWD"
     scratch="$(mktemp -d -t lhci-XXXXXXXX)"
     trap 'rm -rf "$scratch"' EXIT
+    # A failed collection must never leave a previous audit's reports behind.
+    rm -rf -- "$repo/lhci-reports"
+    mkdir -p "$repo/lhci-reports"
     # Audit a snapshot, so a running dev server cannot rewrite site/ mid-run.
     cp -R "$repo/site" "$scratch/site"
-    # Run from the scratch directory: on WSL, chrome-launcher creates one
-    # `C:\Users\…\lighthouse.<n>` profile per run in the working directory.
+    # Puppeteer launches Linux Chrome with an explicit disposable profile.
+    # This avoids chrome-launcher's Windows profile-path inference on WSL.
+    printf '%s\n' 'module.exports = async () => {};' > "$scratch/prepare-browser.cjs"
     cd "$scratch"
-    env -u TEMP -u TMP TMPDIR=/tmp npx --yes {{ lhci }} autorun \
+    status=0
+    env -u TEMP -u TMP TMPDIR=/tmp npx --yes {{ lhci }} autorun --failOnUploadFailure \
         --config="$repo/.config/lighthouserc.json" \
         --collect.staticDistDir="$scratch/site" \
-        --upload.outputDir="$repo/lhci-reports"
+        --collect.puppeteerScript=./prepare-browser.cjs \
+        --collect.puppeteerLaunchOptions.userDataDir="$scratch/chrome" \
+        --upload.outputDir="$repo/lhci-reports" || status=$?
+    # Keep every run and assertion result alongside the exported reports,
+    # including on a failed audit, for local review and the CI artifact.
+    if [[ -d "$scratch/.lighthouseci" ]]; then
+        cp -R "$scratch/.lighthouseci/." "$repo/lhci-reports/"
+    fi
+    exit "$status"
 
 # =============================================================================
 # Dependencies

@@ -20,7 +20,7 @@ default_install_hook_types: [pre-commit, commit-msg]
 default_language_version:
   # Node hooks run this exact LTS, the one CI installs, whatever the local
   # system Node is; each Node hook environment downloads it once.
-  node: "24.22.0"
+  node: "26.13.0"
 
 repos:
   # General file checks
@@ -55,7 +55,7 @@ repos:
   # word had to be listed by hand in `words`, and each new ES page or
   # comment failed CI until someone appended to that list.
   - repo: https://github.com/streetsidesoftware/cspell-cli
-    rev: f5c5d72342f35643988a9ffa0705c05bd3ff8383  # frozen: v10.3.0
+    rev: f6467e1f1ebecf5020560405c7b26e01786a43c8  # frozen: v10.4.0
     hooks:
       - id: cspell
         args: ["--config", ".config/.cspell.json", "--no-must-find-files"]
@@ -74,7 +74,7 @@ repos:
 
   # Markdownlint - Markdown Validation
   - repo: https://github.com/igorshubovych/markdownlint-cli
-    rev: 5b5dddc4fb0f83c3ea1fc5616fa63e115dce83e0  # frozen: v0.49.1
+    rev: cbcdc463be5464e25e3e955a511599a67b9b987f  # frozen: v0.50.0
     hooks:
       - id: markdownlint
         args:
@@ -94,7 +94,7 @@ repos:
 
   # zizmor - GitHub Actions security audit
   - repo: https://github.com/zizmorcore/zizmor-pre-commit
-    rev: c92afdf2c6ca336aaa8f39e2bd8d48f62dbd8e1f  # frozen: v1.31.1
+    rev: 06a39750ec31860bb44f2acf67182c40016cd1e7  # frozen: v1.32.0
     hooks:
       - id: zizmor
 
@@ -102,7 +102,7 @@ repos:
   # Lint only: adopting the formatter rewrites most of scripts/ in one pass,
   # so it waits for a commit of its own. See docs/decisions.md.
   - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: 38bfb07c0c64c304f47eb52090f8288150c77730  # frozen: v0.17.1
+    rev: c0f278f1254ccc8fb09676bcdb8d847e7db493e5  # frozen: v0.17.4
     hooks:
       - id: ruff-check
 
@@ -111,27 +111,27 @@ repos:
   # version: the dependency pin is what actually installs eslint, so a
   # drifted rev silently advertises a different major than the one running.
   - repo: https://github.com/pre-commit/mirrors-eslint
-    rev: 7ab6b7f5c5befd162fb5ddddc4af4c1b4fbfe11d  # frozen: v10.13.0
+    rev: 28bccd32cd8c825b0d0913b486f8ef0f56bfb08a  # frozen: v10.14.0
     hooks:
       - id: eslint
         files: \.(?:[jt]sx?|mjs)$
         args: ["--config", "eslint.config.js", "--max-warnings", "0"]
         additional_dependencies:
-          - eslint@10.13.0
+          - eslint@10.14.0
 
   # Stylelint - CSS validation
-  # No shareable config in `additional_dependencies`: stylelint 17 resolves
+  # No shareable config in `additional_dependencies`: stylelint 18 resolves
   # `extends` with ESM semantics, which ignores the NODE_PATH that pre-commit
   # uses to expose these packages, so `extends: stylelint-config-standard`
   # fails with `Could not find "stylelint-config-standard"`. The ruleset is
   # inlined in .config/.stylelintrc.yaml instead — see the header there.
   - repo: https://github.com/thibaudcolas/pre-commit-stylelint
-    rev: a43d64a23287d2dc2e02289bd3b2cb0da5eddfb1  # frozen: v17.16.0
+    rev: e48ba09830adcf6ad3351bde49abdf5b46b13c16  # frozen: v18.0.0
     hooks:
       - id: stylelint
         args: ["--config", ".config/.stylelintrc.yaml", "--allow-empty-input"]
         additional_dependencies:
-          - stylelint@17.16.0
+          - stylelint@18.0.0
 
   # Repository contracts and tests, run with the locked toolchain. Each hook
   # is scoped to the files that can change its result; the automation policy
