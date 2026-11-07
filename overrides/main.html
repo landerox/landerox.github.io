@@ -19,9 +19,9 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   {% if page.meta and page.meta.description %}
-    <meta name="description" content="{{ page.meta.description }}">
+    <meta name="description" content="{{ page.meta.description | e }}">
   {% elif config.site_description %}
-    <meta name="description" content="{{ config.site_description }}">
+    <meta name="description" content="{{ config.site_description | e }}">
   {% endif %}
   {% if page.meta and page.meta.robots %}
     <meta name="robots" content="{{ page.meta.robots }}">
@@ -135,9 +135,9 @@
   {% endif %}
   {#- Blog articles carry `reviewed`, which also feeds article:modified_time. -#}
   <meta property="og:type" content="{{ 'article' if page.meta and page.meta.reviewed else 'website' }}">
-  <meta property="og:site_name" content="{{ config.site_name }}">
-  <meta property="og:title" content="{{ og_title }}">
-  <meta property="og:description" content="{{ og_description }}">
+  <meta property="og:site_name" content="{{ config.site_name | e }}">
+  <meta property="og:title" content="{{ og_title | e }}">
+  <meta property="og:description" content="{{ og_description | e }}">
   {% if page.canonical_url %}
     <meta property="og:url" content="{{ page.canonical_url }}">
   {% endif %}
@@ -149,7 +149,7 @@
   <meta property="og:locale" content="{{ 'es_ES' if config.theme.language == 'es' else 'en_US' }}">
   <meta property="og:locale:alternate" content="{{ 'en_US' if config.theme.language == 'es' else 'es_ES' }}">
   <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="{{ og_title }}">
-  <meta name="twitter:description" content="{{ og_description }}">
+  <meta name="twitter:title" content="{{ og_title | e }}">
+  <meta name="twitter:description" content="{{ og_description | e }}">
   <meta name="twitter:image" content="https://landerox.com/assets/images/social-card.png">
 {% endblock %}

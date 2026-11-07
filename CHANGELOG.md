@@ -152,11 +152,13 @@ tag and release establish this baseline after review.
 
 ### Stack and repository organization
 
-The site runs on Python 3.14 and Zensical 0.0.71; Pillow draws the social
-cards during the build and the generator's `llmstxt` plugin writes the
-Markdown for agents. `uv` installs Python dependencies from `uv.lock`;
-`just` groups the development, build, content, quality, test, dependency,
-Git, release and security commands. Node.js 24 LTS runs the glossary
+The site runs on Python 3.14 and Zensical 0.1.0, whose upstream release
+line is beta; the locked `zensical-ui` 0.0.41 package supplies its templates
+and browser assets. Pillow draws the social cards during the build and the
+generator's `llmstxt` plugin writes the Markdown for agents. `uv` 0.13.7
+installs Python dependencies from `uv.lock`; `just` groups the development,
+build, content, quality, test, dependency,
+Git, release and security commands. Node.js 26.13.0 LTS runs the glossary
 generator, built-in Node tests and isolated Node hooks.
 
 | Path | Responsibility |
@@ -222,7 +224,10 @@ pages, Blog feeds and article metadata.
   axe-core checks WCAG 2.2 A/AA and its best practices on the states
   Lighthouse never opens: the dialog, the CLI, the intro video and every
   tool, plus Home in both palettes and the Projects and Blog card grids.
-- **Lighthouse CI**: 42 URLs, every page of both locales except the 404,
+- **Lighthouse CI**: `just lighthouse` builds, then invokes the shared
+  `just lighthouse-audit` recipe used by CI over its existing build.
+  Both use `@lhci/cli` 0.16.0, with CI reports uploaded as an artifact.
+  It covers 42 URLs, every page of both locales except the 404,
   three runs each. Accessibility requires 1.0; SEO, best practices, layout
   shift and zero third-party requests are blocking. Performance below 0.9
   and resource-size budgets warn. These checks run after the browser

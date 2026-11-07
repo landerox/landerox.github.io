@@ -10,7 +10,7 @@
   <a href="https://github.com/landerox/landerox.github.io/actions/workflows/lint.yml"><img src="https://github.com/landerox/landerox.github.io/actions/workflows/lint.yml/badge.svg" alt="Lint" /></a>
   <a href="pyproject.toml"><img src="https://img.shields.io/badge/python-3.14%2B-blue?logo=python&logoColor=white" alt="Python" /></a>
   <a href="https://github.com/astral-sh/uv"><img src="https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/astral-sh/uv/main/assets/badge/v0.json" alt="uv" /></a>
-  <a href="https://github.com/zensical/zensical"><img src="https://img.shields.io/badge/Zensical-0.0.71-FF9100" alt="Zensical" /></a>
+  <a href="https://github.com/zensical/zensical"><img src="https://img.shields.io/badge/Zensical-0.1.0-FF9100" alt="Zensical" /></a>
   <br />
   <a href="https://scorecard.dev/viewer/?uri=github.com/landerox/landerox.github.io"><img src="https://api.securityscorecards.dev/projects/github.com/landerox/landerox.github.io/badge" alt="OpenSSF Scorecard" /></a>
   <a href="https://www.bestpractices.dev/projects/12835"><img src="https://www.bestpractices.dev/projects/12835/badge" alt="OpenSSF Best Practices" /></a>
@@ -63,8 +63,10 @@ The reasoning behind each tool is written down in [`docs/`](docs/).
 
 Built for speed, strict dependency management, and long-term maintainability:
 
-- **Static generation** — [Zensical](https://zensical.org), a minimalist
-  Python static site generator, in its `modern` theme variant.
+- **Static generation** — [Zensical 0.1.0](https://github.com/zensical/zensical/releases/tag/v0.1.0),
+  a Python package with a Rust build engine, in its `modern` theme variant.
+  Upstream describes this release line as beta; its templates and browser
+  assets ship separately in the locked `zensical-ui` package.
 - **Environment management** — [`uv`](https://github.com/astral-sh/uv) with a
   committed lockfile, for deterministic and fast resolution.
 - **Task automation** — [`just`](https://github.com/casey/just) as the single
@@ -125,9 +127,9 @@ them. See the recreation
 
 ## 🚀 Local Development
 
-Requires **Python 3.14+**, [`uv`](https://github.com/astral-sh/uv),
-[`just`](https://github.com/casey/just), and **Node.js LTS** (match the pin
-in `.pre-commit-config.yaml`) for the glossary check that `just build` runs,
+Requires **Python 3.14+**, [`uv`](https://github.com/astral-sh/uv) **0.13.7**,
+[`just`](https://github.com/casey/just), and **Node.js 26.13.0 LTS** (match
+the pin in `.pre-commit-config.yaml`) for the glossary check that `just build` runs,
 the built-in JavaScript tests and `just lighthouse`.
 Two optional binaries back single recipes:
 [`lychee`](https://github.com/lycheeverse/lychee) for `just links`
@@ -162,7 +164,7 @@ just glossary     # regenerate both public glossary pages after catalog edits
 just install-browser # install Chromium for the pinned Playwright package
 just test-browser # browser regressions against the current build
 just test-workbench # CLI, glossary, filters, the four tools and availability
-just lighthouse   # Lighthouse CI locally, same config as the Quality workflow
+just lighthouse   # build, then the Lighthouse CI 0.16.0 audit used by Quality CI
 just commit       # commitizen-guided Conventional Commit, signed off
 ```
 

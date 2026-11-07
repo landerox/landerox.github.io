@@ -6,7 +6,7 @@
 > For a **quick reference** of the current stack without the
 > deliberations, see [`tooling.md`](./tooling.md).
 >
-> **Last reviewed:** 2026-10-18
+> **Last reviewed:** 2026-11-07
 
 ## Repository context
 
@@ -49,7 +49,7 @@ order:
 
 | Tool                | Language    | Maturity      | Type                | Notes                                              |
 | :------------------ | :---------- | :------------ | :------------------ | :------------------------------------------------- |
-| **Zensical**        | Python      | Young (0.0.x) | Docs-style SSG      | "Modern" successor of Material for MkDocs (Squidfunk). |
+| **Zensical**        | Python / Rust | Beta (0.1.x) | Docs-style SSG      | "Modern" successor of Material for MkDocs (Squidfunk). |
 | MkDocs Material     | Python      | Very mature   | Docs-style SSG      | De facto standard for technical docs.              |
 | Hugo                | Go          | Very mature   | Generalist SSG      | The fastest on the market.                         |
 | Astro               | TypeScript  | Mature        | Content-first SSG   | MDX, islands, JS ecosystem.                        |
@@ -63,9 +63,9 @@ internal-link validation warnings fail the build instead of reaching
 production unnoticed.
 **Rationale (frankly):** If this were a purely objective choice,
 **Hugo**, **Astro**, or **MkDocs Material** would win on maturity
-and ecosystem. Zensical is at `0.0.x`: new, young, with fewer
-plugins and less community. The choice falls under the **personal
-affinity exception**:
+and ecosystem. Zensical's `0.1.x` line is beta: newer, with a smaller
+ecosystem, despite its growing MkDocs compatibility. The choice falls under
+the **personal affinity exception**:
 
 - Interest in trying the successor of Material for MkDocs (Squidfunk
   lineage, whose philosophy resonates with the rest of the stack).
@@ -85,14 +85,46 @@ affinity exception**:
 
 **Re-evaluate if:**
 
-- Zensical does not advance to `0.1.x+` within 12 months (dead
-  project risk). Upstream has announced 0.1.0, the first dependable
-  release line, for 2026-11-05; re-read this section when it ships.
+- Zensical's beta period does not lead to the reliability and stable APIs
+  promised upstream. Version 0.1.0 shipped on 2026-11-05; its release notes
+  describe a three-month beta before a planned stable transition.
 - A blocking capability appears that the ecosystem does not cover.
 - Maintenance starts generating real friction (unfixed bugs,
   releases that break things).
 
-**Release review, 0.0.71 (2026-10-17).** Adopted. The installed
+**Release review, 0.1.0 (2026-11-07).** Adopted as an upstream beta.
+This upgrade includes the intervening 0.0.72–0.0.74
+fixes to Markdown and URL handling, file watching, `llmstxt` image output,
+navigation history and vulnerable dependencies. Templates, compiled CSS,
+browser assets and icons now come from the separate `zensical-ui` package,
+locked at 0.0.41 by Zensical itself. UI 0.0.38 changes header toggle names
+to hidden text, UI 0.0.39 changes anchor/history handling, and UI 0.0.41
+escapes page descriptions. The overridden `site_meta` block must carry that
+escaping explicitly because replacing the block bypasses the upstream fix.
+The runbook's post-bump checks remain the acceptance contract for this
+upgrade. The bilingual build and all 29 browser contracts pass. Twenty-four
+viewport comparisons of Home, Blueprints and the object-storage article
+match the previous release with the random particle canvas hidden in both;
+the site's custom CSS and JavaScript are unchanged. Compiled Modern CSS,
+header names, palette ownership and metadata escaping were checked locally.
+Sources: [Zensical 0.1.0](https://github.com/zensical/zensical/releases/tag/v0.1.0),
+[Zensical 0.0.74](https://github.com/zensical/zensical/releases/tag/v0.0.74)
+and [UI 0.0.41](https://github.com/zensical/ui/releases/tag/v0.0.41).
+
+The new `privacy` and `optimize` plugins stay disabled: assets are already
+self-hosted, SVG/WebP make up much of the image tree, and the per-page cards
+are generated after Zensical by `post_build.py`. PNG optimization would also
+require `pngquant`. Mermaid 12 is available but has no authored diagrams
+here; adopting it must preserve local assets, the CSP and mobile readability.
+Glossary abbreviations already use snippets, so include-Markdown stays
+disabled. Directives remains Spark early access,
+and the Module API is not yet a public extension interface; neither is a
+free feature implicitly enabled by this dependency update. Sources:
+[plugin compatibility](https://zensical.org/docs/compatibility/mkdocs/plugins/),
+[UI 0.0.39](https://github.com/zensical/ui/releases/tag/v0.0.39)
+and [Directives](https://zensical.org/docs/authoring/directives/).
+
+**Release review, 0.0.71 (2026-10-17).** Adopted at that review. The installed
 `templates/` (bundle, compiled theme CSS and partials) are byte-identical to
 0.0.70 by `diff -r`; only the Rust binary, `config.py` and a new
 `include_markdown` extension changed. The release adds support for
@@ -730,8 +762,8 @@ flake would still add more surface than it removes.
   preparation command and a scoped exception for urgent updates.
 - Cache steps stay directly in the two workflows: the pinned actionlint
   v1.7.12 does not accept GitHub's `$/...` self-repository references, while
-  zizmor v1.31.1 requires them for internal actions (its `self-repository`
-  audit flags `./...`). Sharing the Python
+  zizmor requires them for internal actions (its `self-repository` audit,
+  introduced in v1.31.1, flags `./...`). Sharing the Python
   helper keeps the installation policy consistent and both gates enabled.
 
 - Three binaries live outside the repository and have no lockfile:
@@ -767,7 +799,7 @@ the tool must reference the same version, never a divergent one.
 | Node.js LTS           | `.pre-commit-config.yaml` `default_language_version.node` | `deploy.yml`, `lint.yml`, `quality.yml`, `uv-report.yml` `node-version` | Edit all five together; stay on the newest LTS patch |
 | `eslint` / `stylelint` / `typescript` / `@cspell/dict-es-es` | `.pre-commit-config.yaml` `additional_dependencies` | Pre-commit only (no CI step of their own) | Manual — **Dependabot does not read `additional_dependencies`**, and `pre-commit autoupdate` only moves `rev:` |
 | `lychee` binary       | `lychee-action` pin in `link-report.yml` | Local install (`just links`)                | Review the action version quarterly; move the local binary with it |
-| `@lhci/cli`           | `lighthouse-ci-action` pin in `quality.yml` (bundled release) | `Justfile` `lighthouse` recipe (`npx @lhci/cli@<version>`) | When the action pin moves, read its lockfile and move the recipe with it |
+| `@lhci/cli`           | `Justfile` `lhci` pin (0.16.0)       | Local `just lighthouse` and `quality.yml`, through the shared `lighthouse-audit` recipe | Review the CLI release and its Lighthouse dependency, then edit the one recipe pin |
 | `pinact`              | Local install (no CI consumer)       | `just pin-actions`                              | Review releases manually                     |
 | `just`                | `setup-just` `just-version:` in `deploy.yml`, `lint.yml`, `quality.yml`, `link-report.yml`, `uv-report.yml` | Those five workflows, plus the local install | Edit all five in the same PR and move the local binary with them |
 | Action SHAs           | `.github/workflows/*.yml`            | Workflow files                                  | Review manually; apply new pins with `just pin-actions` |
@@ -785,7 +817,7 @@ was `uv` pinned to a specific version on one surface but installed as
 tools without a lockfile must be aligned by convention.
 
 **Pairing rule:** the `mirrors-eslint` `rev` and the `eslint@` pin in
-`additional_dependencies` move together (both v10.13.0, the newest mirror
+`additional_dependencies` move together (both v10.14.0, the newest mirror
 tag; npm can be a release ahead of the mirror). A comment in
 `.pre-commit-config.yaml` states the rule.
 
@@ -901,12 +933,12 @@ publishes that directory verbatim.
 
 | Tool                  | Type        | Output                                | CI Integration                |
 | :-------------------- | :---------- | :------------------------------------ | :---------------------------- |
-| **Lighthouse CI**     | Auditor     | Scores 0–1 per category + budgets     | `treosh/lighthouse-ci-action` |
+| **Lighthouse CI**     | Auditor     | Scores 0–1 per category + budgets     | `just lighthouse-audit` in Actions |
 | WebPageTest API       | SaaS        | Detailed waterfalls                   | Less GitHub-native            |
 | Pa11y                 | Auditor     | A11y only                             | Specialized                   |
 | Sitespeed.io          | Auditor     | Multi-metric                          | Heavier                       |
 
-**Decision:** ✅ **`treosh/lighthouse-ci-action`** in a dedicated
+**Decision:** ✅ **`@lhci/cli` 0.16.0** through `just lighthouse-audit` in a dedicated
 `quality.yml` workflow. Accessibility, SEO, best-practices, layout
 shift and the third-party request budget are blocking; the performance
 score and byte-size budgets remain warn-only because they are more
@@ -916,6 +948,14 @@ sensitive to CI noise.
 auditing of **accessibility, SEO, performance, best-practices** — but
 Performance scores are known to be noisy across CI runs, while the
 other categories are stable enough to prevent regressions.
+
+The workflow audits its existing build with `just lighthouse-audit` and
+uploads its filesystem reports with `actions/upload-artifact`. Local
+`just lighthouse` builds first, then invokes that shared audit recipe. The
+previous `treosh/lighthouse-ci-action` bundled an older CLI; a single pin in `Justfile`
+allows adopting the current CLI without a second version source. The
+configuration and assertion thresholds are unchanged. Source:
+[Lighthouse CI 0.16.0](https://github.com/GoogleChrome/lighthouse-ci/releases/tag/v0.16.0).
 
 **Concrete setup:**
 
@@ -943,9 +983,11 @@ other categories are stable enough to prevent regressions.
 - **Storage**: `filesystem` + artifact upload. **No**
   `temporaryPublicStorage` (privacy: reports stay private).
 - **Local runs**: `just lighthouse`, the same config and `@lhci/cli` release,
-  executed from a scratch directory because chrome-launcher on WSL creates
-  its Chrome profiles relative to the working directory. The completed
-  bilingual build is copied into that directory before auditing, so a live
+  builds first and invokes `lighthouse-audit`; CI invokes the latter over its
+  already-tested build. Puppeteer launches Chrome with an explicit profile
+  under a scratch directory, avoiding chrome-launcher's Windows-path
+  inference on WSL. The completed bilingual build is copied into that
+  directory before auditing, so a live
   development server cannot remove or replace audited pages mid-run. Later
   source edits are not part of the snapshot (`docs/runbook.md`).
 
@@ -1058,8 +1100,8 @@ typing the theme's untyped globals.
 | **stylelint** | CSS | Linter | `.config/.stylelintrc.yaml` | Native Node mirrors via pre-commit |
 | csslint | CSS | Linter | `.csslintrc` | Legacy, unmaintained |
 
-**Decision:** ✅ **`stylelint`** (v17) with the `stylelint-config-standard`
-ruleset **inlined** rather than referenced through `extends`.
+**Decision:** ✅ **`stylelint`** (v18) with the `stylelint-config-standard`
+41 ruleset **inlined** rather than referenced through `extends`.
 **Status:** In use.
 **Rationale:** Ensures CSS files adhere to standard design system guidelines
 and prevent rule regressions. Runs inside isolated pre-commit virtual

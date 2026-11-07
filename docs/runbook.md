@@ -159,6 +159,14 @@ broken, the styling just no longer lands where it was aimed.
 
 **Diagnosis**:
 
+Zensical 0.1.0 locks `zensical-ui` 0.0.41, which now supplies the installed
+templates, browser assets and icons. Locate that package rather than an old
+`zensical/templates/` path when comparing upstream files:
+
+```bash
+uv run python -c "from importlib.resources import files; print(files('zensical_ui').joinpath('templates'))"
+```
+
 1. `just build`, then check whether the theme CSS filename changed:
 
    ```bash
@@ -244,14 +252,19 @@ broken, the styling just no longer lands where it was aimed.
    Modern's checkbox labels but moves each icon and accessible name into a
    native button. The search error handler must still find
    `label[for=__search]`; verify Enter/Space, Escape and returning focus to
-   the opener. UI 0.0.37 owns the native search dialog, closed-panel inertness,
+   the opener. Since UI 0.0.37, the theme owns the native search dialog,
+   closed-panel inertness,
    focus and ARIA state. Its open shadow root must expose a named combobox
    whose `aria-controls` resolves to the results listbox; `aria-expanded`
    follows the visible results and `aria-activedescendant` names an option
    when applicable. Closed search must not leave its field in the keyboard or
    accessibility tree. `features/search-a11y.js` only translates Spanish
    labels, placeholder and live status messages; it must not replace native
-   dialog state or focus handling. Verify loading, results, no results and
+   dialog state or focus handling. Since UI 0.0.38, the drawer/search labels
+   name their controls with `.md-visually-hidden` text instead of an
+   `aria-label`; the native buttons must retain that text and their accessible
+   names after `setupHeaderButtons()` moves the label's children.
+   Verify loading, results, no results and
    the close action in both locales with `just test-browser`.
 
 7. On the home page, confirm the motion toggle sits immediately before the
@@ -285,9 +298,13 @@ broken, the styling just no longer lands where it was aimed.
 10. Compare the five shadowed partials (`source.html`, `alternate.html`,
     `progress.html`, `actions.html`, `social.html`) and
     the `site_meta` and `extrahead` blocks in `overrides/main.html`
-    against the installed templates. The native progressbar is named, but
-    UI 0.0.37 still resolves the Spanish `progress` string to English
-    `Loading`. Keep the localized `progress.html` override until that upstream
+    against the installed `zensical-ui` templates. Check description
+    escaping in `site_meta`: UI 0.0.41 added `| e` in `base.html`, which our
+    replacement block must preserve explicitly. Check descriptions containing
+    quotes and ampersands in the built HTML.
+    The native progressbar is named, but its Spanish `progress` string has
+    historically fallen back to English `Loading`.
+    Keep the localized `progress.html` override until that upstream
     translation exists. Check its name in both locales, the absence of
     GitHub-facts requests, equivalent-page
     language links and the Toolbox link that follows them.
@@ -704,7 +721,9 @@ them because `.gitignore` hides the pattern.
 WSL and takes its Windows branch to pick a profile directory: it derives a
 Windows `AppData\Local` path from the `/mnt/c/Users/<user>/AppData/...`
 entries in `PATH`, joins it with POSIX `path.join` and creates the result
-with `mkdirSync`. On Linux a backslash is an ordinary filename character, so
+with `mkdirSync`. Without a Windows user path, the inferred directory can
+instead contain `undefined` and fail with `ENOENT`. On Linux a backslash is
+an ordinary filename character, so
 the whole Windows path becomes **one relative directory name**, created in
 whatever the working directory is. Unsetting `TEMP` and `TMP` changes
 nothing — the path comes from `PATH`, not from those variables. CI is not
@@ -720,18 +739,25 @@ affected: GitHub's Ubuntu runners are not WSL, so chrome-launcher uses
   ```
 
   It builds both locales and copies the completed `site/` into a scratch
-  directory before running `@lhci/cli` there. The audited snapshot is isolated
-  from an active development server rebuilding or replacing `site/`, which
+  directory before running `@lhci/cli` there. `Justfile` holds the CLI version
+  pin. The local `lighthouse` recipe builds first and invokes
+  `lighthouse-audit`; Quality CI invokes `lighthouse-audit` over its existing
+  build and uploads `lhci-reports/` as an artifact. LHCI uses its Puppeteer
+  integration to launch Chrome with an explicit profile under the scratch
+  directory, avoiding chrome-launcher's Windows-path inference on WSL.
+  The audited snapshot is
+  isolated from an active development server rebuilding or replacing `site/`, which
   can otherwise remove Spanish pages mid-run. The repository config,
-  snapshot and `lhci-reports/` use absolute paths. The snapshot and stray
-  Chrome profiles are deleted with the scratch directory on exit; reports
+  snapshot and `lhci-reports/` use absolute paths. The snapshot, preparation
+  script and Chrome profile are deleted with the scratch directory on exit; reports
   are the only audit output left behind. Content edits during an audit are
   not included in that snapshot and need a subsequent build/audit.
 - Sweep an existing pile with `just clean` (it removes `site/` and the
   caches too, so rebuild afterwards).
 - `lhci-reports/` is the intended output of a run (forty-two pages times
   three runs, 126 reports; total size varies). It is gitignored and `just clean`
-  does not touch it; delete it by hand when the reports are no longer needed.
+  does not touch it. Each audit replaces its previous contents, including
+  when collection fails, so old assertions cannot look like current results.
 
 ## Security audit fails in CI
 

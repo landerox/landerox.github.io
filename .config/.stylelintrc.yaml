@@ -3,7 +3,7 @@
 #
 # Why the rules are inline instead of `extends: stylelint-config-standard`
 # -------------------------------------------------------------------------
-# stylelint 17 resolves `extends` with ESM semantics (import-meta-resolve),
+# stylelint 18 resolves `extends` with ESM semantics (import-meta-resolve),
 # which does not consult NODE_PATH. pre-commit installs the packages listed
 # in `additional_dependencies` into its own environment and exposes them
 # only through NODE_PATH, so a shareable config referenced by name cannot
@@ -15,12 +15,9 @@
 # stylelint on its latest release.
 #
 # Provenance: this is the effective ruleset of stylelint-config-standard
-# 40.0.0 (which itself extends stylelint-config-recommended), minus the 19
-# stylistic rules this project opts out of. To diff against a newer
-# upstream baseline:
-#
-#   npx --yes --package stylelint@17 --package stylelint-config-standard \
-#     stylelint --print-config content/en/assets/stylesheets/extra.css
+# 41.0.0 and stylelint-config-recommended 19.0.0, minus the 17 stylistic
+# rules this project opts out of. To review a newer upstream baseline,
+# compare both packages' published index.js files with these inline rules.
 #
 # Re-evaluation trigger: a stylelint major bump, or upstream restoring
 # NODE_PATH-compatible resolution — at that point `extends` can come back
@@ -32,6 +29,7 @@ rules:
   # Invalid, deprecated or ineffective CSS that browsers silently drop.
   # -------------------------------------------------------------------------
   annotation-no-unknown: true
+  at-charset-rule-no-invalid: true
   at-rule-descriptor-no-unknown: true
   at-rule-descriptor-value-no-unknown: true
   at-rule-no-deprecated: true
@@ -66,12 +64,16 @@ rules:
   property-no-deprecated: true
   property-no-unknown: true
   selector-anb-no-unmatchable: true
+  selector-no-deprecated: true
+  selector-no-invalid: true
+  selector-no-unmatchable: true
   selector-pseudo-class-no-unknown: true
   selector-pseudo-element-no-unknown: true
   selector-type-no-unknown: [true, { ignore: ["custom-elements"] }]
   string-no-newline:
     [true, { ignore: ["at-rule-preludes", "declaration-values"] }]
   syntax-string-no-invalid: true
+  value-no-invalid: true
 
   # -------------------------------------------------------------------------
   # Conventions — added by stylelint-config-standard on top of the above.
@@ -113,7 +115,7 @@ rules:
   #   alpha-value-notation, at-rule-empty-line-before, color-function-notation,
   #   color-hex-length, comment-empty-line-before, custom-property-pattern,
   #   custom-property-empty-line-before, declaration-empty-line-before,
-  #   declaration-block-single-line-max-declarations, font-family-name-quotes,
+  #   font-family-name-quotes,
   #   hue-degree-notation, import-notation, length-zero-no-unit,
   #   no-descending-specificity, no-duplicate-selectors,
   #   property-no-vendor-prefix, selector-class-pattern, value-keyword-case

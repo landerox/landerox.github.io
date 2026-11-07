@@ -13,7 +13,7 @@ The `#` column in the table below matches the section numbers in
 
 | #  | Category                   | Tool                  | One-line rationale                                            |
 | :- | :------------------------- | :-------------------- | :------------------------------------------------------------ |
-| 0  | Site generator (SSG)       | `zensical`            | Modern successor of Material for MkDocs (personal affinity).  |
+| 0  | Site generator (SSG)       | `zensical` 0.1.0 + `zensical-ui` 0.0.41 | Modern successor of Material for MkDocs; upstream beta release line (personal affinity). |
 | 1  | Python package manager     | `uv`                  | State of the art; reproducible lockfile.                      |
 | 2  | Task runner                | `just`                | Readable syntax, without `make`'s pitfalls.                   |
 | 3  | Hook runner                | `pre-commit`          | Huge catalog; Python is already there for Zensical.           |
@@ -30,10 +30,10 @@ The `#` column in the table below matches the section numbers in
 | 14 | Development environment    | `uv` + `just` locally | Native toolchain; deps from `uv.lock`, hooks from `pre-commit`. |
 | 15 | Supply-chain posture       | OpenSSF Scorecard     | Weekly + push; SARIF to code-scanning; public badge in README.|
 | 16 | Content licensing          | MIT + CC-BY-4.0       | Code under MIT (`LICENSE`); content under CC-BY-4.0 (`LICENSE-CONTENT`). |
-| 17 | Quality gates              | Lighthouse CI + Python Playwright + axe-core | Blocking a11y/SEO/best-practices, layout shift and interaction tests; axe runs on the dialog, the CLI and every tool; the performance score remains warn-only (≥ 0.9). |
+| 17 | Quality gates              | Lighthouse CI 0.16.0 + Python Playwright + axe-core | Same Lighthouse recipe locally and in CI; blocking a11y/SEO/best-practices, layout shift and interaction tests; axe runs on the dialog, the CLI and every tool; performance remains warn-only (≥ 0.9). |
 | 18 | Lockfile maintenance       | Weekly `uv` report    | Tuesdays 06:00 UTC; tests candidates without persisting them. |
-| 19 | JavaScript linter          | `eslint` + `tsc`      | Flat config (ESLint 10) with the recommended rules inlined; `// @ts-check` on the DOM-free modules, checked by a pinned TypeScript hook. |
-| 20 | CSS linter                 | `stylelint`           | Config-standard ruleset inlined (ESM `extends` is unresolvable under pre-commit). |
+| 19 | JavaScript linter          | `eslint` 10.14.0 + `tsc` | Flat config with the recommended rules inlined; `// @ts-check` on the DOM-free modules, checked by a pinned TypeScript hook. |
+| 20 | CSS linter                 | `stylelint` 18       | Config-standard 41 ruleset inlined (ESM `extends` is unresolvable under pre-commit). |
 | 21 | DRY Asset deduplication    | Pre-build Sync Task   | Generates Spanish assets on-the-fly; keeps git repo 100% DRY. |
 | 22 | Bilingual symmetry checker | Custom Python hook    | Runs in pre-commit to ensure English & Spanish page parity.  |
 | 23 | Project governance         | Single Developer Flow | Formalizes sole maintainer roles and exit/continuity policy. |
@@ -72,6 +72,7 @@ The `#` column in the table below matches the section numbers in
 | `just install-browser`  | Install the Chromium release that the locked Playwright expects |
 | `just test-browser`     | Keyboard, locale, mobile, contrast and tool regressions against the current bilingual build (run `just build` first) |
 | `just lighthouse`       | Lighthouse CI locally with the repository config (builds first; reports in `lhci-reports/`) |
+| `just lighthouse-audit` | Audit the current build without rebuilding; the shared local/CI audit recipe |
 | `just update` / `just outdated` / `just tree` | Upgrade the lockfile and sync / list newer Python releases / show the dependency tree |
 | `just hooks-install` / `just hooks-update` / `just hooks-uninstall` | Install the pre-commit and commit-msg hooks / move hook revisions to their newest tags as frozen SHAs (gitleaks moves by hand) / remove the hooks |
 | `just commit`           | commitizen-guided commit with DCO sign-off (`cz commit -- -s`) |
@@ -121,7 +122,7 @@ table, with the bump procedure for each entry, lives in
 | GitHub Actions         | Full commit SHAs in `.github/workflows/*.yml`                |
 | `lychee` (CI)          | `lychee-action` pin in `link-report.yml`                     |
 | `just` (CI)            | `setup-just` `just-version:` in `deploy.yml`, `lint.yml`, `quality.yml`, `link-report.yml`, `uv-report.yml` |
-| `@lhci/cli` (local)    | `lighthouse` recipe in `Justfile`, kept on the release bundled by the `lighthouse-ci-action` pin in `quality.yml` |
+| `@lhci/cli` (local + CI) | `lhci` pin in `Justfile`; local `lighthouse` and `quality.yml` both invoke `lighthouse-audit` |
 
 Dependency version updates are intentionally manual: Dependabot is used only
 for vulnerability alerts and never creates update branches. Every pin above
