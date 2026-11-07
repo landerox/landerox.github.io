@@ -93,6 +93,13 @@ jobs:
       - name: Check bilingual browser interactions
         run: just test-browser
 
+      - name: Select Chrome for Lighthouse
+        run: |
+          # Use the runner's Chrome and its Ubuntu sandbox profile.
+          # An explicit path bypasses puppeteer-core's browser discovery.
+          lighthouse_chrome="$(command -v google-chrome)"
+          printf 'CHROME_PATH=%s\n' "$lighthouse_chrome" >> "$GITHUB_ENV"
+
       - name: Run Lighthouse CI
         run: just lighthouse-audit
 

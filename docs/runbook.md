@@ -745,6 +745,9 @@ affected: GitHub's Ubuntu runners are not WSL, so chrome-launcher uses
   build and uploads `lhci-reports/` as an artifact. LHCI uses its Puppeteer
   integration to launch Chrome with an explicit profile under the scratch
   directory, avoiding chrome-launcher's Windows-path inference on WSL.
+  Quality CI exports `CHROME_PATH` from the runner's installed Google Chrome,
+  using its Ubuntu sandbox profile and avoiding implicit browser discovery.
+  The interaction suite uses the separate, locked Playwright browser.
   The audited snapshot is
   isolated from an active development server rebuilding or replacing `site/`, which
   can otherwise remove Spanish pages mid-run. The repository config,
